@@ -18,6 +18,7 @@ export const validationSchema = Joi.object({
   RATE_LIMIT_MAX: Joi.number().default(100),
   JWT_SECRET: Joi.string().min(32).optional(),
   JWT_EXPIRES_IN: Joi.string().default('1h'),
+  API_SECRET: Joi.string().min(16).required(),
 
   // Performance
   SLOW_QUERY_THRESHOLD: Joi.number().default(1000),

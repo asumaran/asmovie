@@ -24,6 +24,7 @@ export default () => ({
     rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX ?? '100', 10),
     jwtSecret: process.env.JWT_SECRET ?? 'dev-secret-key',
     jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '1h',
+    apiSecret: process.env.API_SECRET ?? 'fallback-secret-2025',
   },
 
   // Performance Configuration

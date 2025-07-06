@@ -11,6 +11,9 @@ import { ResponseInterceptor } from '../common/interceptors/response.interceptor
 import { PerformanceInterceptor } from '../common/interceptors/performance.interceptor';
 import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 
+// API token for testing protected endpoints
+const API_TOKEN = 'test-api-secret-key-for-integration-tests';
+
 describe('Movies Integration Tests', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
@@ -63,6 +66,7 @@ describe('Movies Integration Tests', () => {
 
       const response = await request(app.getHttpServer())
         .post('/movies')
+        .set('X-API-Token', API_TOKEN)
         .send(movieData)
         .expect(201);
 
@@ -90,6 +94,7 @@ describe('Movies Integration Tests', () => {
 
       const response = await request(app.getHttpServer())
         .post('/movies')
+        .set('X-API-Token', API_TOKEN)
         .send(invalidMovie)
         .expect(400);
 
@@ -109,6 +114,7 @@ describe('Movies Integration Tests', () => {
 
       const response = await request(app.getHttpServer())
         .post('/movies')
+        .set('X-API-Token', API_TOKEN)
         .send(invalidMovie)
         .expect(400);
 
@@ -366,6 +372,7 @@ describe('Movies Integration Tests', () => {
 
       const response = await request(app.getHttpServer())
         .patch(`/movies/${createdMovie.id}`)
+        .set('X-API-Token', API_TOKEN)
         .send(updateData)
         .expect(200);
 
@@ -382,6 +389,7 @@ describe('Movies Integration Tests', () => {
     it('should return 404 when updating non-existent movie', async () => {
       const response = await request(app.getHttpServer())
         .patch('/movies/999999')
+        .set('X-API-Token', API_TOKEN)
         .send({ title: 'New Title' })
         .expect(404);
 
@@ -396,6 +404,7 @@ describe('Movies Integration Tests', () => {
 
       const response = await request(app.getHttpServer())
         .patch(`/movies/${createdMovie.id}`)
+        .set('X-API-Token', API_TOKEN)
         .send(invalidUpdate)
         .expect(400);
 
@@ -421,6 +430,7 @@ describe('Movies Integration Tests', () => {
     it('should delete a movie', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/movies/${createdMovie.id}`)
+        .set('X-API-Token', API_TOKEN)
         .expect(200);
 
       expect(response.body.success).toBe(true);
@@ -435,6 +445,7 @@ describe('Movies Integration Tests', () => {
     it('should return 404 when deleting non-existent movie', async () => {
       const response = await request(app.getHttpServer())
         .delete('/movies/999999')
+        .set('X-API-Token', API_TOKEN)
         .expect(404);
 
       expect(response.body.success).toBe(false);
@@ -474,6 +485,7 @@ describe('Movies Integration Tests', () => {
 
         const response = await request(app.getHttpServer())
           .post(`/movies/${createdMovie.id}/actors`)
+          .set('X-API-Token', API_TOKEN)
           .send(addActorData)
           .expect(201);
 
@@ -492,6 +504,7 @@ describe('Movies Integration Tests', () => {
       it('should return 404 for non-existent movie', async () => {
         const response = await request(app.getHttpServer())
           .post('/movies/999999/actors')
+          .set('X-API-Token', API_TOKEN)
           .send({ actorId: createdActor.id, role: 'Lead' })
           .expect(404);
 
@@ -501,6 +514,7 @@ describe('Movies Integration Tests', () => {
       it('should return 404 for non-existent actor', async () => {
         const response = await request(app.getHttpServer())
           .post(`/movies/${createdMovie.id}/actors`)
+          .set('X-API-Token', API_TOKEN)
           .send({ actorId: 999999, role: 'Lead' })
           .expect(404);
 
@@ -511,12 +525,14 @@ describe('Movies Integration Tests', () => {
         // First assignment
         await request(app.getHttpServer())
           .post(`/movies/${createdMovie.id}/actors`)
+          .set('X-API-Token', API_TOKEN)
           .send({ actorId: createdActor.id, role: 'Lead' })
           .expect(201);
 
         // Duplicate assignment
         const response = await request(app.getHttpServer())
           .post(`/movies/${createdMovie.id}/actors`)
+          .set('X-API-Token', API_TOKEN)
           .send({ actorId: createdActor.id, role: 'Supporting' })
           .expect(409);
 
@@ -588,6 +604,7 @@ describe('Movies Integration Tests', () => {
       it('should remove an actor from a movie', async () => {
         const response = await request(app.getHttpServer())
           .delete(`/movies/${createdMovie.id}/actors/${createdActor.id}`)
+          .set('X-API-Token', API_TOKEN)
           .expect(200);
 
         expect(response.body.success).toBe(true);
@@ -605,6 +622,7 @@ describe('Movies Integration Tests', () => {
       it('should return 404 for non-existent relationship', async () => {
         const response = await request(app.getHttpServer())
           .delete(`/movies/${createdMovie.id}/actors/999999`)
+          .set('X-API-Token', API_TOKEN)
           .expect(404);
 
         expect(response.body.success).toBe(false);
@@ -685,6 +703,7 @@ describe('Movies Integration Tests', () => {
       const promises = Array.from({ length: 5 }, (_, i) =>
         request(app.getHttpServer())
           .post('/movies')
+          .set('X-API-Token', API_TOKEN)
           .send({ ...movieData, title: `${movieData.title} ${i}` }),
       );
 
@@ -728,6 +747,7 @@ describe('Movies Integration Tests', () => {
 
       const response = await request(app.getHttpServer())
         .post('/movies')
+        .set('X-API-Token', API_TOKEN)
         .send(movieData)
         .expect(201);
 

@@ -104,7 +104,7 @@ export class ActorsService {
   async getMovies(actorId: number) {
     await this.findOne(actorId); // Validate actor exists
 
-    return this.prisma.movieActor.findMany({
+    const movieActors = await this.prisma.movieActor.findMany({
       where: { actorId },
       include: {
         movie: {
@@ -114,5 +114,7 @@ export class ActorsService {
         },
       },
     });
+
+    return movieActors.map((ma) => ma.movie);
   }
 }

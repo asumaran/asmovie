@@ -10,6 +10,10 @@ post {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 body:json {
   {
     "actorId": 1,
@@ -22,6 +26,8 @@ docs {
   
   Associates an existing actor with a movie and assigns them a role.
   
+  **🔒 Requires API Token Authentication**
+  
   ## Parameters
   - `id` (path): The movie ID
   
@@ -31,6 +37,12 @@ docs {
     "actorId": "number (required)",
     "role": "string (required)"
   }
+  ```
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
   ```
   
   ## Response

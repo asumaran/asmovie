@@ -18,8 +18,24 @@ docs {
   1. Click on the environment dropdown at the top
   2. Select "Local" environment
   3. Verify that api_url resolves to: http://localhost:3001
+  4. Check that api_token is available: {{api_token}}
   
-  If "No Environment" is selected, the {{api_url}} variable will not work!
+  ## 🔒 API Security Notice
+  
+  **Protected Endpoints (Require API Token):**
+  - All CREATE operations (POST requests)
+  - All UPDATE operations (PATCH requests)
+  - All DELETE operations (DELETE requests)
+  
+  **Public Endpoints (No Token Required):**
+  - All READ operations (GET requests)
+  
+  The API token is automatically included in protected endpoint requests using:
+  ```
+  Authorization: Bearer {{api_token}}
+  ```
+  
+  If "No Environment" is selected, the {{api_url}} and {{api_token}} variables will not work!
   
   This request will help you verify the environment is working correctly.
 }

@@ -10,6 +10,10 @@ patch {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 body:json {
   {
     "title": "Inception (Updated)",
@@ -21,6 +25,8 @@ docs {
   # Update Movie
   
   Updates an existing movie by ID. All fields are optional.
+  
+  **🔒 Requires API Token Authentication**
   
   ## Parameters
   - `id` (path): The movie ID to update
@@ -34,6 +40,12 @@ docs {
     "genre": "string (optional)",
     "duration": "number (optional, minutes)"
   }
+  ```
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
   ```
   
   ## Response

@@ -10,14 +10,26 @@ delete {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 docs {
   # Remove Actor from Movie
   
   Removes an actor from a movie (deletes the movie-actor relationship).
   
+  **🔒 Requires API Token Authentication**
+  
   ## Parameters
   - `movieId` (path): The movie ID
   - `actorId` (path): The actor ID to remove
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
+  ```
   
   ## Response
   Returns the deleted movie-actor relationship.

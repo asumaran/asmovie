@@ -10,6 +10,10 @@ patch {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 body:json {
   {
     "name": "Leonardo DiCaprio (Updated)",
@@ -22,6 +26,8 @@ docs {
   
   Updates an existing actor by ID. All fields are optional.
   
+  **🔒 Requires API Token Authentication**
+  
   ## Parameters
   - `id` (path): The actor ID to update
   
@@ -32,6 +38,12 @@ docs {
     "birthDate": "string (optional, ISO date format)",
     "biography": "string (optional)"
   }
+  ```
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
   ```
   
   ## Response

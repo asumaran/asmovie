@@ -10,6 +10,10 @@ post {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 body:json {
   {
     "movieId": 1,
@@ -24,6 +28,8 @@ docs {
   
   Creates a new rating for a movie.
   
+  **🔒 Requires API Token Authentication**
+  
   ## Request Body
   ```json
   {
@@ -32,6 +38,12 @@ docs {
     "comment": "string (optional)",
     "reviewer": "string (required)"
   }
+  ```
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
   ```
   
   ## Response

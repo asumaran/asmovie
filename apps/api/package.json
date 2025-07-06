@@ -10,9 +10,15 @@
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
     "start:dev": "nest start --watch",
+    "start:dev:sync": "npm run sync-bruno-token && npm run start:dev",
     "start:prod": "node dist/main",
     "seed": "tsx prisma/seed.ts",
-    "test": "jest",
+    "sync-bruno-token": "node sync-bruno-token.js",
+    "watch-bruno-sync": "node watch-bruno-sync.js",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "jest --testPathIgnorePatterns=integration.spec.ts",
+    "test:integration": "jest --testPathPattern=integration.spec.ts --runInBand",
+    "test:all": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -83,7 +89,8 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testTimeout": 30000
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

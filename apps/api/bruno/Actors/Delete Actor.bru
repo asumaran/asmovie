@@ -10,13 +10,25 @@ delete {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 docs {
   # Delete Actor
   
   Deletes an actor by ID. This will also cascade delete all movie-actor relationships.
   
+  **🔒 Requires API Token Authentication**
+  
   ## Parameters
   - `id` (path): The actor ID to delete
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
+  ```
   
   ## Response
   Returns the deleted actor object.

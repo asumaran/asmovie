@@ -8,7 +8,14 @@
   ],
   "scripts": {
     "dev:api": "npm run start:dev --workspace=asmovie-api",
-    "dev:client": "npm run dev --workspace=asmovie-client"
+    "dev:client": "npm run dev --workspace=asmovie-client",
+    "sync-bruno-token": "node apps/api/sync-bruno-token.js",
+    "watch-bruno-sync": "node apps/api/watch-bruno-sync.js",
+    "dev:api:sync": "npm run sync-bruno-token && npm run dev:api",
+    "test": "npm run test --workspace=asmovie-api",
+    "test:unit": "npm run test:unit --workspace=asmovie-api",
+    "test:integration": "npm run test:integration --workspace=asmovie-api",
+    "test:all": "npm run test:all --workspace=asmovie-api"
   },
   "devDependencies": {},
   "engines": {

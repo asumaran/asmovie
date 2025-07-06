@@ -268,7 +268,7 @@ describe('ActorsService', () => {
     it('should return movies for an actor', async () => {
       const actorId = 1;
       const mockActor = { id: actorId, name: 'Test Actor' };
-      const expectedMovies = [
+      const mockMovieActors = [
         {
           id: 1,
           movieId: 1,
@@ -281,9 +281,16 @@ describe('ActorsService', () => {
           },
         },
       ];
+      const expectedMovies = [
+        {
+          id: 1,
+          title: 'Test Movie',
+          description: 'Test Description',
+        },
+      ];
 
       mockPrismaService.actor.findUnique.mockResolvedValue(mockActor);
-      mockPrismaService.movieActor.findMany.mockResolvedValue(expectedMovies);
+      mockPrismaService.movieActor.findMany.mockResolvedValue(mockMovieActors);
 
       const result = await service.getMovies(actorId);
 

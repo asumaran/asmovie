@@ -10,6 +10,10 @@ post {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 body:json {
   {
     "title": "The Matrix",
@@ -25,6 +29,8 @@ docs {
   
   Creates a new movie in the database.
   
+  **🔒 Requires API Token Authentication**
+  
   ## Request Body
   ```json
   {
@@ -34,6 +40,12 @@ docs {
     "genre": "string (required)",
     "duration": "number (required, minutes)"
   }
+  ```
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
   ```
   
   ## Response

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { MovieRatingsController } from './movie-ratings.controller';
 import { MovieRatingsService } from './movie-ratings.service';
 
@@ -11,6 +12,10 @@ describe('MovieRatingsController', () => {
     findAll: jest.fn(),
   };
 
+  const mockConfigService = {
+    get: jest.fn().mockReturnValue('test-api-secret'),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MovieRatingsController],
@@ -18,6 +23,10 @@ describe('MovieRatingsController', () => {
         {
           provide: MovieRatingsService,
           useValue: mockMovieRatingsService,
+        },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
         },
       ],
     }).compile();

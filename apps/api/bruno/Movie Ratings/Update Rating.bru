@@ -10,6 +10,10 @@ patch {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 body:json {
   {
     "rating": 9.5,
@@ -22,6 +26,8 @@ docs {
   
   Updates an existing movie rating by ID. All fields are optional.
   
+  **🔒 Requires API Token Authentication**
+  
   ## Parameters
   - `id` (path): The rating ID to update
   
@@ -32,6 +38,12 @@ docs {
     "comment": "string (optional)",
     "reviewer": "string (optional)"
   }
+  ```
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
   ```
   
   ## Response

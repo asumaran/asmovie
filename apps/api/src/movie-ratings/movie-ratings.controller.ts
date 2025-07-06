@@ -11,12 +11,14 @@ import {
   UsePipes,
   ValidationPipe,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { MovieRatingsService } from './movie-ratings.service';
 import {
   CreateMovieRatingDto,
   UpdateMovieRatingDto,
 } from './dto/movie-rating.dto';
+import { ApiTokenGuard } from '../common/guards/api-token.guard';
 
 @Controller('movie-ratings')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -24,6 +26,7 @@ export class MovieRatingsController {
   constructor(private readonly movieRatingsService: MovieRatingsService) {}
 
   @Post()
+  @UseGuards(ApiTokenGuard)
   create(@Body() createMovieRatingDto: CreateMovieRatingDto) {
     return this.movieRatingsService.create(createMovieRatingDto);
   }
@@ -58,6 +61,7 @@ export class MovieRatingsController {
   }
 
   @Patch(':id')
+  @UseGuards(ApiTokenGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateMovieRatingDto: UpdateMovieRatingDto,
@@ -66,6 +70,7 @@ export class MovieRatingsController {
   }
 
   @Delete(':id')
+  @UseGuards(ApiTokenGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.movieRatingsService.remove(id);
   }

@@ -10,13 +10,25 @@ delete {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 docs {
   # Delete Movie Rating
   
   Deletes a movie rating by ID.
   
+  **🔒 Requires API Token Authentication**
+  
   ## Parameters
   - `id` (path): The rating ID to delete
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
+  ```
   
   ## Response
   Returns the deleted rating object.

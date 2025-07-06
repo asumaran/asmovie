@@ -11,6 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
@@ -22,6 +23,7 @@ import {
   AddActorToMovieDto,
   MovieFilterDto,
 } from './dto/movie.dto';
+import { ApiTokenGuard } from '../common/guards/api-token.guard';
 
 @Controller('movies')
 @UseInterceptors(ResponseInterceptor, PerformanceInterceptor)
@@ -30,6 +32,7 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Post()
+  @UseGuards(ApiTokenGuard)
   create(@Body() createMovieDto: CreateMovieDto) {
     return this.moviesService.create(createMovieDto);
   }
@@ -52,6 +55,7 @@ export class MoviesController {
   }
 
   @Patch(':id')
+  @UseGuards(ApiTokenGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateMovieDto: UpdateMovieDto,
@@ -60,11 +64,13 @@ export class MoviesController {
   }
 
   @Delete(':id')
+  @UseGuards(ApiTokenGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.moviesService.remove(id);
   }
 
   @Post(':id/actors')
+  @UseGuards(ApiTokenGuard)
   addActor(
     @Param('id', ParseIntPipe) id: number,
     @Body() addActorDto: AddActorToMovieDto,
@@ -73,6 +79,7 @@ export class MoviesController {
   }
 
   @Delete(':movieId/actors/:actorId')
+  @UseGuards(ApiTokenGuard)
   removeActor(
     @Param('movieId', ParseIntPipe) movieId: number,
     @Param('actorId', ParseIntPipe) actorId: number,

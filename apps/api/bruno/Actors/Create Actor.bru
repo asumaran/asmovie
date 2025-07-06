@@ -10,6 +10,10 @@ post {
   auth: none
 }
 
+headers {
+  Authorization: Bearer {{api_token}}
+}
+
 body:json {
   {
     "name": "Keanu Reeves",
@@ -23,6 +27,8 @@ docs {
   
   Creates a new actor in the database.
   
+  **🔒 Requires API Token Authentication**
+  
   ## Request Body
   ```json
   {
@@ -30,6 +36,12 @@ docs {
     "birthDate": "string (optional, ISO date format)",
     "biography": "string (optional)"
   }
+  ```
+  
+  ## Authentication
+  Requires API token in Authorization header:
+  ```
+  Authorization: Bearer {{api_token}}
   ```
   
   ## Response
