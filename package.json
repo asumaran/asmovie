@@ -7,7 +7,7 @@
     "apps/*"
   ],
   "scripts": {
-    "dev:api": "npm run dev --workspace=asmovie-api",
+    "dev:api": "npm run start:dev --workspace=asmovie-api",
     "dev:client": "npm run dev --workspace=asmovie-client"
   },
   "devDependencies": {},
