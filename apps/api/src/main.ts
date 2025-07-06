@@ -1,11 +1,47 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { PerformanceInterceptor } from './common/interceptors/performance.interceptor';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
+  // Security middleware
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
+
+  // Rate limiting with configuration
+  app.use(
+    rateLimit({
+      windowMs: configService.get('security.rateLimitWindow'),
+      max: configService.get('security.rateLimitMax'),
+      message: {
+        error: 'Too many requests',
+        message: 'Too many requests from this IP, please try again later.',
+        statusCode: 429,
+      },
+      standardHeaders: true,
+      legacyHeaders: false,
+    }),
+  );
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -22,17 +58,23 @@ async function bootstrap() {
   // Global exception filter
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  // Global logging interceptor
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  // Global interceptors
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(),
+    new ResponseInterceptor(),
+    new PerformanceInterceptor(),
+  );
 
-  // Enable CORS
+  // Enable CORS with configuration
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: configService.get('security.allowedOrigins'),
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: true,
   });
 
-  await app.listen(process.env.PORT ?? 3001);
-  console.log('Application is running on: http://localhost:3001');
+  const port = configService.get('port');
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}`);
 }
 void bootstrap();

@@ -10,15 +10,21 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
+import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
+import { PerformanceInterceptor } from '../common/interceptors/performance.interceptor';
+import { PaginationDto } from '../common/dto/pagination.dto';
 import {
   CreateMovieDto,
   UpdateMovieDto,
   AddActorToMovieDto,
+  MovieFilterDto,
 } from './dto/movie.dto';
 
 @Controller('movies')
+@UseInterceptors(ResponseInterceptor, PerformanceInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
@@ -29,8 +35,15 @@ export class MoviesController {
   }
 
   @Get()
-  findAll(@Query('search') search?: string) {
-    return this.moviesService.findAll(search);
+  findAll(
+    @Query() paginationDto: PaginationDto,
+    @Query() filterDto: MovieFilterDto,
+  ) {
+    return this.moviesService.findAll(
+      filterDto,
+      paginationDto.page,
+      paginationDto.limit,
+    );
   }
 
   @Get(':id')

@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MoviesService } from './movies.service';
 import { PrismaService } from '../common/prisma.service';
+import { QueryBuilderService } from '../common/services/query-builder.service';
+import { TransactionService } from '../common/services/transaction.service';
 import { NotFoundException } from '@nestjs/common';
 
 describe('MoviesService', () => {
@@ -14,6 +16,7 @@ describe('MoviesService', () => {
       findUnique: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
     actor: {
       findUnique: jest.fn(),
@@ -26,6 +29,27 @@ describe('MoviesService', () => {
     },
   };
 
+  const mockQueryBuilderService = {
+    buildMovieInclude: jest.fn().mockReturnValue({
+      actors: { include: { actor: true } },
+      ratings: true,
+    }),
+    buildMovieWhere: jest.fn().mockReturnValue({}),
+    buildOrderBy: jest.fn().mockReturnValue({ createdAt: 'desc' }),
+    buildPaginatedQuery: jest.fn().mockReturnValue({
+      skip: 0,
+      take: 10,
+      include: { actors: { include: { actor: true } }, ratings: true },
+      where: {},
+      orderBy: { createdAt: 'desc' },
+    }),
+  };
+
+  const mockTransactionService = {
+    deleteMovieWithRelations: jest.fn(),
+    executeTransaction: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -33,6 +57,14 @@ describe('MoviesService', () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService,
+        },
+        {
+          provide: QueryBuilderService,
+          useValue: mockQueryBuilderService,
+        },
+        {
+          provide: TransactionService,
+          useValue: mockTransactionService,
         },
       ],
     }).compile();
@@ -99,24 +131,21 @@ describe('MoviesService', () => {
       ];
 
       mockPrismaService.movie.findMany.mockResolvedValue(expectedMovies);
+      mockPrismaService.movie.count.mockResolvedValue(expectedMovies.length);
 
-      const result = await service.findAll();
+      const result = await service.findAll({}, 1, 10);
 
-      expect(mockPrismaService.movie.findMany).toHaveBeenCalledWith({
-        where: {},
-        include: {
-          actors: {
-            include: {
-              actor: true,
-            },
-          },
-          ratings: true,
-        },
-        orderBy: {
-          createdAt: 'desc',
+      expect(result).toEqual({
+        data: expectedMovies,
+        meta: {
+          page: 1,
+          limit: 10,
+          total: expectedMovies.length,
+          totalPages: 1,
+          hasNext: false,
+          hasPrev: false,
         },
       });
-      expect(result).toEqual(expectedMovies);
     });
 
     it('should return movies filtered by search term', async () => {
@@ -131,29 +160,21 @@ describe('MoviesService', () => {
       ];
 
       mockPrismaService.movie.findMany.mockResolvedValue(expectedMovies);
+      mockPrismaService.movie.count.mockResolvedValue(expectedMovies.length);
 
-      const result = await service.findAll(searchTerm);
+      const result = await service.findAll({ search: searchTerm }, 1, 10);
 
-      expect(mockPrismaService.movie.findMany).toHaveBeenCalledWith({
-        where: {
-          title: {
-            contains: searchTerm,
-            mode: 'insensitive',
-          },
-        },
-        include: {
-          actors: {
-            include: {
-              actor: true,
-            },
-          },
-          ratings: true,
-        },
-        orderBy: {
-          createdAt: 'desc',
+      expect(result).toEqual({
+        data: expectedMovies,
+        meta: {
+          page: 1,
+          limit: 10,
+          total: expectedMovies.length,
+          totalPages: 1,
+          hasNext: false,
+          hasPrev: false,
         },
       });
-      expect(result).toEqual(expectedMovies);
     });
   });
 
@@ -191,7 +212,7 @@ describe('MoviesService', () => {
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
 
       await expect(service.findOne(movieId)).rejects.toThrow(
-        new NotFoundException(`Movie with ID ${movieId} not found`),
+        `Movie with identifier '${movieId}' not found`,
       );
     });
   });
@@ -206,19 +227,26 @@ describe('MoviesService', () => {
 
       const mockMovie = { id: movieId, title: 'Test Movie' };
       const mockActor = { id: 1, name: 'Test Actor' };
-      const expectedRelation = {
-        id: 1,
-        movieId,
-        actorId: 1,
-        role: 'Lead Actor',
-        actor: mockActor,
-        movie: mockMovie,
+      const mockMovieWithActors = {
+        id: movieId,
+        title: 'Test Movie',
+        actors: [
+          {
+            id: 1,
+            movieId,
+            actorId: 1,
+            role: 'Lead Actor',
+            actor: mockActor,
+          },
+        ],
       };
 
-      mockPrismaService.movie.findUnique.mockResolvedValue(mockMovie);
+      mockPrismaService.movie.findUnique
+        .mockResolvedValueOnce(mockMovie) // First call in findOne
+        .mockResolvedValueOnce(mockMovieWithActors); // Second call after creating relation
       mockPrismaService.actor.findUnique.mockResolvedValue(mockActor);
       mockPrismaService.movieActor.findUnique.mockResolvedValue(null);
-      mockPrismaService.movieActor.create.mockResolvedValue(expectedRelation);
+      mockPrismaService.movieActor.create.mockResolvedValue({});
 
       const result = await service.addActor(movieId, addActorDto);
 
@@ -228,12 +256,19 @@ describe('MoviesService', () => {
           actorId: addActorDto.actorId,
           role: addActorDto.role,
         },
+      });
+
+      expect(mockPrismaService.movie.findUnique).toHaveBeenCalledWith({
+        where: { id: movieId },
         include: {
-          actor: true,
-          movie: true,
+          actors: {
+            include: {
+              actor: true,
+            },
+          },
         },
       });
-      expect(result).toEqual(expectedRelation);
+      expect(result).toEqual(mockMovieWithActors);
     });
 
     it('should throw NotFoundException if actor not found', async () => {
@@ -249,7 +284,7 @@ describe('MoviesService', () => {
       mockPrismaService.actor.findUnique.mockResolvedValue(null);
 
       await expect(service.addActor(movieId, addActorDto)).rejects.toThrow(
-        new NotFoundException(`Actor with ID ${addActorDto.actorId} not found`),
+        `Actor with identifier '${addActorDto.actorId}' not found`,
       );
     });
   });
@@ -305,7 +340,7 @@ describe('MoviesService', () => {
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
 
       await expect(service.update(movieId, updateMovieDto)).rejects.toThrow(
-        new NotFoundException(`Movie with ID ${movieId} not found`),
+        `Movie with identifier '${movieId}' not found`,
       );
     });
   });
@@ -321,14 +356,16 @@ describe('MoviesService', () => {
       };
 
       mockPrismaService.movie.findUnique.mockResolvedValue(mockMovie);
-      mockPrismaService.movie.delete.mockResolvedValue(mockMovie);
+      mockTransactionService.deleteMovieWithRelations.mockResolvedValue(
+        undefined,
+      );
 
       const result = await service.remove(movieId);
 
-      expect(mockPrismaService.movie.delete).toHaveBeenCalledWith({
-        where: { id: movieId },
-      });
-      expect(result).toEqual(mockMovie);
+      expect(
+        mockTransactionService.deleteMovieWithRelations,
+      ).toHaveBeenCalledWith(movieId);
+      expect(result).toBeUndefined();
     });
 
     it('should throw NotFoundException if movie not found', async () => {
@@ -337,7 +374,7 @@ describe('MoviesService', () => {
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
 
       await expect(service.remove(movieId)).rejects.toThrow(
-        new NotFoundException(`Movie with ID ${movieId} not found`),
+        `Movie with identifier '${movieId}' not found`,
       );
     });
   });
@@ -382,7 +419,7 @@ describe('MoviesService', () => {
       mockPrismaService.movieActor.findUnique.mockResolvedValue(null);
 
       await expect(service.removeActor(movieId, actorId)).rejects.toThrow(
-        new NotFoundException('Actor not found in this movie'),
+        `Movie-Actor relationship with identifier 'movieId:${movieId}, actorId:${actorId}' not found`,
       );
     });
   });
@@ -413,7 +450,17 @@ describe('MoviesService', () => {
       expect(mockPrismaService.movieActor.findMany).toHaveBeenCalledWith({
         where: { movieId },
         include: {
-          actor: true,
+          actor: {
+            select: {
+              id: true,
+              name: true,
+              biography: true,
+              birthDate: true,
+            },
+          },
+        },
+        orderBy: {
+          role: 'asc',
         },
       });
       expect(result).toEqual(expectedActors);
@@ -425,7 +472,7 @@ describe('MoviesService', () => {
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
 
       await expect(service.getActors(movieId)).rejects.toThrow(
-        new NotFoundException(`Movie with ID ${movieId} not found`),
+        `Movie with identifier '${movieId}' not found`,
       );
     });
   });
@@ -454,7 +501,7 @@ describe('MoviesService', () => {
       );
 
       await expect(service.addActor(movieId, addActorDto)).rejects.toThrow(
-        'Actor is already in this movie',
+        'Movie-Actor relationship with actor',
       );
     });
   });

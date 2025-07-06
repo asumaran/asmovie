@@ -1,4 +1,12 @@
-import { IsString, IsOptional, IsInt, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsInt,
+  Min,
+  Max,
+  IsIn,
+  IsNumber,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateMovieDto {
@@ -58,4 +66,43 @@ export class AddActorToMovieDto {
 
   @IsString()
   role: string;
+}
+
+export class MovieFilterDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  genre?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  releaseYear?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  @Type(() => Number)
+  minRating?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  @Type(() => Number)
+  maxRating?: number;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['title', 'releaseYear', 'createdAt', 'genre'])
+  sortBy?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['asc', 'desc'])
+  sortOrder?: 'asc' | 'desc';
 }

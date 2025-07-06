@@ -27,6 +27,12 @@ model Movie {
   actors  MovieActor[]
   ratings MovieRating[]
 
+  // Performance indexes
+  @@index([title]) // For search optimization
+  @@index([genre]) // For filtering by genre
+  @@index([releaseYear]) // For filtering/sorting by year
+  @@index([title, genre]) // For combined search and filter
+  @@index([createdAt]) // For sorting by creation date
   @@map("movies")
 }
 
@@ -41,6 +47,10 @@ model Actor {
   // Relationships
   movies MovieActor[]
 
+  // Performance indexes
+  @@index([name]) // For search optimization
+  @@index([birthDate]) // For filtering by birth date
+  @@index([createdAt]) // For sorting by creation date
   @@map("actors")
 }
 
@@ -67,5 +77,11 @@ model MovieRating {
 
   movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
 
+  // Performance indexes
+  @@index([movieId]) // For finding ratings by movie
+  @@index([rating]) // For filtering by rating
+  @@index([reviewer]) // For filtering by reviewer
+  @@index([createdAt]) // For sorting by creation date
+  @@index([movieId, rating]) // For combined movie and rating queries
   @@map("movie_ratings")
 }

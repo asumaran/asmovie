@@ -1,14 +1,30 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
+import { QueryBuilderService } from '../common/services/query-builder.service';
+import { TransactionService } from '../common/services/transaction.service';
+import {
+  ResourceNotFoundException,
+  DuplicateResourceException,
+  BusinessException,
+} from '../common/exceptions/business.exception';
+import {
+  PaginatedResponse,
+  PaginationHelper,
+} from '../common/interfaces/paginated-response.interface';
 import {
   CreateMovieDto,
   UpdateMovieDto,
   AddActorToMovieDto,
+  MovieFilterDto,
 } from './dto/movie.dto';
 
 @Injectable()
 export class MoviesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private queryBuilder: QueryBuilderService,
+    private transactionService: TransactionService,
+  ) {}
 
   async create(createMovieDto: CreateMovieDto) {
     return this.prisma.movie.create({
@@ -24,75 +40,84 @@ export class MoviesService {
     });
   }
 
-  async findAll(search?: string) {
-    const where = search
-      ? {
-          title: {
-            contains: search,
-            mode: 'insensitive' as const,
-          },
-        }
-      : {};
-
-    return this.prisma.movie.findMany({
-      where,
-      include: {
-        actors: {
-          include: {
-            actor: true,
-          },
-        },
-        ratings: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
+  async findAll(
+    filters: MovieFilterDto,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginatedResponse<any>> {
+    const where = this.queryBuilder.buildMovieWhere({
+      search: filters.search,
+      genre: filters.genre,
+      releaseYear: filters.releaseYear,
+      minRating: filters.minRating,
+      maxRating: filters.maxRating,
     });
+
+    const include = this.queryBuilder.buildMovieInclude({
+      includeActors: true,
+      includeRatings: true,
+    });
+
+    const orderBy = this.queryBuilder.buildOrderBy(
+      filters.sortBy,
+      filters.sortOrder,
+      { createdAt: 'desc' as const },
+    );
+
+    const queryOptions = this.queryBuilder.buildPaginatedQuery({
+      page,
+      limit,
+      include,
+      where,
+      orderBy,
+    });
+
+    const [movies, total] = await Promise.all([
+      this.prisma.movie.findMany(queryOptions),
+      this.prisma.movie.count({ where }),
+    ]);
+
+    const meta = PaginationHelper.createMeta(page, limit, total);
+    return PaginationHelper.createResponse(movies, meta);
   }
 
   async findOne(id: number) {
+    const include = this.queryBuilder.buildMovieInclude({
+      includeActors: true,
+      includeRatings: true,
+    });
+
     const movie = await this.prisma.movie.findUnique({
       where: { id },
-      include: {
-        actors: {
-          include: {
-            actor: true,
-          },
-        },
-        ratings: true,
-      },
+      include,
     });
 
     if (!movie) {
-      throw new NotFoundException(`Movie with ID ${id} not found`);
+      throw new ResourceNotFoundException('Movie', id);
     }
 
     return movie;
   }
 
   async update(id: number, updateMovieDto: UpdateMovieDto) {
-    const movie = await this.findOne(id);
+    await this.findOne(id); // Check if exists
+
+    const include = this.queryBuilder.buildMovieInclude({
+      includeActors: true,
+      includeRatings: true,
+    });
 
     return this.prisma.movie.update({
       where: { id },
       data: updateMovieDto,
-      include: {
-        actors: {
-          include: {
-            actor: true,
-          },
-        },
-        ratings: true,
-      },
+      include,
     });
   }
 
   async remove(id: number) {
-    const movie = await this.findOne(id);
+    await this.findOne(id); // Check if exists
 
-    return this.prisma.movie.delete({
-      where: { id },
-    });
+    return this.transactionService.deleteMovieWithRelations(id);
   }
 
   async addActor(movieId: number, addActorDto: AddActorToMovieDto) {
@@ -104,9 +129,7 @@ export class MoviesService {
     });
 
     if (!actor) {
-      throw new NotFoundException(
-        `Actor with ID ${addActorDto.actorId} not found`,
-      );
+      throw new ResourceNotFoundException('Actor', addActorDto.actorId);
     }
 
     // Check if relationship already exists
@@ -117,27 +140,43 @@ export class MoviesService {
           actorId: addActorDto.actorId,
         },
       },
-    });
-
-    if (existingRelation) {
-      throw new Error('Actor is already in this movie');
-    }
-
-    return this.prisma.movieActor.create({
-      data: {
-        movieId,
-        actorId: addActorDto.actorId,
-        role: addActorDto.role,
-      },
       include: {
         actor: true,
         movie: true,
       },
     });
+
+    if (existingRelation) {
+      throw new DuplicateResourceException(
+        'Movie-Actor relationship',
+        'actor',
+        `${actor.name} in ${movie.title}`,
+      );
+    }
+
+    await this.prisma.movieActor.create({
+      data: {
+        movieId,
+        actorId: addActorDto.actorId,
+        role: addActorDto.role,
+      },
+    });
+
+    // Return the movie with updated actors
+    return this.prisma.movie.findUnique({
+      where: { id: movieId },
+      include: {
+        actors: {
+          include: {
+            actor: true,
+          },
+        },
+      },
+    });
   }
 
   async removeActor(movieId: number, actorId: number) {
-    const movie = await this.findOne(movieId);
+    await this.findOne(movieId); // Check if movie exists
 
     const relation = await this.prisma.movieActor.findUnique({
       where: {
@@ -149,7 +188,10 @@ export class MoviesService {
     });
 
     if (!relation) {
-      throw new NotFoundException('Actor not found in this movie');
+      throw new ResourceNotFoundException(
+        'Movie-Actor relationship',
+        `movieId:${movieId}, actorId:${actorId}`,
+      );
     }
 
     return this.prisma.movieActor.delete({
@@ -163,12 +205,22 @@ export class MoviesService {
   }
 
   async getActors(movieId: number) {
-    const movie = await this.findOne(movieId);
+    await this.findOne(movieId); // Check if movie exists
 
     return this.prisma.movieActor.findMany({
       where: { movieId },
       include: {
-        actor: true,
+        actor: {
+          select: {
+            id: true,
+            name: true,
+            biography: true,
+            birthDate: true,
+          },
+        },
+      },
+      orderBy: {
+        role: 'asc',
       },
     });
   }
