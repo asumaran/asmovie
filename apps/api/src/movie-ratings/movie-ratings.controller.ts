@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { MovieRatingsService } from './movie-ratings.service';
 import {
@@ -28,8 +29,27 @@ export class MovieRatingsController {
   }
 
   @Get()
-  findAll(@Query('movieId', ParseIntPipe) movieId?: number) {
-    return this.movieRatingsService.findAll(movieId);
+  findAll(@Query('movieId') movieId?: string) {
+    let parsedMovieId: number | undefined;
+
+    if (movieId !== undefined) {
+      parsedMovieId = parseInt(movieId, 10);
+      if (isNaN(parsedMovieId)) {
+        throw new BadRequestException('movieId must be a valid number');
+      }
+    }
+
+    return this.movieRatingsService.findAll(parsedMovieId);
+  }
+
+  @Get('movie/:movieId/average')
+  getAverageRating(@Param('movieId', ParseIntPipe) movieId: number) {
+    return this.movieRatingsService.getAverageRating(movieId);
+  }
+
+  @Get('movie/:movieId')
+  getMovieRatings(@Param('movieId', ParseIntPipe) movieId: number) {
+    return this.movieRatingsService.getMovieRatings(movieId);
   }
 
   @Get(':id')
@@ -48,15 +68,5 @@ export class MovieRatingsController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.movieRatingsService.remove(id);
-  }
-
-  @Get('movie/:movieId')
-  getMovieRatings(@Param('movieId', ParseIntPipe) movieId: number) {
-    return this.movieRatingsService.getMovieRatings(movieId);
-  }
-
-  @Get('movie/:movieId/average')
-  getAverageRating(@Param('movieId', ParseIntPipe) movieId: number) {
-    return this.movieRatingsService.getAverageRating(movieId);
   }
 }
