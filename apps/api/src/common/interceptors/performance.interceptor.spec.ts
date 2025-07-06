@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { of, throwError } from 'rxjs';
 import {
@@ -44,7 +47,6 @@ describe('PerformanceInterceptor', () => {
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
 
     // Ensure we're not in test environment for metrics collection
-    const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
   });
 

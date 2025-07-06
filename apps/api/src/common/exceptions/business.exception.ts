@@ -1,10 +1,14 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
+export interface BusinessExceptionDetails {
+  [key: string]: unknown;
+}
+
 export class BusinessException extends HttpException {
   constructor(
     message: string,
     statusCode: HttpStatus = HttpStatus.BAD_REQUEST,
-    details?: any,
+    details?: BusinessExceptionDetails,
   ) {
     super(
       {
@@ -39,7 +43,7 @@ export class ResourceNotFoundException extends BusinessException {
 }
 
 export class InvalidRelationshipException extends BusinessException {
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: BusinessExceptionDetails) {
     super(message, HttpStatus.BAD_REQUEST, details);
   }
 }

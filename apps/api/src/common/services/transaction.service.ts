@@ -6,7 +6,7 @@ import { PrismaService } from '../prisma.service';
 export class TransactionService {
   private readonly logger = new Logger(TransactionService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Execute a transaction with automatic rollback on error
@@ -25,8 +25,8 @@ export class TransactionService {
 
     try {
       const result = await this.prisma.$transaction(operations, {
-        maxWait: options?.maxWait || 5000, // 5 seconds
-        timeout: options?.timeout || 10000, // 10 seconds
+        maxWait: options?.maxWait ?? 5000, // 5 seconds
+        timeout: options?.timeout ?? 10000, // 10 seconds
         isolationLevel: options?.isolationLevel,
       });
 
@@ -41,7 +41,7 @@ export class TransactionService {
   /**
    * Execute multiple operations in a single transaction
    */
-  async executeMultipleOperations<T extends Record<string, any>>(
+  async executeMultipleOperations<T extends Record<string, unknown>>(
     operations: Record<
       keyof T,
       (tx: Prisma.TransactionClient) => Promise<T[keyof T]>
@@ -104,7 +104,15 @@ export class TransactionService {
     movieData: Prisma.MovieCreateInput,
     actorIds: number[],
     roles: string[],
-  ): Promise<any> {
+  ): Promise<Prisma.MovieGetPayload<{
+    include: {
+      actors: {
+        include: {
+          actor: true;
+        };
+      };
+    };
+  }> | null> {
     return this.executeTransaction(async (tx) => {
       // Create the movie
       const movie = await tx.movie.create({
@@ -147,10 +155,19 @@ export class TransactionService {
       remove?: number[];
       update?: { id: number; role: string }[];
     },
-  ): Promise<any> {
+  ): Promise<Prisma.MovieGetPayload<{
+    include: {
+      actors: {
+        include: {
+          actor: true;
+        };
+      };
+      ratings: true;
+    };
+  }> | null> {
     return this.executeTransaction(async (tx) => {
       // Update movie data
-      const movie = await tx.movie.update({
+      await tx.movie.update({
         where: { id: movieId },
         data: movieData,
       });
@@ -219,9 +236,29 @@ export class TransactionService {
       comment?: string;
       reviewer: string;
     }>,
-  ): Promise<any[]> {
+  ): Promise<
+    Prisma.MovieRatingGetPayload<{
+      include: {
+        movie: {
+          select: {
+            id: true;
+            title: true;
+          };
+        };
+      };
+    }>[]
+  > {
     return this.executeTransaction(async (tx) => {
-      const createdRatings: any[] = [];
+      const createdRatings: Prisma.MovieRatingGetPayload<{
+        include: {
+          movie: {
+            select: {
+              id: true;
+              title: true;
+            };
+          };
+        };
+      }>[] = [];
 
       for (const ratingData of ratings) {
         // Validate movie exists

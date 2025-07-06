@@ -3,11 +3,9 @@ import { MoviesService } from './movies.service';
 import { PrismaService } from '../common/prisma.service';
 import { QueryBuilderService } from '../common/services/query-builder.service';
 import { TransactionService } from '../common/services/transaction.service';
-import { NotFoundException } from '@nestjs/common';
 
 describe('MoviesService', () => {
   let service: MoviesService;
-  let prismaService: PrismaService;
 
   const mockPrismaService = {
     movie: {
@@ -70,7 +68,6 @@ describe('MoviesService', () => {
     }).compile();
 
     service = module.get<MoviesService>(MoviesService);
-    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {

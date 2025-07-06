@@ -7,7 +7,7 @@ import {
 
 @Injectable()
 export class MovieRatingsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createMovieRatingDto: CreateMovieRatingDto) {
     // Verify movie exists
@@ -59,7 +59,7 @@ export class MovieRatingsService {
   }
 
   async update(id: number, updateMovieRatingDto: UpdateMovieRatingDto) {
-    const rating = await this.findOne(id);
+    await this.findOne(id); // Validate rating exists
 
     return this.prisma.movieRating.update({
       where: { id },
@@ -71,7 +71,7 @@ export class MovieRatingsService {
   }
 
   async remove(id: number) {
-    const rating = await this.findOne(id);
+    await this.findOne(id); // Validate rating exists
 
     return this.prisma.movieRating.delete({
       where: { id },
@@ -117,7 +117,7 @@ export class MovieRatingsService {
 
     return {
       movieId,
-      averageRating: result._avg.rating || 0,
+      averageRating: result._avg.rating ?? 0,
       totalRatings: result._count.rating,
     };
   }

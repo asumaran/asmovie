@@ -6,22 +6,29 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ApiResponse } from '../dto/api-response.dto';
+import {
+  ApiResponse,
+  ApiListResponse,
+  PaginationMeta,
+} from '../dto/api-response.dto';
+
+interface PaginatedData<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
 
 @Injectable()
 export class ResponseInterceptor<T>
-  implements NestInterceptor<T, ApiResponse<T>>
+  implements NestInterceptor<T, ApiResponse<T> | ApiListResponse<T>>
 {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<ApiResponse<T>> {
-    const request = context.switchToHttp().getRequest();
-
+  ): Observable<ApiResponse<T> | ApiListResponse<T>> {
     return next.handle().pipe(
-      map((data) => {
+      map((data: unknown) => {
         // If data is already an ApiResponse, return it as is
-        if (data instanceof ApiResponse) {
+        if (data instanceof ApiResponse || data instanceof ApiListResponse) {
           return data;
         }
 
@@ -32,13 +39,16 @@ export class ResponseInterceptor<T>
           'data' in data &&
           'meta' in data
         ) {
-          const response = new ApiResponse(data.data, 'Success');
-          (response as any).meta = data.meta;
-          return response;
+          const paginatedData = data as PaginatedData<T>;
+          return ApiListResponse.success(
+            paginatedData.data,
+            'Success',
+            paginatedData.meta,
+          );
         }
 
         // For regular responses, wrap in ApiResponse
-        return ApiResponse.success(data, 'Success');
+        return ApiResponse.success(data as T, 'Success');
       }),
     );
   }

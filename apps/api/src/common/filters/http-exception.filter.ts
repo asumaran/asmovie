@@ -7,8 +7,17 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { BusinessException } from '../exceptions/business.exception';
+import {
+  BusinessException,
+  BusinessExceptionDetails,
+} from '../exceptions/business.exception';
 import { ApiResponse } from '../dto/api-response.dto';
+
+interface HttpExceptionResponse {
+  message?: string | string[];
+  error?: string;
+  statusCode?: number;
+}
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -22,14 +31,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let status: number;
     let message: string;
     let errors: string[] | undefined;
-    let details: any;
+    let details: BusinessExceptionDetails | undefined;
 
     if (exception instanceof BusinessException) {
       status = exception.getStatus();
-      const exceptionResponse = exception.getResponse() as any;
-      message = exceptionResponse.message;
-      errors = exceptionResponse.details?.validationErrors;
-      details = exceptionResponse.details;
+      const exceptionResponse =
+        exception.getResponse() as HttpExceptionResponse;
+      message = exceptionResponse.message as string;
+      errors = (
+        exceptionResponse as unknown as {
+          details?: { validationErrors?: string[] };
+        }
+      ).details?.validationErrors;
+      details = (
+        exceptionResponse as unknown as { details?: BusinessExceptionDetails }
+      ).details;
     } else if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
@@ -40,13 +56,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
         typeof exceptionResponse === 'object' &&
         exceptionResponse !== null
       ) {
-        message = (exceptionResponse as any).message || 'Bad Request';
+        const response = exceptionResponse as HttpExceptionResponse;
+        message = (response.message as string) ?? 'Bad Request';
         errors =
-          (exceptionResponse as any).message?.length > 0
-            ? Array.isArray((exceptionResponse as any).message)
-              ? (exceptionResponse as any).message
-              : [(exceptionResponse as any).message]
-            : undefined;
+          response.message && Array.isArray(response.message)
+            ? response.message
+            : response.message
+              ? [response.message]
+              : undefined;
       } else {
         message = 'Bad Request';
       }
@@ -61,7 +78,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     // Add details for business exceptions
     if (details) {
-      (errorResponse as any).details = details;
+      (
+        errorResponse as unknown as { details?: BusinessExceptionDetails }
+      ).details = details;
     }
 
     this.logger.error(

@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionService } from './transaction.service';
 import { PrismaService } from '../prisma.service';
 
 describe('TransactionService', () => {
   let service: TransactionService;
-  let prismaService: PrismaService;
 
   const mockPrismaService = {
     $transaction: jest.fn(),
@@ -40,7 +44,6 @@ describe('TransactionService', () => {
     }).compile();
 
     service = module.get<TransactionService>(TransactionService);
-    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {
@@ -242,7 +245,7 @@ describe('TransactionService', () => {
       // Get the transaction operation and execute it
       const transactionOperation =
         mockPrismaService.$transaction.mock.calls[0][0];
-      const transactionResult = await transactionOperation(mockPrismaService);
+      await transactionOperation(mockPrismaService);
 
       expect(mockPrismaService.movie.create).toHaveBeenCalledWith({
         data: movieData,
@@ -335,7 +338,7 @@ describe('TransactionService', () => {
       // Get the transaction operation and execute it
       const transactionOperation =
         mockPrismaService.$transaction.mock.calls[0][0];
-      const transactionResult = await transactionOperation(mockPrismaService);
+      await transactionOperation(mockPrismaService);
 
       expect(mockPrismaService.movie.update).toHaveBeenCalledWith({
         where: { id: movieId },

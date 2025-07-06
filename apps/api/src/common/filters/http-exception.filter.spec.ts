@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   ArgumentsHost,
   HttpException,
@@ -11,7 +14,6 @@ import {
   ResourceNotFoundException,
   ValidationException,
 } from '../exceptions/business.exception';
-import { ApiResponse } from '../dto/api-response.dto';
 
 describe('HttpExceptionFilter', () => {
   let filter: HttpExceptionFilter;
@@ -495,7 +497,7 @@ describe('HttpExceptionFilter', () => {
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
           message: [],
-          errors: undefined, // Empty array should not create errors
+          errors: [], // Empty array should create empty errors
         }),
       );
     });

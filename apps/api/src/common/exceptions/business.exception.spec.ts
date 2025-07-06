@@ -5,7 +5,15 @@ import {
   ResourceNotFoundException,
   InvalidRelationshipException,
   ValidationException,
+  BusinessExceptionDetails,
 } from './business.exception';
+
+interface BusinessExceptionResponse {
+  error: string;
+  message: string;
+  timestamp: string;
+  details?: BusinessExceptionDetails;
+}
 
 describe('Business Exceptions', () => {
   describe('BusinessException', () => {
@@ -16,7 +24,7 @@ describe('Business Exceptions', () => {
       expect(exception.getStatus()).toBe(HttpStatus.BAD_REQUEST);
       expect(exception.message).toBe(message);
 
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
       expect(response.error).toBe('Business Rule Violation');
       expect(response.message).toBe(message);
       expect(response.timestamp).toBeDefined();
@@ -40,13 +48,13 @@ describe('Business Exceptions', () => {
         details,
       );
 
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
       expect(response.details).toEqual(details);
     });
 
     it('should include timestamp in response', () => {
       const exception = new BusinessException('Test');
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
 
       expect(response.timestamp).toBeDefined();
       expect(new Date(response.timestamp)).toBeInstanceOf(Date);
@@ -66,7 +74,7 @@ describe('Business Exceptions', () => {
         `${resource} with ${field} '${value}' already exists`,
       );
 
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
       expect(response.error).toBe('Business Rule Violation');
       expect(response.details).toEqual({ resource, field, value });
     });
@@ -96,7 +104,7 @@ describe('Business Exceptions', () => {
         `${resource} with identifier '${identifier}' not found`,
       );
 
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
       expect(response.details).toEqual({ resource, identifier });
     });
 
@@ -111,7 +119,7 @@ describe('Business Exceptions', () => {
         `${resource} with identifier '${identifier}' not found`,
       );
 
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
       expect(response.details).toEqual({ resource, identifier });
     });
 
@@ -136,7 +144,7 @@ describe('Business Exceptions', () => {
       expect(exception.getStatus()).toBe(HttpStatus.BAD_REQUEST);
       expect(exception.message).toBe(message);
 
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
       expect(response.error).toBe('Business Rule Violation');
     });
 
@@ -150,7 +158,7 @@ describe('Business Exceptions', () => {
 
       const exception = new InvalidRelationshipException(message, details);
 
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
       expect(response.details).toEqual(details);
     });
   });
@@ -169,8 +177,8 @@ describe('Business Exceptions', () => {
       expect(exception.getStatus()).toBe(HttpStatus.BAD_REQUEST);
       expect(exception.message).toBe(message);
 
-      const response = exception.getResponse() as any;
-      expect(response.details.validationErrors).toEqual(validationErrors);
+      const response = exception.getResponse() as BusinessExceptionResponse;
+      expect(response.details?.validationErrors).toEqual(validationErrors);
     });
 
     it('should handle empty validation errors array', () => {
@@ -179,8 +187,8 @@ describe('Business Exceptions', () => {
 
       const exception = new ValidationException(message, validationErrors);
 
-      const response = exception.getResponse() as any;
-      expect(response.details.validationErrors).toEqual([]);
+      const response = exception.getResponse() as BusinessExceptionResponse;
+      expect(response.details?.validationErrors).toEqual([]);
     });
 
     it('should handle single validation error', () => {
@@ -189,8 +197,8 @@ describe('Business Exceptions', () => {
 
       const exception = new ValidationException(message, validationErrors);
 
-      const response = exception.getResponse() as any;
-      expect(response.details.validationErrors).toEqual(validationErrors);
+      const response = exception.getResponse() as BusinessExceptionResponse;
+      expect(response.details?.validationErrors).toEqual(validationErrors);
     });
   });
 
@@ -224,7 +232,7 @@ describe('Business Exceptions', () => {
       ];
 
       exceptions.forEach((exception) => {
-        const response = exception.getResponse() as any;
+        const response = exception.getResponse() as BusinessExceptionResponse;
         expect(response).toHaveProperty('error', 'Business Rule Violation');
         expect(response).toHaveProperty('message');
         expect(response).toHaveProperty('timestamp');
@@ -236,7 +244,7 @@ describe('Business Exceptions', () => {
   describe('Error response structure', () => {
     it('should have consistent timestamp format', () => {
       const exception = new BusinessException('Test message');
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
 
       // Should be valid ISO string
       expect(() => new Date(response.timestamp)).not.toThrow();
@@ -254,7 +262,7 @@ describe('Business Exceptions', () => {
         HttpStatus.FORBIDDEN,
         details,
       );
-      const response = exception.getResponse() as any;
+      const response = exception.getResponse() as BusinessExceptionResponse;
 
       expect(response.error).toBe('Business Rule Violation');
       expect(response.message).toBe(message);

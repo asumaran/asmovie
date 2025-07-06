@@ -151,7 +151,7 @@ export class QueryBuilderService {
   /**
    * Build optimized order by clause
    */
-  buildOrderBy<T extends Record<string, any>>(
+  buildOrderBy<T extends Record<string, unknown>>(
     sortBy?: string,
     sortOrder: 'asc' | 'desc' = 'asc',
     defaultSort: T = {} as T,
@@ -160,7 +160,7 @@ export class QueryBuilderService {
       return defaultSort;
     }
 
-    const orderBy = {} as any;
+    const orderBy = {} as Record<string, 'asc' | 'desc'>;
     orderBy[sortBy] = sortOrder;
     return orderBy as T;
   }

@@ -29,21 +29,23 @@ export class ApiResponse<T> {
   }
 }
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
 export class ApiListResponse<T> {
   success: boolean;
   data: T[];
   message?: string;
-  meta?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
+  meta?: PaginationMeta;
   timestamp: string;
 
-  constructor(data: T[], message?: string, meta?: any) {
+  constructor(data: T[], message?: string, meta?: PaginationMeta) {
     this.success = true;
     this.data = data;
     this.message = message;
@@ -54,7 +56,7 @@ export class ApiListResponse<T> {
   static success<T>(
     data: T[],
     message?: string,
-    meta?: any,
+    meta?: PaginationMeta,
   ): ApiListResponse<T> {
     return new ApiListResponse(data, message, meta);
   }

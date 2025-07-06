@@ -4,7 +4,7 @@ import { CreateActorDto, UpdateActorDto } from './dto/actor.dto';
 
 @Injectable()
 export class ActorsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createActorDto: CreateActorDto) {
     const data = {
@@ -71,7 +71,7 @@ export class ActorsService {
   }
 
   async update(id: number, updateActorDto: UpdateActorDto) {
-    const actor = await this.findOne(id);
+    await this.findOne(id); // Validate actor exists
 
     const data = {
       ...updateActorDto,
@@ -94,7 +94,7 @@ export class ActorsService {
   }
 
   async remove(id: number) {
-    const actor = await this.findOne(id);
+    await this.findOne(id); // Validate actor exists
 
     return this.prisma.actor.delete({
       where: { id },
@@ -102,7 +102,7 @@ export class ActorsService {
   }
 
   async getMovies(actorId: number) {
-    const actor = await this.findOne(actorId);
+    await this.findOne(actorId); // Validate actor exists
 
     return this.prisma.movieActor.findMany({
       where: { actorId },

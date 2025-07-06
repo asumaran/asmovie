@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { ExecutionContext, CallHandler } from '@nestjs/common';
 import { of } from 'rxjs';
 import { ResponseInterceptor } from './response.interceptor';
-import { ApiResponse } from '../dto/api-response.dto';
+import { ApiResponse, ApiListResponse } from '../dto/api-response.dto';
 
 describe('ResponseInterceptor', () => {
   let interceptor: ResponseInterceptor<any>;
@@ -85,7 +87,7 @@ describe('ResponseInterceptor', () => {
       );
 
       result$.subscribe((result) => {
-        expect(result).toBeInstanceOf(ApiResponse);
+        expect(result).toBeInstanceOf(ApiListResponse);
         expect(result.success).toBe(true);
         expect(result.data).toEqual(paginatedData.data);
         expect(result.message).toBe('Success');
@@ -282,14 +284,17 @@ describe('ResponseInterceptor', () => {
       });
     });
 
-    it('should access request from ExecutionContext', () => {
+    it('should handle response transformation without accessing request', () => {
       const testData = { test: true };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
-      interceptor.intercept(mockExecutionContext, mockCallHandler);
+      const result = interceptor.intercept(
+        mockExecutionContext,
+        mockCallHandler,
+      );
 
-      expect(mockExecutionContext.switchToHttp).toHaveBeenCalled();
-      expect(mockExecutionContext.switchToHttp().getRequest).toHaveBeenCalled();
+      expect(result).toBeDefined();
+      expect(mockCallHandler.handle).toHaveBeenCalled();
     });
 
     it('should preserve timestamp format', (done) => {

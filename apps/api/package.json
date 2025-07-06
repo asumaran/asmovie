@@ -16,7 +16,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lint": "eslint \"{src,prisma}/**/*.ts\" --fix",
+    "lint:check": "eslint \"{src,prisma}/**/*.ts\"",
+    "lint:format": "npm run lint && npm run format",
+    "lint:fix-safe": "eslint \"{src,prisma}/**/*.ts\" --fix --fix-type suggestion",
+    "lint:fix-unused": "eslint \"{src,prisma}/**/*.ts\" --fix --rule '@typescript-eslint/no-unused-vars: error'"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

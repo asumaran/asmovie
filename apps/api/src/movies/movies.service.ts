@@ -1,11 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import { QueryBuilderService } from '../common/services/query-builder.service';
 import { TransactionService } from '../common/services/transaction.service';
 import {
   ResourceNotFoundException,
   DuplicateResourceException,
-  BusinessException,
 } from '../common/exceptions/business.exception';
 import {
   PaginatedResponse,
@@ -21,9 +20,9 @@ import {
 @Injectable()
 export class MoviesService {
   constructor(
-    private prisma: PrismaService,
-    private queryBuilder: QueryBuilderService,
-    private transactionService: TransactionService,
+    private readonly prisma: PrismaService,
+    private readonly queryBuilder: QueryBuilderService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   async create(createMovieDto: CreateMovieDto) {
@@ -44,6 +43,7 @@ export class MoviesService {
     filters: MovieFilterDto,
     page: number = 1,
     limit: number = 10,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<PaginatedResponse<any>> {
     const where = this.queryBuilder.buildMovieWhere({
       search: filters.search,

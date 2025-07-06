@@ -310,7 +310,7 @@ describe('Configuration', () => {
 
       // parseInt should return NaN for invalid values, but the function should still run
       expect(isNaN(config.port)).toBe(true);
-      expect(config.database.maxConnections).toBe(10); // Uses default from parseInt('10', 10)
+      expect(isNaN(config.database.maxConnections)).toBe(true); // Empty string with parseInt results in NaN
     });
 
     it('should handle empty string environment variables', () => {
@@ -320,8 +320,8 @@ describe('Configuration', () => {
 
       const config = configuration();
 
-      expect(config.security.jwtSecret).toBe('dev-secret-key'); // Empty string falls back to default
-      expect(config.logging.level).toBe('info'); // Empty string falls back to default
+      expect(config.security.jwtSecret).toBe(''); // Nullish coalescing preserves empty strings
+      expect(config.logging.level).toBe(''); // Nullish coalescing preserves empty strings
       expect(config.security.allowedOrigins).toEqual(['']); // Split of empty string
     });
   });

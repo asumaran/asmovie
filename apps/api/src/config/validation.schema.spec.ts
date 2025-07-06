@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { validationSchema } from './validation.schema';
 
 describe('Validation Schema', () => {
@@ -405,7 +407,7 @@ describe('Validation Schema', () => {
 
       // Should include various validation errors
       const errorMessages =
-        error?.details.map((detail) => detail.message) || [];
+        error?.details.map((detail) => detail.message) ?? [];
       expect(errorMessages.some((msg) => msg.includes('NODE_ENV'))).toBe(true);
       expect(errorMessages.some((msg) => msg.includes('DATABASE_URL'))).toBe(
         true,
