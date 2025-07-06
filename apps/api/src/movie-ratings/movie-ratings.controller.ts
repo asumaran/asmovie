@@ -18,7 +18,7 @@ import {
   CreateMovieRatingDto,
   UpdateMovieRatingDto,
 } from './dto/movie-rating.dto';
-import { ApiTokenGuard } from '../common/guards/api-token.guard';
+import { ApiOrJwtSimpleGuard } from '../common/guards/api-or-jwt-simple.guard';
 
 @Controller('movie-ratings')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -26,7 +26,7 @@ export class MovieRatingsController {
   constructor(private readonly movieRatingsService: MovieRatingsService) {}
 
   @Post()
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   create(@Body() createMovieRatingDto: CreateMovieRatingDto) {
     return this.movieRatingsService.create(createMovieRatingDto);
   }
@@ -61,7 +61,7 @@ export class MovieRatingsController {
   }
 
   @Patch(':id')
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateMovieRatingDto: UpdateMovieRatingDto,
@@ -70,7 +70,7 @@ export class MovieRatingsController {
   }
 
   @Delete(':id')
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.movieRatingsService.remove(id);
   }

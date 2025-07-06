@@ -1,0 +1,31 @@
+meta {
+  name: Register User
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "john.doe@example.com",
+    "password": "SecurePassword123!",
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+}
+
+tests {
+  test("should register user successfully", function() {
+    expect(res.getStatus()).to.equal(201);
+    expect(res.getBody()).to.have.property('user');
+    expect(res.getBody()).to.have.property('access_token');
+    expect(res.getBody().user).to.have.property('id');
+    expect(res.getBody().user).to.have.property('email');
+    expect(res.getBody().user).to.not.have.property('password');
+  });
+}

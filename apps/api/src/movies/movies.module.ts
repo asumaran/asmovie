@@ -1,18 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MoviesController } from './movies.controller';
 import { MoviesService } from './movies.service';
-import { PrismaService } from '../common/prisma.service';
-import { QueryBuilderService } from '../common/services/query-builder.service';
-import { TransactionService } from '../common/services/transaction.service';
+import { SharedJwtModule } from '../auth/jwt.module';
 
 @Module({
+  imports: [SharedJwtModule],
   controllers: [MoviesController],
-  providers: [
-    MoviesService,
-    PrismaService,
-    QueryBuilderService,
-    TransactionService,
-  ],
+  providers: [MoviesService],
   exports: [MoviesService],
 })
 export class MoviesModule {}

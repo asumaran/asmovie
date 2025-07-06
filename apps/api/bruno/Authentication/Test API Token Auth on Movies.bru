@@ -1,0 +1,34 @@
+meta {
+  name: Test API Token Auth on Movies
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{host}}/movies
+  body: json
+  auth: none
+}
+
+headers {
+  X-API-Token: {{api_token}}
+}
+
+body:json {
+  {
+    "title": "Test Movie with API Token",
+    "releaseYear": 2024,
+    "genre": "Drama",
+    "duration": 110,
+    "description": "A test movie created using API token authentication"
+  }
+}
+
+tests {
+  test("should create movie with API token auth", function() {
+    expect(res.getStatus()).to.equal(201);
+    expect(res.getBody()).to.have.property('id');
+    expect(res.getBody()).to.have.property('title');
+    expect(res.getBody().title).to.equal('Test Movie with API Token');
+  });
+}

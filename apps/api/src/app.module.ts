@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
+import { CommonModule } from './common/common.module';
 import { MoviesModule } from './movies/movies.module';
 import { ActorsModule } from './actors/actors.module';
 import { MovieRatingsModule } from './movie-ratings/movie-ratings.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 import { validationSchema } from './config/validation.schema';
 
@@ -18,6 +21,9 @@ import { validationSchema } from './config/validation.schema';
       },
       isGlobal: true,
     }),
+    CommonModule,
+    AuthModule,
+    UsersModule,
     MoviesModule,
     ActorsModule,
     MovieRatingsModule,

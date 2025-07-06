@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { MovieRatingsController } from './movie-ratings.controller';
 import { MovieRatingsService } from './movie-ratings.service';
+import { PrismaService } from '../common/prisma.service';
 
 describe('MovieRatingsController', () => {
   let controller: MovieRatingsController;
@@ -16,6 +18,16 @@ describe('MovieRatingsController', () => {
     get: jest.fn().mockReturnValue('test-api-secret'),
   };
 
+  const mockJwtService = {
+    verifyAsync: jest.fn(),
+  };
+
+  const mockPrismaService = {
+    user: {
+      findUnique: jest.fn(),
+    },
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MovieRatingsController],
@@ -27,6 +39,14 @@ describe('MovieRatingsController', () => {
         {
           provide: ConfigService,
           useValue: mockConfigService,
+        },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
+        },
+        {
+          provide: PrismaService,
+          useValue: mockPrismaService,
         },
       ],
     }).compile();

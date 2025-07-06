@@ -1,0 +1,38 @@
+meta {
+  name: Login User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "john.doe@example.com",
+    "password": "SecurePassword123!"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 || res.getStatus() === 201) {
+    const body = res.getBody();
+    if (body && body.data.accessToken) {
+      bru.setEnvVar("jwt_token", body.data.accessToken);
+    }
+  }
+}
+
+tests {
+  test("should login user successfully", function() {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.have.property('user');
+    expect(res.getBody()).to.have.property('access_token');
+    expect(res.getBody().user).to.have.property('id');
+    expect(res.getBody().user).to.have.property('email');
+    expect(res.getBody().user).to.not.have.property('password');
+  });
+}

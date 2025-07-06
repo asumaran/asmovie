@@ -1,4 +1,5 @@
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -10,6 +11,41 @@ async function main() {
   await prisma.movieActor.deleteMany();
   await prisma.movie.deleteMany();
   await prisma.actor.deleteMany();
+  await prisma.user.deleteMany();
+
+  // Create test users
+  const hashedPassword = await bcrypt.hash('AdminPassword123!', 12);
+  const testPassword = await bcrypt.hash('TestPassword123!', 12);
+
+  const users = await Promise.all([
+    prisma.user.create({
+      data: {
+        email: 'admin@asmovie.com',
+        password: hashedPassword,
+        firstName: 'Admin',
+        lastName: 'User',
+        isActive: true,
+      },
+    }),
+    prisma.user.create({
+      data: {
+        email: 'test@asmovie.com',
+        password: testPassword,
+        firstName: 'Test',
+        lastName: 'User',
+        isActive: true,
+      },
+    }),
+    prisma.user.create({
+      data: {
+        email: 'john.doe@example.com',
+        password: testPassword,
+        firstName: 'John',
+        lastName: 'Doe',
+        isActive: true,
+      },
+    }),
+  ]);
 
   // Create actors
   const actors = await Promise.all([
@@ -238,9 +274,15 @@ async function main() {
   ]);
 
   console.log('✅ Database seeded successfully!');
+  console.log(`👥 Created ${users.length} users`);
   console.log(`📽️  Created ${movies.length} movies`);
   console.log(`🎭 Created ${actors.length} actors`);
   console.log(`⭐ Created multiple ratings`);
+  console.log('');
+  console.log('🔐 Test users created:');
+  console.log('  📧 admin@asmovie.com - Password: AdminPassword123!');
+  console.log('  📧 test@asmovie.com - Password: TestPassword123!');
+  console.log('  📧 john.doe@example.com - Password: TestPassword123!');
 }
 
 main()

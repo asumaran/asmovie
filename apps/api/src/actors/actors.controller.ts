@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ActorsService } from './actors.service';
 import { CreateActorDto, UpdateActorDto } from './dto/actor.dto';
-import { ApiTokenGuard } from '../common/guards/api-token.guard';
+import { ApiOrJwtGuard } from '../common/guards/api-or-jwt.guard';
 
 @Controller('actors')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -22,7 +22,7 @@ export class ActorsController {
   constructor(private readonly actorsService: ActorsService) {}
 
   @Post()
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtGuard)
   create(@Body() createActorDto: CreateActorDto) {
     return this.actorsService.create(createActorDto);
   }
@@ -38,7 +38,7 @@ export class ActorsController {
   }
 
   @Patch(':id')
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateActorDto: UpdateActorDto,
@@ -47,7 +47,7 @@ export class ActorsController {
   }
 
   @Delete(':id')
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.actorsService.remove(id);
   }

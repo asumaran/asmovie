@@ -23,7 +23,7 @@ import {
   AddActorToMovieDto,
   MovieFilterDto,
 } from './dto/movie.dto';
-import { ApiTokenGuard } from '../common/guards/api-token.guard';
+import { ApiOrJwtSimpleGuard } from '../common/guards/api-or-jwt-simple.guard';
 
 @Controller('movies')
 @UseInterceptors(ResponseInterceptor, PerformanceInterceptor)
@@ -32,7 +32,7 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Post()
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   create(@Body() createMovieDto: CreateMovieDto) {
     return this.moviesService.create(createMovieDto);
   }
@@ -55,7 +55,7 @@ export class MoviesController {
   }
 
   @Patch(':id')
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateMovieDto: UpdateMovieDto,
@@ -64,13 +64,13 @@ export class MoviesController {
   }
 
   @Delete(':id')
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.moviesService.remove(id);
   }
 
   @Post(':id/actors')
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   addActor(
     @Param('id', ParseIntPipe) id: number,
     @Body() addActorDto: AddActorToMovieDto,
@@ -79,7 +79,7 @@ export class MoviesController {
   }
 
   @Delete(':movieId/actors/:actorId')
-  @UseGuards(ApiTokenGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   removeActor(
     @Param('movieId', ParseIntPipe) movieId: number,
     @Param('actorId', ParseIntPipe) actorId: number,

@@ -1,0 +1,34 @@
+meta {
+  name: Test JWT Auth on Movies
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/movies
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwt_token}}
+}
+
+body:json {
+  {
+    "title": "Test Movie with JWT",
+    "releaseYear": 2024,
+    "genre": "Action",
+    "duration": 120,
+    "description": "A test movie created using JWT authentication"
+  }
+}
+
+tests {
+  test("should create movie with JWT auth", function() {
+    expect(res.getStatus()).to.equal(201);
+    expect(res.getBody()).to.have.property('id');
+    expect(res.getBody()).to.have.property('title');
+    expect(res.getBody().title).to.equal('Test Movie with JWT');
+  });
+}

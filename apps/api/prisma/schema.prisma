@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -85,4 +84,21 @@ model MovieRating {
   @@index([createdAt]) // For sorting by creation date
   @@index([movieId, rating]) // For combined movie and rating queries
   @@map("movie_ratings")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String // hashed password
+  firstName String?
+  lastName  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Performance indexes
+  @@index([email]) // For login optimization
+  @@index([isActive]) // For filtering active users
+  @@index([createdAt]) // For sorting by creation date
+  @@map("users")
 }
