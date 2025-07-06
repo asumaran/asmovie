@@ -1,0 +1,55 @@
+meta {
+  name: Create Rating
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{api_url}}/movie-ratings
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "movieId": 1,
+    "rating": 8.5,
+    "comment": "Great movie with excellent visual effects!",
+    "reviewer": "Movie Enthusiast"
+  }
+}
+
+docs {
+  # Create Movie Rating
+  
+  Creates a new rating for a movie.
+  
+  ## Request Body
+  ```json
+  {
+    "movieId": "number (required)",
+    "rating": "number (required, 1.0-10.0)",
+    "comment": "string (optional)",
+    "reviewer": "string (required)"
+  }
+  ```
+  
+  ## Response
+  Returns the created rating object with:
+  - Rating details
+  - Associated movie information
+  
+  ## Validation
+  - movieId must reference an existing movie
+  - rating must be between 1.0 and 10.0
+  - reviewer name is required
+  
+  ## Example
+  ```
+  POST /movie-ratings
+  ```
+  
+  ## Error Responses
+  - `404`: Movie not found
+  - `400`: Invalid rating value or missing required fields
+}

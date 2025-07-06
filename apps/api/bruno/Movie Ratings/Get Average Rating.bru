@@ -1,0 +1,43 @@
+meta {
+  name: Get Average Rating
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{api_url}}/movie-ratings/movie/1/average
+  body: none
+  auth: none
+}
+
+docs {
+  # Get Average Rating for a Movie
+  
+  Calculates and returns the average rating for a specific movie.
+  
+  ## Parameters
+  - `movieId` (path): The movie ID
+  
+  ## Response
+  Returns an object with:
+  - `movieId`: The movie ID
+  - `averageRating`: Average rating value (0 if no ratings)
+  - `totalRatings`: Total number of ratings
+  
+  ## Example
+  ```
+  GET /movie-ratings/movie/1/average
+  ```
+  
+  ## Example Response
+  ```json
+  {
+    "movieId": 1,
+    "averageRating": 8.75,
+    "totalRatings": 4
+  }
+  ```
+  
+  ## Error Responses
+  - `404`: Movie not found
+}

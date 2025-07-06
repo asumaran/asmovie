@@ -1,0 +1,33 @@
+meta {
+  name: Get Rating by ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/movie-ratings/1
+  body: none
+  auth: none
+}
+
+docs {
+  # Get Movie Rating by ID
+  
+  Retrieves a specific movie rating by its ID.
+  
+  ## Parameters
+  - `id` (path): The rating ID
+  
+  ## Response
+  Returns a rating object with:
+  - Rating details
+  - Associated movie information
+  
+  ## Example
+  ```
+  GET /movie-ratings/1
+  ```
+  
+  ## Error Responses
+  - `404`: Rating not found
+}

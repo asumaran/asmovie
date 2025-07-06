@@ -1,0 +1,48 @@
+meta {
+  name: Update Rating
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{api_url}}/movie-ratings/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "rating": 9.5,
+    "comment": "Updated review: This movie is absolutely fantastic!"
+  }
+}
+
+docs {
+  # Update Movie Rating
+  
+  Updates an existing movie rating by ID. All fields are optional.
+  
+  ## Parameters
+  - `id` (path): The rating ID to update
+  
+  ## Request Body
+  ```json
+  {
+    "rating": "number (optional, 1.0-10.0)",
+    "comment": "string (optional)",
+    "reviewer": "string (optional)"
+  }
+  ```
+  
+  ## Response
+  Returns the updated rating object with all associated data.
+  
+  ## Example
+  ```
+  PATCH /movie-ratings/1
+  ```
+  
+  ## Error Responses
+  - `404`: Rating not found
+  - `400`: Invalid rating value
+}

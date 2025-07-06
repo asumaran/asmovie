@@ -1,0 +1,50 @@
+meta {
+  name: Add Actor to Movie
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{api_url}}/movies/1/actors
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "actorId": 1,
+    "role": "Lead Character"
+  }
+}
+
+docs {
+  # Add Actor to Movie
+  
+  Associates an existing actor with a movie and assigns them a role.
+  
+  ## Parameters
+  - `id` (path): The movie ID
+  
+  ## Request Body
+  ```json
+  {
+    "actorId": "number (required)",
+    "role": "string (required)"
+  }
+  ```
+  
+  ## Response
+  Returns the created movie-actor relationship with:
+  - Relationship details
+  - Actor information
+  - Movie information
+  
+  ## Example
+  ```
+  POST /movies/1/actors
+  ```
+  
+  ## Error Responses
+  - `404`: Movie or Actor not found
+  - `400`: Actor already in this movie
+}

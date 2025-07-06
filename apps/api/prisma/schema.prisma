@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,8 +13,59 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model Movie {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  releaseYear Int
+  genre       String
+  duration    Int // in minutes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  actors  MovieActor[]
+  ratings MovieRating[]
+
+  @@map("movies")
+}
+
+model Actor {
+  id        Int       @id @default(autoincrement())
+  name      String
+  birthDate DateTime?
+  biography String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relationships
+  movies MovieActor[]
+
+  @@map("actors")
+}
+
+model MovieActor {
+  id      Int    @id @default(autoincrement())
+  movieId Int
+  actorId Int
+  role    String // character name or role description
+
+  movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  actor Actor @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@unique([movieId, actorId])
+  @@map("movie_actors")
+}
+
+model MovieRating {
+  id        Int      @id @default(autoincrement())
+  movieId   Int
+  rating    Float // 1.0 to 10.0
+  comment   String?
+  reviewer  String // name of reviewer
+  createdAt DateTime @default(now())
+
+  movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  @@map("movie_ratings")
 }

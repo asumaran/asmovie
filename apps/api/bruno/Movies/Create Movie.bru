@@ -1,0 +1,54 @@
+meta {
+  name: Create Movie
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{api_url}}/movies
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "The Matrix",
+    "description": "A computer programmer discovers that reality as he knows it is a simulation.",
+    "releaseYear": 1999,
+    "genre": "Sci-Fi",
+    "duration": 136
+  }
+}
+
+docs {
+  # Create Movie
+  
+  Creates a new movie in the database.
+  
+  ## Request Body
+  ```json
+  {
+    "title": "string (required)",
+    "description": "string (optional)",
+    "releaseYear": "number (required, 1900-2030)",
+    "genre": "string (required)",
+    "duration": "number (required, minutes)"
+  }
+  ```
+  
+  ## Response
+  Returns the created movie object with:
+  - Movie details
+  - Empty actors array (initially)
+  - Empty ratings array (initially)
+  
+  ## Validation
+  - Title is required
+  - Release year must be between 1900 and current year + 5
+  - Duration must be positive number
+  
+  ## Example
+  ```
+  POST /movies
+  ```
+}

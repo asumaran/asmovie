@@ -1,0 +1,32 @@
+meta {
+  name: Remove Actor from Movie
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{api_url}}/movies/1/actors/2
+  body: none
+  auth: none
+}
+
+docs {
+  # Remove Actor from Movie
+  
+  Removes an actor from a movie (deletes the movie-actor relationship).
+  
+  ## Parameters
+  - `movieId` (path): The movie ID
+  - `actorId` (path): The actor ID to remove
+  
+  ## Response
+  Returns the deleted movie-actor relationship.
+  
+  ## Example
+  ```
+  DELETE /movies/1/actors/2
+  ```
+  
+  ## Error Responses
+  - `404`: Movie not found or Actor not in this movie
+}

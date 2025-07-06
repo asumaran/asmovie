@@ -1,0 +1,47 @@
+meta {
+  name: Update Actor
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{api_url}}/actors/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Leonardo DiCaprio (Updated)",
+    "biography": "Updated biography for this amazing actor"
+  }
+}
+
+docs {
+  # Update Actor
+  
+  Updates an existing actor by ID. All fields are optional.
+  
+  ## Parameters
+  - `id` (path): The actor ID to update
+  
+  ## Request Body
+  ```json
+  {
+    "name": "string (optional)",
+    "birthDate": "string (optional, ISO date format)",
+    "biography": "string (optional)"
+  }
+  ```
+  
+  ## Response
+  Returns the updated actor object with all associated data.
+  
+  ## Example
+  ```
+  PATCH /actors/1
+  ```
+  
+  ## Error Responses
+  - `404`: Actor not found
+}

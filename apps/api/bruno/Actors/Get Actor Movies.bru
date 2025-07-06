@@ -1,0 +1,33 @@
+meta {
+  name: Get Actor Movies
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{api_url}}/actors/1/movies
+  body: none
+  auth: none
+}
+
+docs {
+  # Get Actor Movies
+  
+  Retrieves all movies that an actor has appeared in.
+  
+  ## Parameters
+  - `id` (path): The actor ID
+  
+  ## Response
+  Returns an array of movie-actor relationships with:
+  - Movie details (including ratings)
+  - Role in each movie
+  
+  ## Example
+  ```
+  GET /actors/1/movies
+  ```
+  
+  ## Error Responses
+  - `404`: Actor not found
+}

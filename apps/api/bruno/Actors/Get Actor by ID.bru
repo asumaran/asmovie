@@ -1,0 +1,33 @@
+meta {
+  name: Get Actor by ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/actors/1
+  body: none
+  auth: none
+}
+
+docs {
+  # Get Actor by ID
+  
+  Retrieves a specific actor by their ID with all associated movies.
+  
+  ## Parameters
+  - `id` (path): The actor ID
+  
+  ## Response
+  Returns an actor object with:
+  - Actor details
+  - Associated movies with roles
+  
+  ## Example
+  ```
+  GET /actors/1
+  ```
+  
+  ## Error Responses
+  - `404`: Actor not found
+}

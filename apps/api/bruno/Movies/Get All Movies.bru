@@ -1,0 +1,36 @@
+meta {
+  name: Get All Movies
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/movies
+  body: none
+  auth: none
+}
+
+params:query {
+  ~search: inception
+}
+
+docs {
+  # Get All Movies
+  
+  Retrieves all movies from the database with their associated actors and ratings.
+  
+  ## Query Parameters
+  - `search` (optional): Search movies by title (case-insensitive partial match)
+  
+  ## Response
+  Returns an array of movie objects with:
+  - Movie details (id, title, description, releaseYear, genre, duration)
+  - Associated actors with their roles
+  - All ratings for the movie
+  
+  ## Example
+  ```
+  GET /movies
+  GET /movies?search=inception
+  ```
+}

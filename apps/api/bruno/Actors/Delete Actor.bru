@@ -1,0 +1,36 @@
+meta {
+  name: Delete Actor
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{api_url}}/actors/7
+  body: none
+  auth: none
+}
+
+docs {
+  # Delete Actor
+  
+  Deletes an actor by ID. This will also cascade delete all movie-actor relationships.
+  
+  ## Parameters
+  - `id` (path): The actor ID to delete
+  
+  ## Response
+  Returns the deleted actor object.
+  
+  ## Example
+  ```
+  DELETE /actors/7
+  ```
+  
+  ## Error Responses
+  - `404`: Actor not found
+  
+  ## Note
+  This operation is destructive and will permanently remove:
+  - The actor record
+  - All movie-actor relationships (but not the movies themselves)
+}

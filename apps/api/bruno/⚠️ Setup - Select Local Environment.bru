@@ -1,0 +1,25 @@
+meta {
+  name: ⚠️ REMEMBER - Select Local Environment
+  type: http
+  seq: 0
+}
+
+get {
+  url: {{api_url}}/
+  body: none
+  auth: none
+}
+
+docs {
+  # 🚨 IMPORTANT: Select "Local" Environment
+  
+  **Before testing any endpoints, make sure to:**
+  
+  1. Click on the environment dropdown at the top
+  2. Select "Local" environment
+  3. Verify that api_url resolves to: http://localhost:3001
+  
+  If "No Environment" is selected, the {{api_url}} variable will not work!
+  
+  This request will help you verify the environment is working correctly.
+}

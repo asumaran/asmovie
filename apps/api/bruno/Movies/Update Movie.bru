@@ -1,0 +1,49 @@
+meta {
+  name: Update Movie
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{api_url}}/movies/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Inception (Updated)",
+    "description": "Updated description for this mind-bending thriller"
+  }
+}
+
+docs {
+  # Update Movie
+  
+  Updates an existing movie by ID. All fields are optional.
+  
+  ## Parameters
+  - `id` (path): The movie ID to update
+  
+  ## Request Body
+  ```json
+  {
+    "title": "string (optional)",
+    "description": "string (optional)",
+    "releaseYear": "number (optional, 1900-2030)",
+    "genre": "string (optional)",
+    "duration": "number (optional, minutes)"
+  }
+  ```
+  
+  ## Response
+  Returns the updated movie object with all associated data.
+  
+  ## Example
+  ```
+  PATCH /movies/1
+  ```
+  
+  ## Error Responses
+  - `404`: Movie not found
+}

@@ -1,0 +1,47 @@
+meta {
+  name: Create Actor
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{api_url}}/actors
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Keanu Reeves",
+    "birthDate": "1964-09-02",
+    "biography": "Canadian actor known for his versatile acting and iconic roles in action films."
+  }
+}
+
+docs {
+  # Create Actor
+  
+  Creates a new actor in the database.
+  
+  ## Request Body
+  ```json
+  {
+    "name": "string (required)",
+    "birthDate": "string (optional, ISO date format)",
+    "biography": "string (optional)"
+  }
+  ```
+  
+  ## Response
+  Returns the created actor object with:
+  - Actor details
+  - Empty movies array (initially)
+  
+  ## Example
+  ```
+  POST /actors
+  ```
+  
+  ## Date Format
+  - birthDate should be in ISO format: "YYYY-MM-DD"
+}

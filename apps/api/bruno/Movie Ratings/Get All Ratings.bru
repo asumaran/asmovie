@@ -1,0 +1,35 @@
+meta {
+  name: Get All Ratings
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/movie-ratings
+  body: none
+  auth: none
+}
+
+params:query {
+  ~movieId: 1
+}
+
+docs {
+  # Get All Movie Ratings
+  
+  Retrieves all movie ratings from the database.
+  
+  ## Query Parameters
+  - `movieId` (optional): Filter ratings by movie ID
+  
+  ## Response
+  Returns an array of rating objects with:
+  - Rating details (id, rating, comment, reviewer, createdAt)
+  - Associated movie information
+  
+  ## Example
+  ```
+  GET /movie-ratings
+  GET /movie-ratings?movieId=1
+  ```
+}

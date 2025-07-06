@@ -1,0 +1,35 @@
+meta {
+  name: Get All Actors
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/actors
+  body: none
+  auth: none
+}
+
+params:query {
+  ~search: leonardo
+}
+
+docs {
+  # Get All Actors
+  
+  Retrieves all actors from the database with their associated movies.
+  
+  ## Query Parameters
+  - `search` (optional): Search actors by name (case-insensitive partial match)
+  
+  ## Response
+  Returns an array of actor objects with:
+  - Actor details (id, name, birthDate, biography)
+  - Associated movies with their roles
+  
+  ## Example
+  ```
+  GET /actors
+  GET /actors?search=leonardo
+  ```
+}
