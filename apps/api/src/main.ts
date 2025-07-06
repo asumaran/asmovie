@@ -8,4 +8,4 @@ async function bootstrap() {
     'Hello World from NestJS API running on http://localhost:3001 🚀',
   );
 }
-bootstrap();
+void bootstrap();
