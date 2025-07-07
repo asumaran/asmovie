@@ -55,7 +55,7 @@ logs
 .temp
 
 # Bruno API testing files
-bruno/
+# bruno/
 
 # Coverage reports
 coverage/

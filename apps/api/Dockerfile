@@ -16,10 +16,12 @@ RUN npm install && npm cache clean --force
 # Generate Prisma client
 RUN npx prisma generate
 
-# Copy source code (excluding files already copied)
+# Copy source code and scripts
 COPY src ./src
 COPY *.json ./
 COPY nest-cli.json ./
+COPY sync-bruno-token.js ./
+COPY bruno ./bruno
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs

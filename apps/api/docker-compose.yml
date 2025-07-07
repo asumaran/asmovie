@@ -38,6 +38,8 @@ services:
       # Mount only essential source directories for hot reload
       - ./src:/app/src
       - ./prisma:/app/prisma
+      - ./bruno:/app/bruno
+      - ./sync-bruno-token.js:/app/sync-bruno-token.js
       - ./package.json:/app/package.json
       - ./tsconfig.json:/app/tsconfig.json
       - ./nest-cli.json:/app/nest-cli.json
@@ -45,8 +47,14 @@ services:
       sh -c "
         echo 'Waiting for database to be ready...' &&
         npx prisma migrate deploy &&
-        echo 'Migrations applied. Starting development server...' &&
-        echo 'To run seed: docker exec asmovie-api npx prisma db seed' &&
+        echo 'Migrations applied.' &&
+        echo 'Running database seed...' &&
+        npx prisma db seed &&
+        echo 'Database seeded successfully!' &&
+        echo 'Syncing Bruno API token...' &&
+        npm run sync-bruno-token &&
+        echo 'Bruno token synced!' &&
+        echo 'Starting development server...' &&
         npm run start:dev
       "
 

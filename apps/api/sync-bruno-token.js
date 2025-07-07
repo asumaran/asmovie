@@ -16,7 +16,15 @@ const BRUNO_ENV_FILE = path.join(
   'Local.bru',
 );
 
-function readEnvFile() {
+function getApiSecret() {
+  // First try to get from environment variables (Docker)
+  const envSecret = process.env.API_SECRET;
+  if (envSecret) {
+    console.log('✅ Found API_SECRET in environment variables');
+    return envSecret;
+  }
+
+  // Fallback to reading from .env file (local development)
   try {
     const envContent = fs.readFileSync(ENV_FILE, 'utf8');
     const lines = envContent.split('\n');
@@ -30,7 +38,7 @@ function readEnvFile() {
     }
     return null;
   } catch (error) {
-    console.error('Error reading .env file:', error.message);
+    console.log('Note: .env file not found, trying environment variables...');
     return null;
   }
 }
@@ -58,9 +66,9 @@ function updateBrunoEnv(apiSecret) {
 function main() {
   console.log('🔄 Syncing API token from .env to Bruno environment...');
 
-  const apiSecret = readEnvFile();
+  const apiSecret = getApiSecret();
   if (!apiSecret) {
-    console.error('❌ API_SECRET not found in .env file');
+    console.error('❌ API_SECRET not found in environment variables or .env file');
     process.exit(1);
   }
 
@@ -76,4 +84,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { readEnvFile, updateBrunoEnv };
+module.exports = { getApiSecret, updateBrunoEnv };
