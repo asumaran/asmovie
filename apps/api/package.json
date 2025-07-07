@@ -27,7 +27,7 @@
     "lint:check": "eslint \"{src,prisma}/**/*.ts\"",
     "lint:format": "npm run lint && npm run format",
     "lint:fix-safe": "eslint \"{src,prisma}/**/*.ts\" --fix --fix-type suggestion",
-    "lint:fix-unused": "eslint \"{src,prisma}/**/*.ts\" --fix --rule '@typescript-eslint/no-unused-vars: error'"
+    "lint:check-unused": "npm run lint:check 2>&1 | grep 'no-unused-vars' && echo '' || echo 'No unused variables found!'"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
