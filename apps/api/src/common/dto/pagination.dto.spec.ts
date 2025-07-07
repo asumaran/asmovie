@@ -111,7 +111,7 @@ describe('PaginationDto', () => {
       const dto = createPaginationDto({ limit: undefined });
       const errors = await validate(dto);
       expect(errors).toHaveLength(0);
-      expect(dto.limit).toBe(undefined); // plainToClass doesn't apply defaults for undefined
+      expect(dto.limit).toBe(10); // Ahora el valor por defecto es 10
     });
   });
 
@@ -204,7 +204,7 @@ describe('PaginationDto', () => {
       const errors = await validate(dto);
       expect(errors).toHaveLength(0);
       expect(dto.page).toBe(null); // plainToClass preserves null values
-      expect(dto.limit).toBe(null); // plainToClass preserves null values
+      expect(dto.limit).toBe(10); // Ahora el valor por defecto es 10
     });
 
     it('should maintain type safety', () => {

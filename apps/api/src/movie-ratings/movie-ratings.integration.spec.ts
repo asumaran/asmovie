@@ -3,8 +3,13 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../app.module';
 import { PrismaService } from '../common/prisma.service';
+import * as dotenv from 'dotenv';
 
-const API_TOKEN = 'test-api-secret-key-for-integration-tests';
+dotenv.config();
+
+const API_TOKEN =
+  process.env.API_TOKEN ??
+  'your-super-secure-api-secret-key-here-at-least-32-characters-long';
 
 describe('Movie Ratings Integration Tests', () => {
   let app: INestApplication;

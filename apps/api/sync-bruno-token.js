@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Script to sync API_SECRET from .env to Bruno environment
+ * Script to sync API_TOKEN from .env to Bruno environment
  * Usage: npm run sync-bruno-token
  */
 
@@ -18,9 +18,9 @@ const BRUNO_ENV_FILE = path.join(
 
 function getApiSecret() {
   // First try to get from environment variables (Docker)
-  const envSecret = process.env.API_SECRET;
+  const envSecret = process.env.API_TOKEN;
   if (envSecret) {
-    console.log('✅ Found API_SECRET in environment variables');
+    console.log('✅ Found API_TOKEN in environment variables');
     return envSecret;
   }
 
@@ -30,7 +30,7 @@ function getApiSecret() {
     const lines = envContent.split('\n');
 
     for (const line of lines) {
-      if (line.startsWith('API_SECRET=')) {
+      if (line.startsWith('API_TOKEN=')) {
         // Extract the value, removing quotes if present
         const value = line.split('=')[1].replace(/["']/g, '');
         return value;
@@ -69,7 +69,7 @@ function main() {
   const apiSecret = getApiSecret();
   if (!apiSecret) {
     console.error(
-      '❌ API_SECRET not found in environment variables or .env file',
+      '❌ API_TOKEN not found in environment variables or .env file',
     );
     process.exit(1);
   }

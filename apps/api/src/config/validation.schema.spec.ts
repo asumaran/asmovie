@@ -5,7 +5,7 @@ import { validationSchema } from './validation.schema';
 // Base test data that includes required fields
 const baseTestData = {
   DATABASE_URL: 'postgres://localhost/test',
-  API_SECRET: 'test-api-secret-123',
+  API_TOKEN: 'test-api-secret-123',
 };
 
 describe('Validation Schema', () => {
@@ -59,7 +59,7 @@ describe('Validation Schema', () => {
   describe('DATABASE_URL validation', () => {
     it('should require DATABASE_URL', () => {
       const { error } = validationSchema.validate({
-        API_SECRET: 'test-api-secret-123',
+        API_TOKEN: 'test-api-secret-123',
       });
       expect(error).toBeDefined();
       expect(error?.details[0].message).toContain('DATABASE_URL');
@@ -233,24 +233,24 @@ describe('Validation Schema', () => {
       });
     });
 
-    describe('API_SECRET', () => {
-      it('should require API_SECRET', () => {
+    describe('API_TOKEN', () => {
+      it('should require API_TOKEN', () => {
         const { error } = validationSchema.validate({
           DATABASE_URL: 'postgres://localhost/test',
         });
         expect(error).toBeDefined();
-        expect(error?.details[0].message).toContain('API_SECRET');
+        expect(error?.details[0].message).toContain('API_TOKEN');
       });
 
-      it('should accept valid API_SECRET', () => {
+      it('should accept valid API_TOKEN', () => {
         const { error } = validationSchema.validate(baseTestData);
         expect(error).toBeUndefined();
       });
 
-      it('should reject API_SECRET that is too short', () => {
+      it('should reject API_TOKEN that is too short', () => {
         const { error } = validationSchema.validate({
           ...baseTestData,
-          API_SECRET: 'short',
+          API_TOKEN: 'short',
         });
         expect(error).toBeDefined();
         expect(error?.details[0].message).toContain('length must be at least');
@@ -406,7 +406,7 @@ describe('Validation Schema', () => {
         const { error } = validationSchema.validate({
           DATABASE_URL: 'postgres://localhost/test',
           ENABLE_METRICS: '1',
-          API_SECRET: 'test-secret-16chars',
+          API_TOKEN: 'test-secret-16chars',
         });
         expect(error).toBeDefined();
         expect(error?.details[0].message).toContain('must be a boolean');
@@ -418,7 +418,7 @@ describe('Validation Schema', () => {
     it('should validate a minimal configuration with defaults', () => {
       const minimalConfig = {
         DATABASE_URL: 'postgres://localhost/test_db',
-        API_SECRET: 'test-api-secret-for-development',
+        API_TOKEN: 'test-api-secret-for-development',
       };
 
       const { error, value } = validationSchema.validate(minimalConfig);
@@ -453,7 +453,7 @@ describe('Validation Schema', () => {
         RATE_LIMIT_MAX: 200,
         JWT_SECRET: 'production-jwt-secret-key-that-is-very-secure-and-long',
         JWT_EXPIRES_IN: '24h',
-        API_SECRET: 'production-api-secret-key',
+        API_TOKEN: 'production-api-secret-key',
         SLOW_QUERY_THRESHOLD: 2000,
         MAX_MEMORY_USAGE: 52428800,
         PAGINATION_DEFAULT_LIMIT: 20,
@@ -472,7 +472,7 @@ describe('Validation Schema', () => {
       const incompleteConfig = {
         NODE_ENV: 'production',
         PORT: 8080,
-        // Missing DATABASE_URL and API_SECRET
+        // Missing DATABASE_URL and API_TOKEN
       };
 
       const { error } = validationSchema.validate(incompleteConfig);
@@ -483,7 +483,7 @@ describe('Validation Schema', () => {
 
     it('should validate test environment configuration', () => {
       const testConfig = {
-        API_SECRET: 'test-secret-16chars',
+        API_TOKEN: 'test-secret-16chars',
         DATABASE_URL: 'postgresql://localhost:5432/asmovie_test',
         ENABLE_DETAILED_LOGS: false,
         ENABLE_METRICS: false,
@@ -524,7 +524,7 @@ describe('Validation Schema', () => {
     it('should handle string numbers correctly', () => {
       const { error, value } = validationSchema.validate({
         DATABASE_URL: 'postgres://localhost/test',
-        API_SECRET: 'test-secret-16chars',
+        API_TOKEN: 'test-secret-16chars',
         PORT: '3000',
         DB_MAX_CONNECTIONS: '15',
       });
@@ -537,7 +537,7 @@ describe('Validation Schema', () => {
     it('should handle boolean strings correctly', () => {
       const { error, value } = validationSchema.validate({
         DATABASE_URL: 'postgres://localhost/test',
-        API_SECRET: 'test-secret-16chars',
+        API_TOKEN: 'test-secret-16chars',
         ENABLE_METRICS: 'true',
         ENABLE_DETAILED_LOGS: 'false',
       });
@@ -550,7 +550,7 @@ describe('Validation Schema', () => {
     it('should reject invalid boolean strings', () => {
       const { error } = validationSchema.validate({
         DATABASE_URL: 'postgres://localhost/test',
-        API_SECRET: 'test-secret-16chars',
+        API_TOKEN: 'test-secret-16chars',
         ENABLE_METRICS: 'yes',
       });
 
@@ -563,11 +563,11 @@ describe('Validation Schema', () => {
         DATABASE_URL: '',
         LOG_LEVEL: '',
         JWT_SECRET: '',
-        API_SECRET: '', // Include API_SECRET since it's required
+        API_TOKEN: '', // Include API_TOKEN since it's required
       });
 
       expect(error).toBeDefined();
-      // Should fail for empty DATABASE_URL and API_SECRET
+      // Should fail for empty DATABASE_URL and API_TOKEN
       expect(
         error?.details.some(
           (detail) =>
@@ -580,7 +580,7 @@ describe('Validation Schema', () => {
     it('should handle whitespace-only strings', () => {
       const { error } = validationSchema.validate({
         DATABASE_URL: '   ',
-        API_SECRET: '\t\n  ',
+        API_TOKEN: '\t\n  ',
       });
 
       expect(error).toBeDefined();
@@ -608,7 +608,7 @@ describe('Validation Schema', () => {
       const { error, value } = validationSchema.validate({
         DATABASE_URL:
           'postgres://user:p@ss!word$123@localhost:5432/db-name_test',
-        API_SECRET: 'api-secret-with-special-chars!@#$%^&*()',
+        API_TOKEN: 'api-secret-with-special-chars!@#$%^&*()',
         JWT_SECRET: 'jwt-secret-with-unicode-chars-äöü-and-numbers-123456789',
         ALLOWED_ORIGINS:
           'https://app.example.com:3000,http://dev.example.com:8080',
@@ -616,7 +616,7 @@ describe('Validation Schema', () => {
 
       expect(error).toBeUndefined();
       expect(value.DATABASE_URL).toContain('p@ss!word$123');
-      expect(value.API_SECRET).toContain('!@#$%^&*()');
+      expect(value.API_TOKEN).toContain('!@#$%^&*()');
       expect(value.JWT_SECRET).toContain('äöü');
       expect(value.ALLOWED_ORIGINS).toContain('https://app.example.com:3000');
     });
@@ -631,7 +631,7 @@ describe('Validation Schema', () => {
       maliciousUrls.forEach((url) => {
         const { error } = validationSchema.validate({
           DATABASE_URL: url,
-          API_SECRET: 'test-secret-16chars',
+          API_TOKEN: 'test-secret-16chars',
         });
 
         // Schema should still accept these as valid URLs (security is handled at connection level)
@@ -730,7 +730,7 @@ describe('Validation Schema', () => {
         PORT: 3001,
         DATABASE_URL:
           'postgresql://postgres:password@localhost:5432/asmovie_dev',
-        API_SECRET: 'dev-api-secret-16chars',
+        API_TOKEN: 'dev-api-secret-16chars',
         LOG_LEVEL: 'debug',
         ENABLE_DETAILED_LOGS: true,
         ENABLE_METRICS: false,
@@ -747,7 +747,7 @@ describe('Validation Schema', () => {
         PORT: 443,
         DATABASE_URL:
           'postgresql://prod_user:secure_password@prod-db.internal:5432/asmovie_prod',
-        API_SECRET: 'production-api-secret-very-secure-key-2025',
+        API_TOKEN: 'production-api-secret-very-secure-key-2025',
         JWT_SECRET:
           'production-jwt-secret-extremely-secure-and-random-key-with-special-chars-!@#$%',
         LOG_LEVEL: 'warn',
@@ -769,7 +769,7 @@ describe('Validation Schema', () => {
         PORT: 0, // Let OS assign port
         DATABASE_URL:
           'postgresql://test_user:test_pass@localhost:5433/asmovie_test',
-        API_SECRET: 'test-api-secret-16chars',
+        API_TOKEN: 'test-api-secret-16chars',
         LOG_LEVEL: 'error',
         ENABLE_DETAILED_LOGS: false,
         ENABLE_METRICS: false,

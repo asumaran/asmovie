@@ -3,6 +3,7 @@ import { MoviesService } from './movies.service';
 import { PrismaService } from '../common/prisma.service';
 import { QueryBuilderService } from '../common/services/query-builder.service';
 import { TransactionService } from '../common/services/transaction.service';
+import { ConfigService } from '@nestjs/config';
 
 describe('MoviesService', () => {
   let service: MoviesService;
@@ -64,6 +65,12 @@ describe('MoviesService', () => {
           provide: TransactionService,
           useValue: mockTransactionService,
         },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockImplementation((key, def) => def ?? 10),
+          },
+        },
       ],
     }).compile();
 
@@ -117,7 +124,7 @@ describe('MoviesService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all movies', async () => {
+    it('should return paginated movies', async () => {
       const expectedMovies = [
         {
           id: 1,

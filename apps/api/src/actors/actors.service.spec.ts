@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ActorsService } from './actors.service';
 import { PrismaService } from '../common/prisma.service';
+import { QueryBuilderService } from '../common/services/query-builder.service';
+import { ConfigService } from '@nestjs/config';
 import { NotFoundException } from '@nestjs/common';
 
 describe('ActorsService', () => {
@@ -13,6 +15,7 @@ describe('ActorsService', () => {
       findUnique: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
     movieActor: {
       findMany: jest.fn(),
@@ -26,6 +29,26 @@ describe('ActorsService', () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService,
+        },
+        {
+          provide: QueryBuilderService,
+          useValue: {
+            buildPaginatedQuery: jest
+              .fn()
+              .mockImplementation(({ page, limit, include, where }) => ({
+                skip: (page - 1) * limit,
+                take: limit,
+                include,
+                where,
+                orderBy: { createdAt: 'desc' },
+              })),
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockImplementation((key, def) => def ?? 10),
+          },
         },
       ],
     }).compile();
@@ -79,7 +102,7 @@ describe('ActorsService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all actors', async () => {
+    it('should return paginated actors', async () => {
       const expectedActors = [
         {
           id: 1,
@@ -87,10 +110,11 @@ describe('ActorsService', () => {
           movies: [],
         },
       ];
-
       mockPrismaService.actor.findMany.mockResolvedValue(expectedActors);
+      mockPrismaService.actor.count.mockResolvedValue(1);
 
-      const result = await service.findAll();
+      // page=1, limit=10 por defecto
+      const result = await service.findAll(undefined, 1, 10);
 
       expect(mockPrismaService.actor.findMany).toHaveBeenCalledWith({
         where: {},
@@ -101,14 +125,25 @@ describe('ActorsService', () => {
             },
           },
         },
-        orderBy: {
-          createdAt: 'desc',
-        },
+        skip: 0,
+        take: 10,
+        orderBy: { createdAt: 'desc' },
       });
-      expect(result).toEqual(expectedActors);
+      expect(mockPrismaService.actor.count).toHaveBeenCalledWith({ where: {} });
+      expect(result).toEqual({
+        meta: {
+          total: 1,
+          page: 1,
+          limit: 10,
+          hasNext: false,
+          hasPrev: false,
+          totalPages: 1,
+        },
+        data: expectedActors,
+      });
     });
 
-    it('should return actors filtered by search term', async () => {
+    it('should return paginated actors filtered by search term', async () => {
       const searchTerm = 'leonardo';
       const expectedActors = [
         {
@@ -117,10 +152,10 @@ describe('ActorsService', () => {
           movies: [],
         },
       ];
-
       mockPrismaService.actor.findMany.mockResolvedValue(expectedActors);
+      mockPrismaService.actor.count.mockResolvedValue(1);
 
-      const result = await service.findAll(searchTerm);
+      const result = await service.findAll(searchTerm, 1, 10);
 
       expect(mockPrismaService.actor.findMany).toHaveBeenCalledWith({
         where: {
@@ -136,11 +171,29 @@ describe('ActorsService', () => {
             },
           },
         },
-        orderBy: {
-          createdAt: 'desc',
+        skip: 0,
+        take: 10,
+        orderBy: { createdAt: 'desc' },
+      });
+      expect(mockPrismaService.actor.count).toHaveBeenCalledWith({
+        where: {
+          name: {
+            contains: searchTerm,
+            mode: 'insensitive',
+          },
         },
       });
-      expect(result).toEqual(expectedActors);
+      expect(result).toEqual({
+        meta: {
+          total: 1,
+          page: 1,
+          limit: 10,
+          hasNext: false,
+          hasPrev: false,
+          totalPages: 1,
+        },
+        data: expectedActors,
+      });
     });
   });
 

@@ -10,9 +10,13 @@ import { PrismaService } from '../common/prisma.service';
 import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
 import { PerformanceInterceptor } from '../common/interceptors/performance.interceptor';
 import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 // API token for testing protected endpoints
-const API_TOKEN = 'test-api-secret-key-for-integration-tests';
+const API_TOKEN =
+  process.env.API_TOKEN ??
+  'your-super-secure-api-secret-key-here-at-least-32-characters-long';
 
 describe('Movies Integration Tests', () => {
   let app: INestApplication;

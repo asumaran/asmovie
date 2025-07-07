@@ -11,25 +11,37 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ActorsService } from './actors.service';
 import { CreateActorDto, UpdateActorDto } from './dto/actor.dto';
-import { ApiOrJwtGuard } from '../common/guards/api-or-jwt.guard';
+import { ApiOrJwtSimpleGuard } from '../common/guards/api-or-jwt-simple.guard';
+import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
+import { PerformanceInterceptor } from '../common/interceptors/performance.interceptor';
+import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Controller('actors')
+@UseInterceptors(ResponseInterceptor, PerformanceInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
 export class ActorsController {
   constructor(private readonly actorsService: ActorsService) {}
 
   @Post()
-  @UseGuards(ApiOrJwtGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   create(@Body() createActorDto: CreateActorDto) {
     return this.actorsService.create(createActorDto);
   }
 
   @Get()
-  findAll(@Query('search') search?: string) {
-    return this.actorsService.findAll(search);
+  findAll(
+    @Query() paginationDto: PaginationDto,
+    @Query('search') search?: string,
+  ) {
+    return this.actorsService.findAll(
+      search,
+      paginationDto.page,
+      paginationDto.limit,
+    );
   }
 
   @Get(':id')
@@ -38,7 +50,7 @@ export class ActorsController {
   }
 
   @Patch(':id')
-  @UseGuards(ApiOrJwtGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateActorDto: UpdateActorDto,
@@ -47,7 +59,7 @@ export class ActorsController {
   }
 
   @Delete(':id')
-  @UseGuards(ApiOrJwtGuard)
+  @UseGuards(ApiOrJwtSimpleGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.actorsService.remove(id);
   }

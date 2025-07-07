@@ -273,6 +273,52 @@ async function main() {
     }),
   ]);
 
+  // Agregar actores y películas para integración
+  const testActors = await Promise.all([
+    prisma.actor.create({
+      data: {
+        name: 'Test Actor',
+        birthDate: new Date('1990-01-01'),
+        biography: 'Biography for Test Actor',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Test Actor 1',
+        birthDate: new Date('1991-01-01'),
+        biography: 'Biography for Test Actor 1',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'John Doe',
+        birthDate: new Date('1980-01-01'),
+        biography: 'Biography for John Doe',
+      },
+    }),
+  ]);
+
+  const testMovies = await Promise.all([
+    prisma.movie.create({
+      data: {
+        title: 'Test Movie',
+        description: 'Description for Test Movie',
+        releaseYear: 2020,
+        genre: 'Drama',
+        duration: 120,
+      },
+    }),
+  ]);
+
+  // Relacionar actor y película de test
+  await prisma.movieActor.create({
+    data: {
+      movieId: testMovies[0].id,
+      actorId: testActors[0].id,
+      role: 'Main Role',
+    },
+  });
+
   console.log('✅ Database seeded successfully!');
   console.log(`👥 Created ${users.length} users`);
   console.log(`📽️  Created ${movies.length} movies`);

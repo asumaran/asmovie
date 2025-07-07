@@ -38,7 +38,7 @@ const patterns = [
           (prop) =>
             prop &&
             !prop.includes('DATABASE_URL') &&
-            !prop.includes('API_SECRET'),
+            !prop.includes('API_TOKEN'),
         );
 
       if (props.length === 0) {

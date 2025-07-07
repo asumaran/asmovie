@@ -3,8 +3,13 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../app.module';
 import { PrismaService } from '../common/prisma.service';
+import * as dotenv from 'dotenv';
 
-const API_TOKEN = 'test-api-secret-key-for-integration-tests';
+dotenv.config();
+
+const API_TOKEN =
+  process.env.API_TOKEN ??
+  'your-super-secure-api-secret-key-here-at-least-32-characters-long';
 
 describe('Actors Integration Tests', () => {
   let app: INestApplication;
@@ -47,11 +52,11 @@ describe('Actors Integration Tests', () => {
         .expect(201);
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.name).toBe('Test Actor');
+      expect(response.body.data.name).toBe('Test Actor');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.biography).toBe('Test biography');
+      expect(response.body.data.biography).toBe('Test biography');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.id).toBeDefined();
+      expect(response.body.data.id).toBeDefined();
     });
 
     it('should return 401 when no token is provided', async () => {
@@ -112,10 +117,10 @@ describe('Actors Integration Tests', () => {
         .get('/actors')
         .expect(200);
 
-      expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body).toHaveLength(1);
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body.data).toHaveLength(1);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body[0].name).toBe('Test Actor 1');
+      expect(response.body.data[0].name).toBe('Test Actor 1');
     });
 
     it('should search actors by name', async () => {
@@ -132,10 +137,10 @@ describe('Actors Integration Tests', () => {
         .get('/actors?search=John%20Doe')
         .expect(200);
 
-      expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body).toHaveLength(1);
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body.data).toHaveLength(1);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body[0].name).toBe('John Doe');
+      expect(response.body.data[0].name).toBe('John Doe');
     });
   });
 
@@ -158,9 +163,9 @@ describe('Actors Integration Tests', () => {
         .expect(200);
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.id).toBe(actor.id);
+      expect(response.body.data.id).toBe(actor.id);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.name).toBe('Test Actor');
+      expect(response.body.data.name).toBe('Test Actor');
     });
 
     it('should return 404 for non-existent actor', async () => {
@@ -198,9 +203,9 @@ describe('Actors Integration Tests', () => {
         .expect(200);
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.name).toBe('Updated Actor');
+      expect(response.body.data.name).toBe('Updated Actor');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.biography).toBe('Updated biography');
+      expect(response.body.data.biography).toBe('Updated biography');
     });
 
     it('should return 401 when no token is provided', async () => {
@@ -338,10 +343,10 @@ describe('Actors Integration Tests', () => {
         .get(`/actors/${actor.id}/movies`)
         .expect(200);
 
-      expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body).toHaveLength(1);
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body.data).toHaveLength(1);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body[0].title).toBe('Test Movie');
+      expect(response.body.data[0].title).toBe('Test Movie');
     });
 
     it('should return 404 for non-existent actor', async () => {

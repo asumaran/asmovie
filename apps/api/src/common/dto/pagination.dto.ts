@@ -17,5 +17,5 @@ export class PaginationDto {
     ({ value }) =>
       value ?? parseInt(process.env.PAGINATION_DEFAULT_LIMIT ?? '10', 10),
   )
-  limit?: number;
+  limit?: number = 10;
 }

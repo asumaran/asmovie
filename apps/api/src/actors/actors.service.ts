@@ -1,10 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../common/prisma.service';
+import { QueryBuilderService } from '../common/services/query-builder.service';
+import {
+  PaginatedResponse,
+  PaginationHelper,
+} from '../common/interfaces/paginated-response.interface';
 import { CreateActorDto, UpdateActorDto } from './dto/actor.dto';
 
 @Injectable()
 export class ActorsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queryBuilder: QueryBuilderService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async create(createActorDto: CreateActorDto) {
     const data = {
@@ -26,7 +36,18 @@ export class ActorsService {
     });
   }
 
-  async findAll(search?: string) {
+  async findAll(
+    search?: string,
+    page: number = 1,
+    limit?: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<PaginatedResponse<any>> {
+    const defaultLimit = this.configService.get<number>(
+      'pagination.defaultLimit',
+      10,
+    );
+    const effectiveLimit = limit ?? defaultLimit;
+
     const where = search
       ? {
           name: {
@@ -36,19 +57,33 @@ export class ActorsService {
         }
       : {};
 
-    return this.prisma.actor.findMany({
-      where,
-      include: {
-        movies: {
-          include: {
-            movie: true,
-          },
+    const include = {
+      movies: {
+        include: {
+          movie: true,
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+    };
+
+    const orderBy = {
+      createdAt: 'desc' as const,
+    };
+
+    const queryOptions = this.queryBuilder.buildPaginatedQuery({
+      page,
+      limit: effectiveLimit,
+      include,
+      where,
+      orderBy,
     });
+
+    const [actors, total] = await Promise.all([
+      this.prisma.actor.findMany(queryOptions),
+      this.prisma.actor.count({ where }),
+    ]);
+
+    const meta = PaginationHelper.createMeta(page, effectiveLimit, total);
+    return PaginationHelper.createResponse(actors, meta);
   }
 
   async findOne(id: number) {

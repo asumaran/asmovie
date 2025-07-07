@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * File watcher to automatically sync API_SECRET from .env to Bruno environment
+ * File watcher to automatically sync API_TOKEN from .env to Bruno environment
  * Usage: npm run watch-bruno-sync
  */
 
@@ -12,7 +12,7 @@ const { readEnvFile, updateBrunoEnv } = require('./sync-bruno-token');
 const ENV_FILE = path.join(__dirname, '.env');
 
 function watchEnvFile() {
-  console.log('👀 Watching .env file for API_SECRET changes...');
+  console.log('👀 Watching .env file for API_TOKEN changes...');
   console.log('📁 File:', ENV_FILE);
   console.log('🔄 Will auto-sync to Bruno environment on changes');
   console.log('💡 Press Ctrl+C to stop watching\n');
@@ -25,14 +25,14 @@ function watchEnvFile() {
 
   // Watch for changes
   fs.watchFile(ENV_FILE, { interval: 1000 }, (curr, prev) => {
-    console.log('\n📝 .env file changed, checking for API_SECRET updates...');
+    console.log('\n📝 .env file changed, checking for API_TOKEN updates...');
 
     const newToken = readEnvFile();
     if (newToken) {
       updateBrunoEnv(newToken);
       console.log('✨ Bruno environment synced!\n');
     } else {
-      console.log('⚠️ API_SECRET not found in .env file\n');
+      console.log('⚠️ API_TOKEN not found in .env file\n');
     }
   });
 
