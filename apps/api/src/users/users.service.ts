@@ -72,7 +72,8 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    const existingUser = await this.findOne(id);
+    // Validate user exists
+    await this.findOne(id);
 
     // Check for email conflicts
     if (updateUserDto.email) {

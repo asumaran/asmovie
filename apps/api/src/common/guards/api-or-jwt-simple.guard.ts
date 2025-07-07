@@ -46,11 +46,12 @@ export class ApiOrJwtSimpleGuard implements CanActivate {
         where: { id: payload.sub },
       });
 
-      if (!user || !user.isActive) {
+      if (!user?.isActive) {
         throw new UnauthorizedException('Invalid or inactive user');
       }
 
       // Attach user to request (without password)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = user;
       request.user = { type: 'jwt', ...userWithoutPassword };
       return true;

@@ -7,9 +7,6 @@ import { PrismaService } from '../prisma.service';
 
 describe('ApiOrJwtSimpleGuard', () => {
   let guard: ApiOrJwtSimpleGuard;
-  let configService: ConfigService;
-  let jwtService: JwtService;
-  let prismaService: PrismaService;
 
   const mockConfigService = {
     get: jest.fn(),
@@ -54,9 +51,6 @@ describe('ApiOrJwtSimpleGuard', () => {
     }).compile();
 
     guard = module.get<ApiOrJwtSimpleGuard>(ApiOrJwtSimpleGuard);
-    configService = module.get<ConfigService>(ConfigService);
-    jwtService = module.get<JwtService>(JwtService);
-    prismaService = module.get<PrismaService>(PrismaService);
 
     jest.clearAllMocks();
   });

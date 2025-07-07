@@ -43,7 +43,7 @@ export class ApiOrJwtGuard implements CanActivate {
 
       // Validate user exists and is active
       const user = await this.authService.validateUserById(payload.sub);
-      if (!user || !user.isActive) {
+      if (!user?.isActive) {
         throw new UnauthorizedException('Invalid or inactive user');
       }
 
