@@ -61,8 +61,8 @@ export class TransactionService {
   /**
    * Delete movie with all related data in a transaction
    */
-  async deleteMovieWithRelations(movieId: number): Promise<void> {
-    await this.executeTransaction(async (tx) => {
+  async deleteMovieWithRelations(movieId: number) {
+    return this.executeTransaction(async (tx) => {
       // Delete movie ratings first
       await tx.movieRating.deleteMany({
         where: { movieId },
@@ -73,8 +73,8 @@ export class TransactionService {
         where: { movieId },
       });
 
-      // Delete the movie
-      await tx.movie.delete({
+      // Delete the movie and return its data
+      return tx.movie.delete({
         where: { id: movieId },
       });
     });

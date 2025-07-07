@@ -180,6 +180,54 @@ describe('MoviesService', () => {
         },
       });
     });
+
+    it('should use default values when called without parameters', async () => {
+      const expectedMovies = [
+        {
+          id: 1,
+          title: 'Movie 1',
+          actors: [],
+          ratings: [],
+        },
+      ];
+
+      mockPrismaService.movie.findMany.mockResolvedValue(expectedMovies);
+      mockPrismaService.movie.count.mockResolvedValue(expectedMovies.length);
+
+      // Call with empty filters object to verify that it uses default values
+      const result = await service.findAll({});
+
+      expect(mockQueryBuilderService.buildMovieWhere).toHaveBeenCalledWith({
+        search: undefined,
+        genre: undefined,
+        releaseYear: undefined,
+        minRating: undefined,
+        maxRating: undefined,
+      });
+      expect(mockQueryBuilderService.buildOrderBy).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+        { createdAt: 'desc' },
+      );
+      expect(mockQueryBuilderService.buildPaginatedQuery).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10, // Should use the default value from ConfigService
+        include: { actors: { include: { actor: true } }, ratings: true },
+        where: {},
+        orderBy: { createdAt: 'desc' },
+      });
+      expect(result).toEqual({
+        data: expectedMovies,
+        meta: {
+          page: 1,
+          limit: 10,
+          total: expectedMovies.length,
+          totalPages: 1,
+          hasNext: false,
+          hasPrev: false,
+        },
+      });
+    });
   });
 
   describe('findOne', () => {
@@ -355,13 +403,19 @@ describe('MoviesService', () => {
       const mockMovie = {
         id: movieId,
         title: 'Test Movie',
+        releaseYear: 2023,
+        genre: 'Action',
+        duration: 120,
+        description: 'Test description',
+        createdAt: new Date(),
+        updatedAt: new Date(),
         actors: [],
         ratings: [],
       };
 
       mockPrismaService.movie.findUnique.mockResolvedValue(mockMovie);
       mockTransactionService.deleteMovieWithRelations.mockResolvedValue(
-        undefined,
+        mockMovie,
       );
 
       const result = await service.remove(movieId);
@@ -369,7 +423,7 @@ describe('MoviesService', () => {
       expect(
         mockTransactionService.deleteMovieWithRelations,
       ).toHaveBeenCalledWith(movieId);
-      expect(result).toBeUndefined();
+      expect(result).toEqual(mockMovie);
     });
 
     it('should throw NotFoundException if movie not found', async () => {

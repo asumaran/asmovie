@@ -106,3 +106,57 @@ export class MovieFilterDto {
   @IsIn(['asc', 'desc'])
   sortOrder?: 'asc' | 'desc';
 }
+
+export class MovieQueryDto {
+  // Filter parameters
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  genre?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  releaseYear?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  @Type(() => Number)
+  minRating?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  @Type(() => Number)
+  maxRating?: number;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['title', 'releaseYear', 'createdAt', 'genre'])
+  sortBy?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['asc', 'desc'])
+  sortOrder?: 'asc' | 'desc';
+
+  // Pagination parameters
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  page?: number = 1;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  @Type(() => Number)
+  limit?: number = 10;
+}

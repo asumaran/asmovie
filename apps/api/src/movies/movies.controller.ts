@@ -16,18 +16,17 @@ import {
 import { MoviesService } from './movies.service';
 import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
 import { PerformanceInterceptor } from '../common/interceptors/performance.interceptor';
-import { PaginationDto } from '../common/dto/pagination.dto';
 import {
   CreateMovieDto,
   UpdateMovieDto,
   AddActorToMovieDto,
-  MovieFilterDto,
+  MovieQueryDto,
 } from './dto/movie.dto';
 import { ApiOrJwtSimpleGuard } from '../common/guards/api-or-jwt-simple.guard';
 
 @Controller('movies')
 @UseInterceptors(ResponseInterceptor, PerformanceInterceptor)
-@UsePipes(new ValidationPipe({ transform: true }))
+@UsePipes(new ValidationPipe({ transform: true, forbidNonWhitelisted: false }))
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
@@ -38,15 +37,9 @@ export class MoviesController {
   }
 
   @Get()
-  findAll(
-    @Query() paginationDto: PaginationDto,
-    @Query() filterDto: MovieFilterDto,
-  ) {
-    return this.moviesService.findAll(
-      filterDto,
-      paginationDto.page,
-      paginationDto.limit,
-    );
+  findAll(@Query() query: MovieQueryDto) {
+    const { page, limit, ...filterDto } = query;
+    return this.moviesService.findAll(filterDto, page, limit);
   }
 
   @Get(':id')

@@ -6,7 +6,11 @@ import {
   PaginatedResponse,
   PaginationHelper,
 } from '../common/interfaces/paginated-response.interface';
-import { CreateActorDto, UpdateActorDto } from './dto/actor.dto';
+import {
+  CreateActorDto,
+  UpdateActorDto,
+  ActorFilterDto,
+} from './dto/actor.dto';
 
 @Injectable()
 export class ActorsService {
@@ -37,7 +41,7 @@ export class ActorsService {
   }
 
   async findAll(
-    search?: string,
+    filters: ActorFilterDto,
     page: number = 1,
     limit?: number,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,26 +52,20 @@ export class ActorsService {
     );
     const effectiveLimit = limit ?? defaultLimit;
 
-    const where = search
-      ? {
-          name: {
-            contains: search,
-            mode: 'insensitive' as const,
-          },
-        }
-      : {};
+    const where = this.queryBuilder.buildActorWhere({
+      search: filters.search,
+    });
 
-    const include = {
-      movies: {
-        include: {
-          movie: true,
-        },
-      },
-    };
+    const include = this.queryBuilder.buildActorInclude({
+      includeMovies: true,
+      includeMovieDetails: true,
+    });
 
-    const orderBy = {
-      createdAt: 'desc' as const,
-    };
+    const orderBy = this.queryBuilder.buildOrderBy(
+      filters.sortBy,
+      filters.sortOrder,
+      { createdAt: 'desc' as const },
+    );
 
     const queryOptions = this.queryBuilder.buildPaginatedQuery({
       page,

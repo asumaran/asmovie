@@ -22,6 +22,27 @@ describe('ActorsService', () => {
     },
   };
 
+  const mockQueryBuilderService = {
+    buildActorWhere: jest.fn().mockReturnValue({}),
+    buildActorInclude: jest.fn().mockReturnValue({
+      movies: {
+        include: {
+          movie: true,
+        },
+      },
+    }),
+    buildOrderBy: jest.fn().mockReturnValue({ createdAt: 'desc' }),
+    buildPaginatedQuery: jest
+      .fn()
+      .mockImplementation(({ page, limit, include, where }) => ({
+        skip: (page - 1) * limit,
+        take: limit,
+        include,
+        where,
+        orderBy: { createdAt: 'desc' },
+      })),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -32,17 +53,7 @@ describe('ActorsService', () => {
         },
         {
           provide: QueryBuilderService,
-          useValue: {
-            buildPaginatedQuery: jest
-              .fn()
-              .mockImplementation(({ page, limit, include, where }) => ({
-                skip: (page - 1) * limit,
-                take: limit,
-                include,
-                where,
-                orderBy: { createdAt: 'desc' },
-              })),
-          },
+          useValue: mockQueryBuilderService,
         },
         {
           provide: ConfigService,
@@ -113,11 +124,23 @@ describe('ActorsService', () => {
       mockPrismaService.actor.findMany.mockResolvedValue(expectedActors);
       mockPrismaService.actor.count.mockResolvedValue(1);
 
-      // page=1, limit=10 por defecto
-      const result = await service.findAll(undefined, 1, 10);
+      const result = await service.findAll({}, 1, 10);
 
-      expect(mockPrismaService.actor.findMany).toHaveBeenCalledWith({
-        where: {},
+      expect(mockQueryBuilderService.buildActorWhere).toHaveBeenCalledWith({
+        search: undefined,
+      });
+      expect(mockQueryBuilderService.buildActorInclude).toHaveBeenCalledWith({
+        includeMovies: true,
+        includeMovieDetails: true,
+      });
+      expect(mockQueryBuilderService.buildOrderBy).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+        { createdAt: 'desc' },
+      );
+      expect(mockQueryBuilderService.buildPaginatedQuery).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10,
         include: {
           movies: {
             include: {
@@ -125,11 +148,9 @@ describe('ActorsService', () => {
             },
           },
         },
-        skip: 0,
-        take: 10,
+        where: {},
         orderBy: { createdAt: 'desc' },
       });
-      expect(mockPrismaService.actor.count).toHaveBeenCalledWith({ where: {} });
       expect(result).toEqual({
         meta: {
           total: 1,
@@ -155,15 +176,23 @@ describe('ActorsService', () => {
       mockPrismaService.actor.findMany.mockResolvedValue(expectedActors);
       mockPrismaService.actor.count.mockResolvedValue(1);
 
-      const result = await service.findAll(searchTerm, 1, 10);
+      const result = await service.findAll({ search: searchTerm }, 1, 10);
 
-      expect(mockPrismaService.actor.findMany).toHaveBeenCalledWith({
-        where: {
-          name: {
-            contains: searchTerm,
-            mode: 'insensitive',
-          },
-        },
+      expect(mockQueryBuilderService.buildActorWhere).toHaveBeenCalledWith({
+        search: searchTerm,
+      });
+      expect(mockQueryBuilderService.buildActorInclude).toHaveBeenCalledWith({
+        includeMovies: true,
+        includeMovieDetails: true,
+      });
+      expect(mockQueryBuilderService.buildOrderBy).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+        { createdAt: 'desc' },
+      );
+      expect(mockQueryBuilderService.buildPaginatedQuery).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10,
         include: {
           movies: {
             include: {
@@ -171,17 +200,60 @@ describe('ActorsService', () => {
             },
           },
         },
-        skip: 0,
-        take: 10,
+        where: {},
         orderBy: { createdAt: 'desc' },
       });
-      expect(mockPrismaService.actor.count).toHaveBeenCalledWith({
-        where: {
-          name: {
-            contains: searchTerm,
-            mode: 'insensitive',
+      expect(result).toEqual({
+        meta: {
+          total: 1,
+          page: 1,
+          limit: 10,
+          hasNext: false,
+          hasPrev: false,
+          totalPages: 1,
+        },
+        data: expectedActors,
+      });
+    });
+
+    it('should use default values when called without parameters', async () => {
+      const expectedActors = [
+        {
+          id: 1,
+          name: 'Actor 1',
+          movies: [],
+        },
+      ];
+      mockPrismaService.actor.findMany.mockResolvedValue(expectedActors);
+      mockPrismaService.actor.count.mockResolvedValue(1);
+
+      // Call with empty filters object to verify that it uses default values
+      const result = await service.findAll({});
+
+      expect(mockQueryBuilderService.buildActorWhere).toHaveBeenCalledWith({
+        search: undefined,
+      });
+      expect(mockQueryBuilderService.buildActorInclude).toHaveBeenCalledWith({
+        includeMovies: true,
+        includeMovieDetails: true,
+      });
+      expect(mockQueryBuilderService.buildOrderBy).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+        { createdAt: 'desc' },
+      );
+      expect(mockQueryBuilderService.buildPaginatedQuery).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10, // Should use the default value from ConfigService
+        include: {
+          movies: {
+            include: {
+              movie: true,
+            },
           },
         },
+        where: {},
+        orderBy: { createdAt: 'desc' },
       });
       expect(result).toEqual({
         meta: {

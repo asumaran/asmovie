@@ -219,6 +219,38 @@ describe('QueryBuilderService', () => {
       });
     });
 
+    it('should build where clause with minRating only', () => {
+      const result = service.buildMovieWhere({
+        minRating: 7.0,
+      });
+
+      expect(result).toEqual({
+        ratings: {
+          some: {
+            rating: {
+              gte: 7.0,
+            },
+          },
+        },
+      });
+    });
+
+    it('should build where clause with maxRating only', () => {
+      const result = service.buildMovieWhere({
+        maxRating: 9.0,
+      });
+
+      expect(result).toEqual({
+        ratings: {
+          some: {
+            rating: {
+              lte: 9.0,
+            },
+          },
+        },
+      });
+    });
+
     it('should build where clause with multiple filters', () => {
       const result = service.buildMovieWhere({
         search: 'action',

@@ -135,15 +135,27 @@ describe('TransactionService', () => {
   });
 
   describe('deleteMovieWithRelations', () => {
-    it('should delete movie with all relations', async () => {
+    it('should delete movie with all relations and return the deleted movie', async () => {
       const movieId = 1;
+      const mockDeletedMovie = {
+        id: movieId,
+        title: 'Test Movie',
+        releaseYear: 2023,
+        genre: 'Action',
+        duration: 120,
+        description: 'Test description',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
       mockPrismaService.$transaction.mockImplementation((operation) =>
         operation(mockPrismaService),
       );
+      mockPrismaService.movie.delete.mockResolvedValue(mockDeletedMovie);
 
-      await service.deleteMovieWithRelations(movieId);
+      const result = await service.deleteMovieWithRelations(movieId);
 
+      expect(result).toEqual(mockDeletedMovie);
       expect(mockPrismaService.$transaction).toHaveBeenCalled();
 
       // Get the transaction operation that was passed

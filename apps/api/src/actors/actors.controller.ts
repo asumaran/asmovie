@@ -14,15 +14,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ActorsService } from './actors.service';
-import { CreateActorDto, UpdateActorDto } from './dto/actor.dto';
+import { CreateActorDto, UpdateActorDto, ActorQueryDto } from './dto/actor.dto';
 import { ApiOrJwtSimpleGuard } from '../common/guards/api-or-jwt-simple.guard';
 import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
 import { PerformanceInterceptor } from '../common/interceptors/performance.interceptor';
-import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Controller('actors')
 @UseInterceptors(ResponseInterceptor, PerformanceInterceptor)
-@UsePipes(new ValidationPipe({ transform: true }))
+@UsePipes(new ValidationPipe({ transform: true, forbidNonWhitelisted: false }))
 export class ActorsController {
   constructor(private readonly actorsService: ActorsService) {}
 
@@ -33,15 +32,9 @@ export class ActorsController {
   }
 
   @Get()
-  findAll(
-    @Query() paginationDto: PaginationDto,
-    @Query('search') search?: string,
-  ) {
-    return this.actorsService.findAll(
-      search,
-      paginationDto.page,
-      paginationDto.limit,
-    );
+  findAll(@Query() query: ActorQueryDto) {
+    const { page, limit, ...filterDto } = query;
+    return this.actorsService.findAll(filterDto, page, limit);
   }
 
   @Get(':id')

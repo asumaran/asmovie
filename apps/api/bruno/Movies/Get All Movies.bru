@@ -12,6 +12,14 @@ get {
 
 params:query {
   ~search: inception
+  ~page: 1
+  ~limit: 10
+  ~genre: Action
+  ~releaseYear: 2010
+  ~minRating: 7.0
+  ~maxRating: 10.0
+  ~sortBy: title
+  ~sortOrder: asc
 }
 
 docs {
@@ -21,16 +29,28 @@ docs {
   
   ## Query Parameters
   - `search` (optional): Search movies by title (case-insensitive partial match)
+  - `page` (optional): Page number for pagination (default: 1)
+  - `limit` (optional): Number of items per page (default: 10, max: 100)
+  - `genre` (optional): Filter by genre (exact match)
+  - `releaseYear` (optional): Filter by release year (exact match)
+  - `minRating` (optional): Filter by minimum rating (0-10)
+  - `maxRating` (optional): Filter by maximum rating (0-10)
+  - `sortBy` (optional): Sort field - title, releaseYear, createdAt, genre (default: createdAt)
+  - `sortOrder` (optional): Sort order - asc, desc (default: desc)
   
   ## Response
-  Returns an array of movie objects with:
-  - Movie details (id, title, description, releaseYear, genre, duration)
-  - Associated actors with their roles
-  - All ratings for the movie
+  Returns a paginated response with:
+  - `data`: Array of movie objects with details, actors, and ratings
+  - `meta`: Pagination metadata (page, limit, total, totalPages, hasNext, hasPrev)
   
   ## Example
   ```
   GET /movies
   GET /movies?search=inception
+  GET /movies?page=2&limit=5
+  GET /movies?genre=Action&releaseYear=2010
+  GET /movies?minRating=7.0&maxRating=10.0
+  GET /movies?sortBy=title&sortOrder=asc
+  GET /movies?search=inception&page=1&limit=10&sortBy=title&sortOrder=asc
   ```
 }

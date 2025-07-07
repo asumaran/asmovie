@@ -107,17 +107,16 @@ export class QueryBuilderService {
       }),
       ...(genre && { genre: { equals: genre, mode: 'insensitive' } }),
       ...(releaseYear && { releaseYear }),
-      ...(minRating &&
-        maxRating && {
-          ratings: {
-            some: {
-              rating: {
-                gte: minRating,
-                lte: maxRating,
-              },
+      ...((minRating !== undefined || maxRating !== undefined) && {
+        ratings: {
+          some: {
+            rating: {
+              ...(minRating !== undefined && { gte: minRating }),
+              ...(maxRating !== undefined && { lte: maxRating }),
             },
           },
-        }),
+        },
+      }),
     };
   }
 
