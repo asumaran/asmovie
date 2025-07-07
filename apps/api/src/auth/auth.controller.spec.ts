@@ -80,5 +80,4 @@ describe('AuthController', () => {
       expect(result).toEqual(mockAuthResponse);
     });
   });
-
 });

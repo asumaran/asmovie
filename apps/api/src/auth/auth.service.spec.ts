@@ -82,7 +82,10 @@ describe('AuthService', () => {
       const result = await service.register(createUserDto);
 
       expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);
-      expect(mockJwtService.signAsync).toHaveBeenCalledWith({ sub: 1, email: 'test@example.com' });
+      expect(mockJwtService.signAsync).toHaveBeenCalledWith({
+        sub: 1,
+        email: 'test@example.com',
+      });
       expect(result.user).toBeInstanceOf(Object);
       expect(result.user.id).toEqual(mockUser.id);
       expect(result.user.email).toEqual(mockUser.email);
@@ -90,12 +93,15 @@ describe('AuthService', () => {
     });
 
     it('should throw exception if user creation fails', async () => {
-      mockUsersService.create.mockRejectedValue(new ConflictException('Email already exists'));
+      mockUsersService.create.mockRejectedValue(
+        new ConflictException('Email already exists'),
+      );
 
-      await expect(service.register(createUserDto)).rejects.toThrow(ConflictException);
+      await expect(service.register(createUserDto)).rejects.toThrow(
+        ConflictException,
+      );
       expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);
     });
-
   });
 
   describe('login', () => {
@@ -117,9 +123,17 @@ describe('AuthService', () => {
 
       const result = await service.login(loginDto);
 
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(userWithPassword, 'Password123!');
-      expect(mockJwtService.signAsync).toHaveBeenCalledWith({ sub: 1, email: 'test@example.com' });
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
+      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(
+        userWithPassword,
+        'Password123!',
+      );
+      expect(mockJwtService.signAsync).toHaveBeenCalledWith({
+        sub: 1,
+        email: 'test@example.com',
+      });
       expect(result.user).toBeInstanceOf(Object);
       expect(result.user.id).toEqual(mockUser.id);
       expect(result.user.email).toEqual(mockUser.email);
@@ -129,17 +143,28 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException if user not found', async () => {
       mockUsersService.findByEmail.mockResolvedValue(null);
 
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
     });
 
     it('should throw UnauthorizedException if password is invalid', async () => {
       mockUsersService.findByEmail.mockResolvedValue(userWithPassword);
       mockUsersService.validatePassword.mockResolvedValue(false);
 
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(userWithPassword, 'Password123!');
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
+      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(
+        userWithPassword,
+        'Password123!',
+      );
     });
 
     it('should throw UnauthorizedException if user is inactive', async () => {
@@ -147,9 +172,16 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(inactiveUser);
       mockUsersService.validatePassword.mockResolvedValue(true);
 
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(inactiveUser, 'Password123!');
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
+      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(
+        inactiveUser,
+        'Password123!',
+      );
     });
   });
 
@@ -163,19 +195,32 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(userWithPassword);
       mockUsersService.validatePassword.mockResolvedValue(true);
 
-      const result = await service.validateUser('test@example.com', 'Password123!');
+      const result = await service.validateUser(
+        'test@example.com',
+        'Password123!',
+      );
 
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(userWithPassword, 'Password123!');
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
+      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(
+        userWithPassword,
+        'Password123!',
+      );
       expect(result).toEqual(userWithPassword);
     });
 
     it('should return null if user not found', async () => {
       mockUsersService.findByEmail.mockResolvedValue(null);
 
-      const result = await service.validateUser('test@example.com', 'Password123!');
+      const result = await service.validateUser(
+        'test@example.com',
+        'Password123!',
+      );
 
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
       expect(result).toBeNull();
     });
 
@@ -183,10 +228,18 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(userWithPassword);
       mockUsersService.validatePassword.mockResolvedValue(false);
 
-      const result = await service.validateUser('test@example.com', 'wrongPassword');
+      const result = await service.validateUser(
+        'test@example.com',
+        'wrongPassword',
+      );
 
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(userWithPassword, 'wrongPassword');
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
+      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(
+        userWithPassword,
+        'wrongPassword',
+      );
       expect(result).toBeNull();
     });
 
@@ -195,10 +248,18 @@ describe('AuthService', () => {
       mockUsersService.findByEmail.mockResolvedValue(inactiveUser);
       mockUsersService.validatePassword.mockResolvedValue(true);
 
-      const result = await service.validateUser('test@example.com', 'Password123!');
+      const result = await service.validateUser(
+        'test@example.com',
+        'Password123!',
+      );
 
-      expect(mockUsersService.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(inactiveUser, 'Password123!');
+      expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
+        'test@example.com',
+      );
+      expect(mockUsersService.validatePassword).toHaveBeenCalledWith(
+        inactiveUser,
+        'Password123!',
+      );
       expect(result).toEqual(inactiveUser);
     });
   });

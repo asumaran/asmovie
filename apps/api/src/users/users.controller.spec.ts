@@ -158,16 +158,16 @@ describe('UsersController', () => {
       expect(usersService.changePassword).toHaveBeenCalledWith(
         1,
         'currentPassword',
-        'newPassword123!'
+        'newPassword123!',
       );
       expect(result).toEqual(mockUser);
     });
 
-    it('should throw error if user tries to change another user\'s password', async () => {
+    it("should throw error if user tries to change another user's password", async () => {
       const req = { user: { id: 2 } };
 
       await expect(
-        controller.changePassword(1, changePasswordDto, req)
+        controller.changePassword(1, changePasswordDto, req),
       ).rejects.toThrow('You can only change your own password');
     });
   });

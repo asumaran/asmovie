@@ -468,7 +468,6 @@ describe('Validation Schema', () => {
       expect(value).toMatchObject(completeConfig);
     });
 
-
     it('should fail validation if required fields are missing', () => {
       const incompleteConfig = {
         NODE_ENV: 'production',
@@ -607,10 +606,12 @@ describe('Validation Schema', () => {
 
     it('should handle special characters in string fields', () => {
       const { error, value } = validationSchema.validate({
-        DATABASE_URL: 'postgres://user:p@ss!word$123@localhost:5432/db-name_test',
+        DATABASE_URL:
+          'postgres://user:p@ss!word$123@localhost:5432/db-name_test',
         API_SECRET: 'api-secret-with-special-chars!@#$%^&*()',
         JWT_SECRET: 'jwt-secret-with-unicode-chars-äöü-and-numbers-123456789',
-        ALLOWED_ORIGINS: 'https://app.example.com:3000,http://dev.example.com:8080',
+        ALLOWED_ORIGINS:
+          'https://app.example.com:3000,http://dev.example.com:8080',
       });
 
       expect(error).toBeUndefined();
@@ -727,7 +728,8 @@ describe('Validation Schema', () => {
       const devConfig = {
         NODE_ENV: 'development',
         PORT: 3001,
-        DATABASE_URL: 'postgresql://postgres:password@localhost:5432/asmovie_dev',
+        DATABASE_URL:
+          'postgresql://postgres:password@localhost:5432/asmovie_dev',
         API_SECRET: 'dev-api-secret-16chars',
         LOG_LEVEL: 'debug',
         ENABLE_DETAILED_LOGS: true,
@@ -743,9 +745,11 @@ describe('Validation Schema', () => {
       const prodConfig = {
         NODE_ENV: 'production',
         PORT: 443,
-        DATABASE_URL: 'postgresql://prod_user:secure_password@prod-db.internal:5432/asmovie_prod',
+        DATABASE_URL:
+          'postgresql://prod_user:secure_password@prod-db.internal:5432/asmovie_prod',
         API_SECRET: 'production-api-secret-very-secure-key-2025',
-        JWT_SECRET: 'production-jwt-secret-extremely-secure-and-random-key-with-special-chars-!@#$%',
+        JWT_SECRET:
+          'production-jwt-secret-extremely-secure-and-random-key-with-special-chars-!@#$%',
         LOG_LEVEL: 'warn',
         ENABLE_DETAILED_LOGS: false,
         ENABLE_METRICS: true,
@@ -763,7 +767,8 @@ describe('Validation Schema', () => {
       const testConfig = {
         NODE_ENV: 'test',
         PORT: 0, // Let OS assign port
-        DATABASE_URL: 'postgresql://test_user:test_pass@localhost:5433/asmovie_test',
+        DATABASE_URL:
+          'postgresql://test_user:test_pass@localhost:5433/asmovie_test',
         API_SECRET: 'test-api-secret-16chars',
         LOG_LEVEL: 'error',
         ENABLE_DETAILED_LOGS: false,

@@ -71,7 +71,9 @@ describe('ApiOrJwtSimpleGuard', () => {
       };
 
       mockConfigService.get.mockReturnValue('test-api-secret');
-      mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(request);
+      mockExecutionContext.switchToHttp().getRequest = jest
+        .fn()
+        .mockReturnValue(request);
 
       const result = await guard.canActivate(mockExecutionContext);
 
@@ -88,7 +90,9 @@ describe('ApiOrJwtSimpleGuard', () => {
       };
 
       mockConfigService.get.mockReturnValue('test-api-secret');
-      mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(request);
+      mockExecutionContext.switchToHttp().getRequest = jest
+        .fn()
+        .mockReturnValue(request);
 
       const result = await guard.canActivate(mockExecutionContext);
 
@@ -119,9 +123,14 @@ describe('ApiOrJwtSimpleGuard', () => {
         .mockReturnValueOnce('different-api-secret') // API secret doesn't match
         .mockReturnValueOnce('jwt-secret'); // JWT secret
 
-      mockJwtService.verifyAsync.mockResolvedValue({ sub: 1, email: 'test@example.com' });
+      mockJwtService.verifyAsync.mockResolvedValue({
+        sub: 1,
+        email: 'test@example.com',
+      });
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(request);
+      mockExecutionContext.switchToHttp().getRequest = jest
+        .fn()
+        .mockReturnValue(request);
 
       const result = await guard.canActivate(mockExecutionContext);
 
@@ -145,9 +154,13 @@ describe('ApiOrJwtSimpleGuard', () => {
         user: undefined,
       };
 
-      mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(request);
+      mockExecutionContext.switchToHttp().getRequest = jest
+        .fn()
+        .mockReturnValue(request);
 
-      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should throw UnauthorizedException if API token is invalid', async () => {
@@ -163,9 +176,13 @@ describe('ApiOrJwtSimpleGuard', () => {
         .mockReturnValueOnce('jwt-secret'); // JWT secret
 
       mockJwtService.verifyAsync.mockRejectedValue(new Error('Invalid JWT'));
-      mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(request);
+      mockExecutionContext.switchToHttp().getRequest = jest
+        .fn()
+        .mockReturnValue(request);
 
-      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should throw UnauthorizedException if JWT token is invalid', async () => {
@@ -181,9 +198,13 @@ describe('ApiOrJwtSimpleGuard', () => {
         .mockReturnValueOnce('jwt-secret'); // JWT secret
 
       mockJwtService.verifyAsync.mockRejectedValue(new Error('Invalid JWT'));
-      mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(request);
+      mockExecutionContext.switchToHttp().getRequest = jest
+        .fn()
+        .mockReturnValue(request);
 
-      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should throw UnauthorizedException if user from JWT is not found', async () => {
@@ -198,11 +219,18 @@ describe('ApiOrJwtSimpleGuard', () => {
         .mockReturnValueOnce('different-api-secret') // API secret doesn't match
         .mockReturnValueOnce('jwt-secret'); // JWT secret
 
-      mockJwtService.verifyAsync.mockResolvedValue({ sub: 1, email: 'test@example.com' });
+      mockJwtService.verifyAsync.mockResolvedValue({
+        sub: 1,
+        email: 'test@example.com',
+      });
       mockPrismaService.user.findUnique.mockResolvedValue(null);
-      mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(request);
+      mockExecutionContext.switchToHttp().getRequest = jest
+        .fn()
+        .mockReturnValue(request);
 
-      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should throw UnauthorizedException if user from JWT is inactive', async () => {
@@ -228,11 +256,18 @@ describe('ApiOrJwtSimpleGuard', () => {
         .mockReturnValueOnce('different-api-secret') // API secret doesn't match
         .mockReturnValueOnce('jwt-secret'); // JWT secret
 
-      mockJwtService.verifyAsync.mockResolvedValue({ sub: 1, email: 'test@example.com' });
+      mockJwtService.verifyAsync.mockResolvedValue({
+        sub: 1,
+        email: 'test@example.com',
+      });
       mockPrismaService.user.findUnique.mockResolvedValue(inactiveUser);
-      mockExecutionContext.switchToHttp().getRequest = jest.fn().mockReturnValue(request);
+      mockExecutionContext.switchToHttp().getRequest = jest
+        .fn()
+        .mockReturnValue(request);
 
-      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 });

@@ -3,9 +3,9 @@ import { PrismaService } from '../common/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-import { 
-  DuplicateResourceException, 
-  ResourceNotFoundException 
+import {
+  DuplicateResourceException,
+  ResourceNotFoundException,
 } from '../common/exceptions/business.exception';
 import * as bcrypt from 'bcryptjs';
 import { User } from '@prisma/client';
@@ -21,7 +21,11 @@ export class UsersService {
     });
 
     if (existingUser) {
-      throw new DuplicateResourceException('User', 'email', createUserDto.email);
+      throw new DuplicateResourceException(
+        'User',
+        'email',
+        createUserDto.email,
+      );
     }
 
     // Hash password
@@ -43,7 +47,7 @@ export class UsersService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return users.map(user => new UserResponseDto(user));
+    return users.map((user) => new UserResponseDto(user));
   }
 
   async findOne(id: number): Promise<UserResponseDto> {
@@ -64,8 +68,10 @@ export class UsersService {
     });
   }
 
-
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
     const existingUser = await this.findOne(id);
 
     // Check for email conflicts
@@ -75,7 +81,11 @@ export class UsersService {
       });
 
       if (conflictUser && conflictUser.id !== id) {
-        throw new DuplicateResourceException('User', 'email', updateUserDto.email);
+        throw new DuplicateResourceException(
+          'User',
+          'email',
+          updateUserDto.email,
+        );
       }
     }
 
@@ -100,9 +110,9 @@ export class UsersService {
   }
 
   async changePassword(
-    id: number, 
-    currentPassword: string, 
-    newPassword: string
+    id: number,
+    currentPassword: string,
+    newPassword: string,
   ): Promise<UserResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -112,7 +122,10 @@ export class UsersService {
       throw new ResourceNotFoundException('User', id);
     }
 
-    const isCurrentPasswordValid = await this.validatePassword(user, currentPassword);
+    const isCurrentPasswordValid = await this.validatePassword(
+      user,
+      currentPassword,
+    );
     if (!isCurrentPasswordValid) {
       throw new Error('Current password is incorrect');
     }

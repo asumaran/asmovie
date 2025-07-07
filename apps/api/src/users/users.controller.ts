@@ -39,7 +39,9 @@ export class UsersController {
 
   @Get(':id')
   @UseGuards(ApiOrJwtSimpleGuard)
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserResponseDto> {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<UserResponseDto> {
     return this.usersService.findOne(id);
   }
 

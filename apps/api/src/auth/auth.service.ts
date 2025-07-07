@@ -24,13 +24,13 @@ export class AuthService {
   async register(registerDto: CreateUserDto): Promise<AuthResponseDto> {
     const user = await this.usersService.create(registerDto);
     const tokens = await this.generateTokens(user);
-    
+
     return new AuthResponseDto(tokens.accessToken, user);
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
-    
+
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -41,19 +41,22 @@ export class AuthService {
 
     const userResponse = new UserResponseDto(user);
     const tokens = await this.generateTokens(userResponse);
-    
+
     return new AuthResponseDto(tokens.accessToken, userResponse);
   }
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.usersService.findByEmail(email);
-    
+
     if (!user) {
       return null;
     }
 
-    const isPasswordValid = await this.usersService.validatePassword(user, password);
-    
+    const isPasswordValid = await this.usersService.validatePassword(
+      user,
+      password,
+    );
+
     if (!isPasswordValid) {
       return null;
     }
@@ -69,7 +72,9 @@ export class AuthService {
     }
   }
 
-  private async generateTokens(user: UserResponseDto): Promise<{ accessToken: string }> {
+  private async generateTokens(
+    user: UserResponseDto,
+  ): Promise<{ accessToken: string }> {
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,

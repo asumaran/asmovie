@@ -7,11 +7,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { SharedJwtModule } from './jwt.module';
 
 @Module({
-  imports: [
-    forwardRef(() => UsersModule),
-    PassportModule,
-    SharedJwtModule,
-  ],
+  imports: [forwardRef(() => UsersModule), PassportModule, SharedJwtModule],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService, SharedJwtModule],
