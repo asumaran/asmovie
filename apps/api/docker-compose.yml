@@ -1,0 +1,59 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: asmovie-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: asmovie
+      POSTGRES_USER: asmovie_user
+      POSTGRES_PASSWORD: asmovie_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5433:5432'
+    networks:
+      - asmovie-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U asmovie_user -d asmovie']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # NestJS API
+  api:
+    build: .
+    container_name: asmovie-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '3001:3001'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - asmovie-network
+    volumes:
+      # Mount only essential source directories for hot reload
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./nest-cli.json:/app/nest-cli.json
+    command: >
+      sh -c "
+        echo 'Waiting for database to be ready...' &&
+        npx prisma migrate deploy &&
+        echo 'Migrations applied. Starting development server...' &&
+        echo 'To run seed: docker exec asmovie-api npx prisma db seed' &&
+        npm run start:dev
+      "
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  asmovie-network:
+    driver: bridge

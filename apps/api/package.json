@@ -27,7 +27,14 @@
     "lint:check": "eslint \"{src,prisma}/**/*.ts\"",
     "lint:format": "npm run lint && npm run format",
     "lint:fix-safe": "eslint \"{src,prisma}/**/*.ts\" --fix --fix-type suggestion",
-    "lint:check-unused": "npm run lint:check 2>&1 | grep 'no-unused-vars' && echo '' || echo 'No unused variables found!'"
+    "lint:check-unused": "npm run lint:check 2>&1 | grep 'no-unused-vars' && echo '' || echo 'No unused variables found!'",
+    "docker:up": "npm run docker:kill-port && docker-compose up --build",
+    "docker:up:detached": "npm run docker:kill-port && docker-compose up --build -d",
+    "docker:down": "docker-compose down",
+    "docker:clean": "docker-compose down -v --rmi all",
+    "docker:logs": "docker-compose logs -f",
+    "docker:restart": "docker-compose restart api",
+    "docker:kill-port": "lsof -ti:3001 | xargs kill -9 2>/dev/null || echo 'Port 3001 is free'; lsof -ti:5433 | xargs kill -9 2>/dev/null || echo 'Port 5433 is free'"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
