@@ -27,8 +27,9 @@ body:json {
 tests {
   test("should create movie with JWT auth", function() {
     expect(res.getStatus()).to.equal(201);
-    expect(res.getBody()).to.have.property('id');
-    expect(res.getBody()).to.have.property('title');
-    expect(res.getBody().title).to.equal('Test Movie with JWT');
+    expect(res.getBody()).to.have.property('data');
+    expect(res.getBody().data).to.have.property('id');
+    expect(res.getBody().data).to.have.property('title');
+    expect(res.getBody().data.title).to.equal('Test Movie with JWT');
   });
 }

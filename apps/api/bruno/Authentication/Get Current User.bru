@@ -17,8 +17,9 @@ auth:bearer {
 tests {
   test("should get current user successfully", function() {
     expect(res.getStatus()).to.equal(200);
-    expect(res.getBody()).to.have.property('id');
-    expect(res.getBody()).to.have.property('email');
-    expect(res.getBody()).to.not.have.property('password');
+    expect(res.getBody()).to.have.property('data');
+    expect(res.getBody().data).to.have.property('id');
+    expect(res.getBody().data).to.have.property('email');
+    expect(res.getBody().data).to.not.have.property('password');
   });
 }

@@ -13,7 +13,7 @@ post {
 body:json {
   {
     "email": "john.doe@example.com",
-    "password": "SecurePassword123!",
+    "password": "TestPassword123!",
     "firstName": "John",
     "lastName": "Doe"
   }
@@ -22,10 +22,11 @@ body:json {
 tests {
   test("should register user successfully", function() {
     expect(res.getStatus()).to.equal(201);
-    expect(res.getBody()).to.have.property('user');
-    expect(res.getBody()).to.have.property('access_token');
-    expect(res.getBody().user).to.have.property('id');
-    expect(res.getBody().user).to.have.property('email');
-    expect(res.getBody().user).to.not.have.property('password');
+    expect(res.getBody()).to.have.property('data');
+    expect(res.getBody().data).to.have.property('user');
+    expect(res.getBody().data).to.have.property('accessToken');
+    expect(res.getBody().data.user).to.have.property('id');
+    expect(res.getBody().data.user).to.have.property('email');
+    expect(res.getBody().data.user).to.not.have.property('password');
   });
 }

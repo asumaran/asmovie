@@ -11,7 +11,7 @@ patch {
 }
 
 headers {
-  Authorization: Bearer {{api_token}}
+  X-API-Token: {{api_token}}
 }
 
 body:json {
@@ -45,7 +45,7 @@ docs {
   ## Authentication
   Requires API token in Authorization header:
   ```
-  Authorization: Bearer {{api_token}}
+  X-API-Token: {{api_token}}
   ```
   
   ## Response
