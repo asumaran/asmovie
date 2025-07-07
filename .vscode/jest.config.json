@@ -1,0 +1,9 @@
+{
+  "jestCommandLine": "npx jest",
+  "rootPath": ".",
+  "pathToJest": "npx jest",
+  "pathToConfig": "jest.config.js",
+  "enableInlineErrorMessages": true,
+  "runMode": "on-demand",
+  "debugMode": false
+}

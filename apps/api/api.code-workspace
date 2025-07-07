@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "path": "./apps/api"
+    }
+  ],
+  "settings": {
+    "jest.jestCommandLine": "npm test",
+    "jest.rootPath": ".",
+    "jest.pathToJest": "npx jest",
+    "jest.pathToConfig": "./jest.config.js",
+    "jest.runMode": "on-demand",
+    "jest.enableInlineErrorMessages": true,
+    "jest.debugMode": true,
+    "testing.automaticallyOpenPeekView": "never",
+    "testing.defaultGutterClickAction": "run",
+    "testing.gutterEnabled": true
+  }
+}

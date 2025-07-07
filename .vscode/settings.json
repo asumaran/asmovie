@@ -1,0 +1,59 @@
+{
+  // TypeScript
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  
+  // Editor
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  
+  // ESLint & Prettier
+  "eslint.workingDirectories": ["./apps/api"],
+  "prettier.configPath": "./apps/api/.prettierrc",
+  
+  // File associations
+  "files.associations": {
+    "*.bru": "http"
+  },
+  
+  // File nesting
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "$(capture).spec.ts, $(capture).test.ts, $(capture).d.ts",
+    "*.js": "$(capture).spec.js, $(capture).test.js, $(capture).d.ts",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
+    "tsconfig.json": "tsconfig.*.json, tsconfig.build.json",
+    "docker-compose.yml": "docker-compose.*.yml, Dockerfile*",
+    ".env": ".env.*, .env.local, .env.example"
+  },
+  
+  // Search and file exclusions
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.git": true,
+    "**/prisma/migrations": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true
+  },
+  
+  // Jest and Testing - Essential settings only
+  "jest.jestCommandLine": "npx jest",
+  "jest.rootPath": ".",
+  "jest.runMode": "on-demand",
+  "jest.pathToConfig": "jest.config.js",
+  "testing.defaultGutterClickAction": "run",
+  "testing.gutterEnabled": true,
+  
+  // Jest Runner - Essential settings only
+  "jestrunner.jestCommand": "npx jest",
+  "jestrunner.configPath": "jest.config.js"
+}

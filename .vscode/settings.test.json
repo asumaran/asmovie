@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "name": "Jest Tests",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm test",
+      "cwd": "${workspaceFolder}/apps/api",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
+  ]
+}

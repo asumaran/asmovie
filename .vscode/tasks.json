@@ -1,0 +1,330 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Start API Dev",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev:api"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": ".",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*webpack.*compiling.*",
+          "endsPattern": "^.*webpack.*compiled.*"
+        }
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "🚀 Start API with Bruno Sync",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev:api:sync"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": ".",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*webpack.*compiling.*",
+          "endsPattern": "^.*webpack.*compiled.*"
+        }
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "🌐 Start Client Dev",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev:client"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "🧪 Run All Tests",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:all"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "🧪 Run Unit Tests",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:unit"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "🧪 Run Integration Tests",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:integration"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "🧪 Run Current Test File",
+      "type": "shell",
+      "command": "npx",
+      "args": [
+        "jest",
+        "--runInBand",
+        "--no-cache",
+        "${relativeFile}",
+        "--config",
+        "jest.config.js"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/apps/api"
+      }
+    },
+    {
+      "label": "🧪 Run Test with Pattern",
+      "type": "shell",
+      "command": "npx",
+      "args": [
+        "jest",
+        "--runInBand",
+        "--no-cache",
+        "--testNamePattern",
+        "${input:testPattern}",
+        "--config",
+        "jest.config.js"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/apps/api"
+      }
+    },
+    {
+      "label": "🔄 Sync Bruno Token",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "sync-bruno-token"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "👀 Watch Bruno Sync",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "watch-bruno-sync"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "🗄️ Database: Seed Data",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "seed", "--workspace=asmovie-api"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "🗄️ Database: Run Migrations",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prisma", "migrate", "dev"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/apps/api"
+      }
+    },
+    {
+      "label": "🗄️ Database: Generate Prisma Client",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prisma", "generate"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/apps/api"
+      }
+    },
+    {
+      "label": "🧪 Jest: Discover Tests",
+      "type": "shell",
+      "command": "npm",
+      "args": ["test", "--", "--listTests"],
+      "group": "test",
+      "options": {
+        "cwd": "${workspaceFolder}/apps/api"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🧪 Jest: Clear Cache",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:clear-cache"],
+      "group": "test",
+      "options": {
+        "cwd": "${workspaceFolder}/apps/api"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "testPattern",
+      "description": "Test name pattern to run",
+      "default": "",
+      "type": "promptString"
+    }
+  ]
+}

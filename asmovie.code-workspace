@@ -1,0 +1,85 @@
+{
+  "folders": [
+    {
+      "name": "🎬 ASMovie (Root)",
+      "path": "."
+    },
+    {
+      "name": "🚀 API (NestJS)",
+      "path": "./apps/api"
+    },
+    {
+      "name": "🌐 Client",
+      "path": "./apps/client"
+    }
+  ],
+  "settings": {
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.includePackageJsonAutoImports": "on",
+    "typescript.suggest.autoImports": true,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "eslint.workingDirectories": [
+      "./apps/api"
+    ],
+    "prettier.configPath": "./apps/api/.prettierrc",
+    "files.associations": {
+      "*.bru": "http"
+    },
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.expand": false,
+    "explorer.fileNesting.patterns": {
+      "*.ts": "$(capture).spec.ts, $(capture).test.ts, $(capture).d.ts",
+      "*.js": "$(capture).spec.js, $(capture).test.js, $(capture).d.ts",
+      "*.tsx": "$(capture).spec.tsx, $(capture).test.tsx",
+      "*.jsx": "$(capture).spec.jsx, $(capture).test.jsx",
+      "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
+      "tsconfig.json": "tsconfig.*.json, tsconfig.build.json",
+      "docker-compose.yml": "docker-compose.*.yml, Dockerfile*",
+      ".env": ".env.*, .env.local, .env.example"
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/coverage": true,
+      "**/.git": true,
+      "**/.vscode": true
+    },
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/coverage": true
+    },
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false,
+    "git.autofetch": true,
+    "emmet.includeLanguages": {
+      "typescript": "html",
+      "javascript": "html"
+    },
+    "debug.internalConsoleOptions": "neverOpen",
+    "terminal.integrated.env.osx": {
+      "NODE_ENV": "development"
+    },
+    "terminal.integrated.env.linux": {
+      "NODE_ENV": "development"
+    },
+    "terminal.integrated.env.windows": {
+      "NODE_ENV": "development"
+    },
+    "jest.rootPath": ".",
+    "jest.jestCommandLine": "npx jest",
+    "jest.pathToJest": "npx jest",
+    "jest.pathToConfig": "jest.config.js",
+    "jest.runMode": "on-demand",
+    "jest.enableInlineErrorMessages": true,
+    "jest.debugMode": false,
+    "testing.automaticallyOpenPeekView": "never",
+    "testing.defaultGutterClickAction": "run",
+    "testing.gutterEnabled": true
+  },
+}
