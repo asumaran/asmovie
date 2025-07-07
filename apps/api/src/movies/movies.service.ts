@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../common/prisma.service';
 import { QueryBuilderService } from '../common/services/query-builder.service';
 import { TransactionService } from '../common/services/transaction.service';
@@ -23,6 +24,7 @@ export class MoviesService {
     private readonly prisma: PrismaService,
     private readonly queryBuilder: QueryBuilderService,
     private readonly transactionService: TransactionService,
+    private readonly configService: ConfigService,
   ) {}
 
   async create(createMovieDto: CreateMovieDto) {
@@ -42,9 +44,14 @@ export class MoviesService {
   async findAll(
     filters: MovieFilterDto,
     page: number = 1,
-    limit: number = 10,
+    limit?: number,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<PaginatedResponse<any>> {
+    const defaultLimit = this.configService.get<number>(
+      'pagination.defaultLimit',
+      10,
+    );
+    const effectiveLimit = limit ?? defaultLimit;
     const where = this.queryBuilder.buildMovieWhere({
       search: filters.search,
       genre: filters.genre,
@@ -66,7 +73,7 @@ export class MoviesService {
 
     const queryOptions = this.queryBuilder.buildPaginatedQuery({
       page,
-      limit,
+      limit: effectiveLimit,
       include,
       where,
       orderBy,
@@ -77,7 +84,7 @@ export class MoviesService {
       this.prisma.movie.count({ where }),
     ]);
 
-    const meta = PaginationHelper.createMeta(page, limit, total);
+    const meta = PaginationHelper.createMeta(page, effectiveLimit, total);
     return PaginationHelper.createResponse(movies, meta);
   }
 

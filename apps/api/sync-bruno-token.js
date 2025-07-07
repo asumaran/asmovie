@@ -68,7 +68,9 @@ function main() {
 
   const apiSecret = getApiSecret();
   if (!apiSecret) {
-    console.error('❌ API_SECRET not found in environment variables or .env file');
+    console.error(
+      '❌ API_SECRET not found in environment variables or .env file',
+    );
     process.exit(1);
   }
 
