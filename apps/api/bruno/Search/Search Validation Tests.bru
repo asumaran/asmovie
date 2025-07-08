@@ -1,0 +1,67 @@
+meta {
+  name: Search Validation Tests
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{api_url}}/search
+  body: none
+  auth: none
+}
+
+params:query {
+  ~q: 
+  ~sortBy: invalid
+  ~sortOrder: invalid
+  ~page: 0
+  ~limit: 25
+}
+
+docs {
+  # Search Validation Tests
+  
+  Test validation rules for search endpoint parameters.
+  
+  ## Validation Rules
+  - `q`: Required, cannot be empty
+  - `sortBy`: Optional, must be one of: title, name, rating, releaseYear, createdAt
+  - `sortOrder`: Optional, must be one of: asc, desc
+  - `page`: Optional, must be >= 1
+  - `limit`: Optional, must be one of: 5, 10, 15, 20
+  
+  ## Test Cases
+  To test validation, uncomment one parameter at a time:
+  
+  ### Missing/Empty Query
+  ```
+  GET /search
+  GET /search?q=
+  ```
+  Expected: 400 Bad Request - "q should not be empty"
+  
+  
+  ### Invalid Sort By
+  ```
+  GET /search?q=test&sortBy=invalid
+  ```
+  Expected: 400 Bad Request - "sortBy must be one of the following values: title, name, rating, releaseYear, createdAt"
+  
+  ### Invalid Sort Order
+  ```
+  GET /search?q=test&sortOrder=invalid
+  ```
+  Expected: 400 Bad Request - "sortOrder must be one of the following values: asc, desc"
+  
+  ### Invalid Page
+  ```
+  GET /search?q=test&page=0
+  ```
+  Expected: 400 Bad Request - "page must not be less than 1"
+  
+  ### Invalid Limit
+  ```
+  GET /search?q=test&limit=25
+  ```
+  Expected: 400 Bad Request - "limit must be one of the following values: 5, 10, 15, 20"
+}

@@ -1,0 +1,44 @@
+meta {
+  name: Search with Name Sort
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api_url}}/search
+  body: none
+  auth: none
+}
+
+params:query {
+  q: robert
+  sortBy: name
+  sortOrder: asc
+  ~page: 1
+  ~limit: 10
+}
+
+docs {
+  # Search with Name Sort
+  
+  Search for movies and actors with sorting by name/title.
+  
+  ## Query Parameters
+  - `q` (required): Search query string (searches titles, descriptions, names, biographies)
+  - `sortBy` (fixed): name - sort by name (actors) or title (movies)
+  - `sortOrder` (optional): Sort order - asc, desc (default: desc)
+  - `page` (optional): Page number for pagination (default: 1)
+  - `limit` (optional): Number of items per page - 5, 10, 15, 20 (default: 10)
+  
+  ## Response
+  Returns a paginated response with:
+  - Movies sorted by title
+  - Actors sorted by name
+  - Each result includes type indicator ("movie" or "actor")
+  
+  ## Example
+  ```
+  GET /search?q=robert&sortBy=name&sortOrder=asc
+  GET /search?q=robert&sortBy=title&sortOrder=desc
+  ```
+}

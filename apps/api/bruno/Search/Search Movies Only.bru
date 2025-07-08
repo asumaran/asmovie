@@ -1,0 +1,44 @@
+meta {
+  name: Search with Rating Sort
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/search
+  body: none
+  auth: none
+}
+
+params:query {
+  q: action
+  sortBy: rating
+  sortOrder: desc
+  ~page: 1
+  ~limit: 10
+}
+
+docs {
+  # Search with Rating Sort
+  
+  Search for movies and actors with sorting by rating (applies only to movies).
+  
+  ## Query Parameters
+  - `q` (required): Search query string (searches titles, descriptions, names, biographies)
+  - `sortBy` (fixed): rating - sort by average rating (only applies to movies)
+  - `sortOrder` (optional): Sort order - asc, desc (default: desc)
+  - `page` (optional): Page number for pagination (default: 1)
+  - `limit` (optional): Number of items per page - 5, 10, 15, 20 (default: 10)
+  
+  ## Response
+  Returns a paginated response with:
+  - Movies sorted by average rating
+  - Actors appear in the results but are not affected by rating sort
+  - Each result includes type indicator ("movie" or "actor")
+  
+  ## Example
+  ```
+  GET /search?q=action&sortBy=rating&sortOrder=desc
+  GET /search?q=action&sortBy=rating&sortOrder=asc
+  ```
+}

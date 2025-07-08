@@ -1,0 +1,50 @@
+meta {
+  name: Search Paginated
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_url}}/search
+  body: none
+  auth: none
+}
+
+params:query {
+  q: the
+  page: 2
+  limit: 5
+  ~sortBy: title
+  ~sortOrder: asc
+}
+
+docs {
+  # Search with Pagination
+  
+  Search with specific pagination parameters to test different page sizes and navigation.
+  
+  ## Query Parameters
+  - `q` (required): Search query string
+  - `page` (optional): Page number for pagination (default: 1)
+  - `limit` (optional): Number of items per page - 5, 10, 15, 20 (default: 10)
+  - `sortBy` (optional): Sort field - title, name, rating, releaseYear, createdAt (default: createdAt)
+  - `sortOrder` (optional): Sort order - asc, desc (default: desc)
+  
+  ## Response
+  Returns a paginated response with:
+  - `data`: Array of search result objects
+  - `meta`: Pagination metadata
+    - `page`: Current page number
+    - `limit`: Items per page
+    - `total`: Total number of results
+    - `totalPages`: Total number of pages
+    - `hasNext`: Whether there are more pages
+    - `hasPrev`: Whether there are previous pages
+  
+  ## Example
+  ```
+  GET /search?q=the&page=2&limit=5
+  GET /search?q=the&page=1&limit=20
+  GET /search?q=the&page=3&limit=10
+  ```
+}
