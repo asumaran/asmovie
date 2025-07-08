@@ -80,6 +80,7 @@
     "jest.debugMode": false,
     "testing.automaticallyOpenPeekView": "never",
     "testing.defaultGutterClickAction": "run",
-    "testing.gutterEnabled": true
+    "testing.gutterEnabled": true,
+    "typescript.tsdk": "🎬 ASMovie (Root)/node_modules/typescript/lib"
   },
 }
