@@ -11,7 +11,7 @@
     "start:debug": "nest start --debug --watch",
     "start:dev": "nest start --watch",
     "start:dev:sync": "npm run sync-bruno-token && npm run start:dev",
-    "start:prod": "node dist/main",
+    "start:prod": "npm run validate-env && node dist/src/main.js",
     "seed": "tsx prisma/seed.ts",
     "sync-bruno-token": "node sync-bruno-token.js",
     "watch-bruno-sync": "node watch-bruno-sync.js",
@@ -35,7 +35,14 @@
     "docker:clean": "docker-compose down -v --rmi all",
     "docker:logs": "docker-compose logs -f",
     "docker:restart": "docker-compose restart api",
-    "docker:kill-port": "lsof -ti:3001 | xargs kill -9 2>/dev/null || echo 'Port 3001 is free'; lsof -ti:5433 | xargs kill -9 2>/dev/null || echo 'Port 5433 is free'"
+    "docker:kill-port": "lsof -ti:3001 | xargs kill -9 2>/dev/null || echo 'Port 3001 is free'; lsof -ti:5433 | xargs kill -9 2>/dev/null || echo 'Port 5433 is free'",
+    "deploy:aws": "./deploy-one-click.sh",
+    "deploy:aws:force": "./deploy-one-click.sh --force-recreate",
+    "deploy:aws:destroy": "cd infrastructure && npm run destroy",
+    "deploy:check": "./check-deploy-status.sh",
+    "deploy:update": "./update-remote-code.sh",
+    "bruno:update-production": "node update-bruno-environment.js",
+    "validate-env": "node validate-env.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
