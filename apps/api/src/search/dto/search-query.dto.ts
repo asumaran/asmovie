@@ -25,6 +25,7 @@ export class SearchQueryDto {
     'director',
     'budget',
     'boxOffice',
+    'nationality',
   ])
   sortBy?: string;
 

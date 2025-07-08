@@ -10,6 +10,8 @@ export class SearchItemDto {
   biography?: string;
   releaseYear?: number;
   birthDate?: Date;
+  placeOfBirth?: string;
+  nationality?: string;
   genre?: string;
   duration?: number;
   budget?: number;

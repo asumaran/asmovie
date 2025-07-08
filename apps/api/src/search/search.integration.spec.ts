@@ -89,7 +89,7 @@ describe('Search Integration Tests', () => {
 
       expect(response.body.success).toBe(false);
       expect(response.body.message).toContain(
-        'sortBy must be one of the following values: title, name, rating, releaseYear, createdAt, director, budget, boxOffice',
+        'sortBy must be one of the following values: title, name, rating, releaseYear, createdAt, director, budget, boxOffice, nationality',
       );
     });
 

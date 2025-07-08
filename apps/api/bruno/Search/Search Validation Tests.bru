@@ -25,7 +25,7 @@ docs {
   
   ## Validation Rules
   - `q`: Required, cannot be empty
-  - `sortBy`: Optional, must be one of: title, name, rating, releaseYear, createdAt, director, budget, boxOffice
+  - `sortBy`: Optional, must be one of: title, name, rating, releaseYear, createdAt, director, budget, boxOffice, nationality
   - `sortOrder`: Optional, must be one of: asc, desc
   - `page`: Optional, must be >= 1
   - `limit`: Optional, must be one of: 5, 10, 15, 20
@@ -45,7 +45,7 @@ docs {
   ```
   GET /search?q=test&sortBy=invalid
   ```
-  Expected: 400 Bad Request - "sortBy must be one of the following values: title, name, rating, releaseYear, createdAt, director, budget, boxOffice"
+  Expected: 400 Bad Request - "sortBy must be one of the following values: title, name, rating, releaseYear, createdAt, director, budget, boxOffice, nationality"
   
   ### Invalid Sort Order
   ```

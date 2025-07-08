@@ -21,6 +21,18 @@ export class CreateActorDto {
 
   @IsOptional()
   @IsString()
+  placeOfBirth?: string;
+
+  @IsOptional()
+  @IsString()
+  nationality?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
   biography?: string;
 }
 
@@ -36,6 +48,18 @@ export class UpdateActorDto {
 
   @IsOptional()
   @IsString()
+  placeOfBirth?: string;
+
+  @IsOptional()
+  @IsString()
+  nationality?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
   biography?: string;
 }
 
@@ -46,7 +70,7 @@ export class ActorFilterDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['name', 'createdAt', 'birthDate'])
+  @IsIn(['name', 'createdAt', 'birthDate', 'nationality'])
   sortBy?: string;
 
   @IsOptional()
@@ -63,7 +87,7 @@ export class ActorQueryDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['name', 'createdAt', 'birthDate'])
+  @IsIn(['name', 'createdAt', 'birthDate', 'nationality'])
   sortBy?: string;
 
   @IsOptional()

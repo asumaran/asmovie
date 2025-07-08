@@ -1,0 +1,46 @@
+meta {
+  name: Search Sorted by Nationality
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{api_url}}/search
+  body: none
+  auth: none
+}
+
+params:query {
+  q: american
+  sortBy: nationality
+  sortOrder: asc
+  ~page: 1
+  ~limit: 10
+}
+
+docs {
+  # Search Sorted by Nationality
+  
+  Search for movies and actors sorted by nationality (only affects actors).
+  Note: Movies don't have nationality, so they appear in results but are not affected by nationality sort.
+  
+  ## Query Parameters
+  - `q` (required): Search query string
+  - `sortBy` (fixed): nationality - sort by actor nationality (only affects actors)
+  - `sortOrder` (optional): asc (A-Z) or desc (Z-A)
+  - `page` (optional): Page number for pagination (default: 1)
+  - `limit` (optional): Number of items per page - 5, 10, 15, 20 (default: 10)
+  
+  ## Response
+  Returns results sorted by nationality:
+  - Actors with nationality are sorted alphabetically
+  - Actors without nationality appear last
+  - Movies appear in results but are not affected by nationality sort
+  - Each result includes type indicator ("movie" or "actor")
+  
+  ## Example
+  ```
+  GET /search?q=american&sortBy=nationality&sortOrder=asc
+  GET /search?q=actor&sortBy=nationality&sortOrder=desc
+  ```
+}

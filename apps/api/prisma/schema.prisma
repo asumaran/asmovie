@@ -44,12 +44,15 @@ model Movie {
 }
 
 model Actor {
-  id        Int       @id @default(autoincrement())
-  name      String
-  birthDate DateTime?
-  biography String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id           Int       @id @default(autoincrement())
+  name         String    // Actor's name (keep existing)
+  birthDate    DateTime? // Existing birth date field
+  placeOfBirth String?   // Birth location
+  nationality  String?   // Actor's nationality
+  description  String?   // Small description
+  biography    String?   // Detailed biography
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   // Relationships
   movies MovieActor[]
@@ -57,6 +60,7 @@ model Actor {
   // Performance indexes
   @@index([name]) // For search optimization
   @@index([birthDate]) // For filtering by birth date
+  @@index([nationality]) // For filtering by nationality
   @@index([createdAt]) // For sorting by creation date
   @@map("actors")
 }

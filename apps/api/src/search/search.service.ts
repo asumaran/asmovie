@@ -70,7 +70,7 @@ export class SearchService {
       this.prisma.movie.findMany({
         where,
         include,
-        orderBy,
+        orderBy: orderBy as any,
         take: limit,
         skip: (page - 1) * limit,
       }),
@@ -92,14 +92,14 @@ export class SearchService {
       writers: movie.writers || undefined,
       director: movie.director || undefined,
       averageRating:
-        movie.ratings && movie.ratings.length > 0
-          ? movie.ratings.reduce((sum, rating) => sum + rating.rating, 0) /
-            movie.ratings.length
+        (movie as any).ratings && (movie as any).ratings.length > 0
+          ? (movie as any).ratings.reduce((sum: number, rating: any) => sum + rating.rating, 0) /
+            (movie as any).ratings.length
           : undefined,
       createdAt: movie.createdAt,
       updatedAt: movie.updatedAt,
-      actors: movie.actors
-        ? movie.actors.map((movieActor) => ({
+      actors: (movie as any).actors
+        ? (movie as any).actors.map((movieActor: any) => ({
             id: movieActor.actor.id,
             name: movieActor.actor.name,
             role: movieActor.role,
@@ -121,6 +121,9 @@ export class SearchService {
       OR: [
         { name: { contains: query, mode: 'insensitive' as const } },
         { biography: { contains: query, mode: 'insensitive' as const } },
+        { description: { contains: query, mode: 'insensitive' as const } },
+        { nationality: { contains: query, mode: 'insensitive' as const } },
+        { placeOfBirth: { contains: query, mode: 'insensitive' as const } },
       ],
     };
 
@@ -138,7 +141,7 @@ export class SearchService {
       this.prisma.actor.findMany({
         where,
         include,
-        orderBy,
+        orderBy: orderBy as any,
         take: limit,
         skip: (page - 1) * limit,
       }),
@@ -149,12 +152,15 @@ export class SearchService {
       id: actor.id,
       type: 'actor' as const,
       name: actor.name,
+      description: actor.description || undefined,
       biography: actor.biography || undefined,
       birthDate: actor.birthDate || undefined,
+      placeOfBirth: actor.placeOfBirth || undefined,
+      nationality: actor.nationality || undefined,
       createdAt: actor.createdAt,
       updatedAt: actor.updatedAt,
-      movies: actor.movies
-        ? actor.movies.map((movieActor) => ({
+      movies: (actor as any).movies
+        ? (actor as any).movies.map((movieActor: any) => ({
             id: movieActor.movie.id,
             title: movieActor.movie.title,
             role: movieActor.role,
@@ -170,19 +176,19 @@ export class SearchService {
 
     switch (sortBy) {
       case 'title':
-        return { title: order };
+        return { title: order as 'asc' | 'desc' };
       case 'releaseYear':
-        return { releaseYear: order };
+        return { releaseYear: order as 'asc' | 'desc' };
       case 'rating':
-        return { ratings: { _count: order } };
+        return { ratings: { _count: order as 'asc' | 'desc' } };
       case 'director':
-        return { director: order };
+        return { director: order as 'asc' | 'desc' };
       case 'budget':
-        return { budget: order };
+        return { budget: order as 'asc' | 'desc' };
       case 'boxOffice':
-        return { boxOffice: order };
+        return { boxOffice: order as 'asc' | 'desc' };
       case 'createdAt':
-        return { createdAt: order };
+        return { createdAt: order as 'asc' | 'desc' };
       default:
         return { createdAt: 'desc' as const };
     }
@@ -193,9 +199,13 @@ export class SearchService {
 
     switch (sortBy) {
       case 'name':
-        return { name: order };
+        return { name: order as 'asc' | 'desc' };
+      case 'nationality':
+        return { nationality: order as 'asc' | 'desc' };
+      case 'birthDate':
+        return { birthDate: order as 'asc' | 'desc' };
       case 'createdAt':
-        return { createdAt: order };
+        return { createdAt: order as 'asc' | 'desc' };
       default:
         return { createdAt: 'desc' as const };
     }
@@ -242,6 +252,10 @@ export class SearchService {
         case 'boxOffice':
           aValue = a.boxOffice || 0;
           bValue = b.boxOffice || 0;
+          break;
+        case 'nationality':
+          aValue = a.nationality || '';
+          bValue = b.nationality || '';
           break;
         case 'createdAt':
           aValue = a.createdAt;
