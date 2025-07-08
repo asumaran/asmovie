@@ -11,21 +11,75 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { searchMoviesAndActors } from '@/lib/data';
-import {
-  getCurrentPage,
-  getItemsPerPage,
-  paginateArray,
-} from '@/lib/pagination';
-import {
-  getSortValue,
-  SEARCH_SORT_OPTIONS,
-  sortSearchResults,
-} from '@/lib/sorting';
-import { Film, Search, User } from 'lucide-react';
+import { searchMoviesAndActors } from '@/lib/api';
+import { getCurrentPage, getItemsPerPage } from '@/lib/pagination';
+import { getSortValue, SEARCH_SORT_OPTIONS } from '@/lib/sorting';
+import { Film, Loader2, Search, User } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+function SearchLoadingSkeleton({ query, itemsPerPage }) {
+  return (
+    <div className="space-y-8">
+      {/* Loading message */}
+      <div className="text-center py-8">
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary mb-4" />
+        <h2 className="text-2xl font-semibold mb-2">Searching...</h2>
+        <p className="text-muted-foreground">
+          Finding movies and actors for "{query}"
+        </p>
+      </div>
+
+      {/* Controls skeleton */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="h-4 bg-muted rounded w-48 animate-pulse"></div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="h-8 bg-muted rounded w-40 animate-pulse"></div>
+          <div className="h-8 bg-muted rounded w-32 animate-pulse"></div>
+        </div>
+      </div>
+
+      {/* Grid skeleton */}
+      <div
+        className={`grid gap-6 ${
+          itemsPerPage === 5
+            ? 'md:grid-cols-2 lg:grid-cols-3'
+            : itemsPerPage === 10
+              ? 'md:grid-cols-2 lg:grid-cols-3'
+              : itemsPerPage === 15
+                ? 'md:grid-cols-3 lg:grid-cols-4'
+                : 'md:grid-cols-4 lg:grid-cols-5'
+        }`}
+      >
+        {Array.from({ length: itemsPerPage }).map((_, i) => (
+          <Card key={i} className="h-64 animate-pulse">
+            <CardHeader>
+              <div className="h-4 bg-muted rounded w-3/4"></div>
+              <div className="h-3 bg-muted rounded w-1/2"></div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="h-3 bg-muted rounded w-full"></div>
+                <div className="h-3 bg-muted rounded w-full"></div>
+                <div className="h-3 bg-muted rounded w-2/3"></div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Pagination skeleton */}
+      <div className="flex items-center justify-center space-x-2 mt-8">
+        <div className="h-8 bg-muted rounded w-20 animate-pulse"></div>
+        <div className="h-8 bg-muted rounded w-8 animate-pulse"></div>
+        <div className="h-8 bg-muted rounded w-8 animate-pulse"></div>
+        <div className="h-8 bg-muted rounded w-8 animate-pulse"></div>
+        <div className="h-8 bg-muted rounded w-20 animate-pulse"></div>
+      </div>
+    </div>
+  );
+}
 
 function SearchResults() {
   const searchParams = useSearchParams();
@@ -34,19 +88,80 @@ function SearchResults() {
   const itemsPerPage = getItemsPerPage(searchParams);
   const sortBy = getSortValue(searchParams, SEARCH_SORT_OPTIONS[0].value);
 
-  const { movies, actors } = searchMoviesAndActors(query);
-  const allResults = [
-    ...movies.map((movie) => ({ ...movie, type: 'movie' as const })),
-    ...actors.map((actor) => ({ ...actor, type: 'actor' as const })),
-  ];
+  const [searchResponse, setSearchResponse] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Sort results first, then paginate
-  const sortedResults = sortSearchResults(allResults, sortBy);
-  const { items: paginatedResults, totalPages } = paginateArray(
-    sortedResults,
-    currentPage,
-    itemsPerPage,
-  );
+  useEffect(() => {
+    async function performSearch() {
+      if (!query.trim()) {
+        setSearchResponse({
+          data: [],
+          meta: {
+            page: 1,
+            limit: itemsPerPage,
+            total: 0,
+            totalPages: 0,
+            hasNext: false,
+            hasPrev: false,
+          },
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await searchMoviesAndActors({
+          q: query,
+          page: currentPage,
+          limit: itemsPerPage,
+          sortBy: sortBy as
+            | 'title'
+            | 'name'
+            | 'rating'
+            | 'releaseYear'
+            | 'createdAt'
+            | 'director'
+            | 'budget'
+            | 'boxOffice'
+            | 'nationality',
+          sortOrder: 'desc',
+        });
+        setSearchResponse(response);
+      } catch (err) {
+        setError(err.message || 'An error occurred while searching');
+        setSearchResponse({
+          data: [],
+          meta: {
+            page: 1,
+            limit: itemsPerPage,
+            total: 0,
+            totalPages: 0,
+            hasNext: false,
+            hasPrev: false,
+          },
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    performSearch();
+  }, [query, currentPage, itemsPerPage, sortBy]);
+
+  const allResults = searchResponse?.data || [];
+  const totalPages = searchResponse?.meta?.totalPages || 1;
+  const total = searchResponse?.meta?.total || 0;
+
+  // Separate movies and actors for display stats - memoized to prevent infinite loops
+  const { movies, actors } = useMemo(() => {
+    const movies = allResults.filter((item) => item.type === 'movie');
+    const actors = allResults.filter((item) => item.type === 'actor');
+    return { movies, actors };
+  }, [allResults]);
 
   if (!query.trim()) {
     return (
@@ -57,6 +172,22 @@ function SearchResults() {
         </h2>
         <p className="text-muted-foreground">
           Please enter a search term to find movies and actors.
+        </p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return <SearchLoadingSkeleton query={query} itemsPerPage={itemsPerPage} />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-16">
+        <Search className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+        <h2 className="text-2xl font-semibold mb-2">Search Error</h2>
+        <p className="text-muted-foreground">
+          Failed to search for "{query}". Please try again.
         </p>
       </div>
     );
@@ -75,13 +206,12 @@ function SearchResults() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 search-results-container">
       {/* Search Summary */}
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-2">Search Results</h1>
         <p className="text-muted-foreground">
-          Found {allResults.length} result{allResults.length !== 1 ? 's' : ''}{' '}
-          for "{query}"
+          Found {total} result{total !== 1 ? 's' : ''} for "{query}"
         </p>
         <div className="flex items-center justify-center gap-4 mt-2 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
@@ -99,8 +229,7 @@ function SearchResults() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="text-sm text-muted-foreground">
           Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-          {Math.min(currentPage * itemsPerPage, allResults.length)} of{' '}
-          {allResults.length} results
+          {Math.min(currentPage * itemsPerPage, total)} of {total} results
         </div>
         <div className="flex flex-col sm:flex-row gap-4">
           <SortSelector
@@ -115,14 +244,16 @@ function SearchResults() {
       {/* Results Grid */}
       <div
         className={`grid gap-6 ${
-          itemsPerPage === 6
+          itemsPerPage === 5
             ? 'md:grid-cols-2 lg:grid-cols-3'
-            : itemsPerPage === 12
-              ? 'md:grid-cols-3 lg:grid-cols-4'
-              : 'md:grid-cols-4 lg:grid-cols-6'
+            : itemsPerPage === 10
+              ? 'md:grid-cols-2 lg:grid-cols-3'
+              : itemsPerPage === 15
+                ? 'md:grid-cols-3 lg:grid-cols-4'
+                : 'md:grid-cols-4 lg:grid-cols-5'
         }`}
       >
-        {paginatedResults.map((result, index) => {
+        {allResults.map((result, index) => {
           if (result.type === 'movie') {
             const movie = result;
             return (
@@ -138,46 +269,45 @@ function SearchResults() {
                           </Badge>
                         </div>
                         <CardTitle
-                          className={`${itemsPerPage === 24 ? 'text-lg' : 'text-xl'}`}
+                          className={`${itemsPerPage === 20 ? 'text-lg' : 'text-xl'}`}
                         >
                           {movie.title}
                         </CardTitle>
                         <CardDescription>
-                          {movie.year} • {movie.director}
+                          {movie.releaseYear} • {movie.director}
                         </CardDescription>
                       </div>
-                      <Badge variant="secondary">{movie.rating}</Badge>
+                      <Badge variant="secondary">
+                        {movie.averageRating?.toFixed(1) || 'N/A'}
+                      </Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <Badge variant="outline">{movie.genre}</Badge>
                       <p
-                        className={`text-sm text-muted-foreground ${itemsPerPage === 24 ? 'line-clamp-2' : ''}`}
+                        className={`text-sm text-muted-foreground ${itemsPerPage === 20 ? 'line-clamp-2' : ''}`}
                       >
-                        {movie.description}
+                        {movie.description || movie.plot}
                       </p>
-                      {itemsPerPage !== 24 && (
+                      {itemsPerPage !== 20 && movie.actors && (
                         <div>
                           <h4 className="font-semibold text-sm mb-2">Cast:</h4>
                           <div className="flex flex-wrap gap-1">
-                            {movie.cast &&
-                              movie.cast
-                                .slice(0, 3)
-                                .map((actor, actorIndex) => (
-                                  <Badge
-                                    key={actorIndex}
-                                    variant="outline"
-                                    className="text-xs"
-                                  >
-                                    {typeof actor === 'string'
-                                      ? actor
-                                      : actor.name}
-                                  </Badge>
-                                ))}
-                            {movie.cast && movie.cast.length > 3 && (
+                            {movie.actors
+                              .slice(0, 3)
+                              .map((actor, actorIndex) => (
+                                <Badge
+                                  key={actorIndex}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
+                                  {actor.name}
+                                </Badge>
+                              ))}
+                            {movie.actors.length > 3 && (
                               <Badge variant="outline" className="text-xs">
-                                +{movie.cast.length - 3} more
+                                +{movie.actors.length - 3} more
                               </Badge>
                             )}
                           </div>
@@ -203,51 +333,51 @@ function SearchResults() {
                           </Badge>
                         </div>
                         <CardTitle
-                          className={`${itemsPerPage === 24 ? 'text-lg' : 'text-xl'}`}
+                          className={`${itemsPerPage === 20 ? 'text-lg' : 'text-xl'}`}
                         >
                           {actor.name}
                         </CardTitle>
                         <CardDescription>
-                          {actor.nationality} • {actor.age} years old
+                          {actor.nationality} • {actor.placeOfBirth}
                         </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      <div>
-                        <h4 className="font-semibold text-sm mb-2">
-                          Known for:
-                        </h4>
-                        <div className="flex flex-wrap gap-1">
-                          {actor.knownFor &&
-                            actor.knownFor
-                              .slice(0, itemsPerPage === 24 ? 2 : 3)
+                      {actor.movies && (
+                        <div>
+                          <h4 className="font-semibold text-sm mb-2">
+                            Known for:
+                          </h4>
+                          <div className="flex flex-wrap gap-1">
+                            {actor.movies
+                              .slice(0, itemsPerPage === 20 ? 2 : 3)
                               .map((movie, movieIndex) => (
                                 <Badge
                                   key={movieIndex}
                                   variant="outline"
                                   className="text-xs"
                                 >
-                                  {movie}
+                                  {movie.title}
                                 </Badge>
                               ))}
-                          {actor.knownFor &&
-                            actor.knownFor.length >
-                              (itemsPerPage === 24 ? 2 : 3) && (
+                            {actor.movies.length >
+                              (itemsPerPage === 20 ? 2 : 3) && (
                               <Badge variant="outline" className="text-xs">
                                 +
-                                {actor.knownFor.length -
-                                  (itemsPerPage === 24 ? 2 : 3)}{' '}
+                                {actor.movies.length -
+                                  (itemsPerPage === 20 ? 2 : 3)}{' '}
                                 more
                               </Badge>
                             )}
+                          </div>
                         </div>
-                      </div>
+                      )}
                       <p
-                        className={`text-sm text-muted-foreground ${itemsPerPage === 24 ? 'line-clamp-2' : ''}`}
+                        className={`text-sm text-muted-foreground ${itemsPerPage === 20 ? 'line-clamp-2' : ''}`}
                       >
-                        {actor.bio}
+                        {actor.biography}
                       </p>
                     </div>
                   </CardContent>
@@ -272,16 +402,7 @@ function SearchResults() {
 export default function SearchPage() {
   return (
     <div className="container mx-auto py-8">
-      <Suspense
-        fallback={
-          <div className="text-center py-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Searching...</p>
-          </div>
-        }
-      >
-        <SearchResults />
-      </Suspense>
+      <SearchResults />
     </div>
   );
 }

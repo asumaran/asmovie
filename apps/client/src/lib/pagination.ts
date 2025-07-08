@@ -1,5 +1,5 @@
-export const DEFAULT_ITEMS_PER_PAGE = 6;
-export const ITEMS_PER_PAGE_OPTIONS = [6, 12, 24] as const;
+export const DEFAULT_ITEMS_PER_PAGE = 10;
+export const ITEMS_PER_PAGE_OPTIONS = [5, 10, 15, 20] as const;
 
 export function paginateArray<T>(
   array: T[],

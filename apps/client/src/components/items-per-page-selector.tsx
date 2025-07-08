@@ -25,7 +25,7 @@ export function ItemsPerPageSelector({
     const newParams = new URLSearchParams(searchParams);
 
     // Set the new per_page value
-    if (value === '6') {
+    if (value === '10') {
       newParams.delete('per_page'); // Default value, no need to store in URL
     } else {
       newParams.set('per_page', value);
@@ -48,9 +48,10 @@ export function ItemsPerPageSelector({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="6">6</SelectItem>
-          <SelectItem value="12">12</SelectItem>
-          <SelectItem value="24">24</SelectItem>
+          <SelectItem value="5">5</SelectItem>
+          <SelectItem value="10">10</SelectItem>
+          <SelectItem value="15">15</SelectItem>
+          <SelectItem value="20">20</SelectItem>
         </SelectContent>
       </Select>
       <span className="text-sm text-muted-foreground">per page</span>

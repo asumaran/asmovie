@@ -1,6 +1,9 @@
-import Link from 'next/link';
+'use client';
+
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
 
 interface PaginationProps {
   currentPage: number;
@@ -15,6 +18,10 @@ export function Pagination({
   baseUrl,
   searchParams,
 }: PaginationProps) {
+  const router = useRouter();
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   if (totalPages <= 1) return null;
 
   const createPageUrl = (page: number) => {
@@ -26,6 +33,16 @@ export function Pagination({
     }
     const queryString = params.toString();
     return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page === currentPage || isTransitioning) return;
+    
+    setIsTransitioning(true);
+    const url = createPageUrl(page);
+    
+    router.push(url, { scroll: false });
+    setIsTransitioning(false);
   };
 
   const getVisiblePages = () => {
@@ -63,14 +80,18 @@ export function Pagination({
   return (
     <div className="flex items-center justify-center space-x-2 mt-8">
       {/* Previous Button */}
-      <Button variant="outline" size="sm" asChild disabled={currentPage === 1}>
-        <Link
-          href={createPageUrl(currentPage - 1)}
-          className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-        >
+      <Button 
+        variant="outline" 
+        size="sm" 
+        disabled={currentPage === 1 || isTransitioning}
+        onClick={() => handlePageChange(currentPage - 1)}
+      >
+        {isTransitioning ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
           <ChevronLeft className="h-4 w-4" />
-          Previous
-        </Link>
+        )}
+        Previous
       </Button>
 
       {/* Page Numbers */}
@@ -95,10 +116,10 @@ export function Pagination({
               key={pageNumber}
               variant={isActive ? 'default' : 'outline'}
               size="sm"
-              asChild
-              className={isActive ? '' : ''}
+              onClick={() => handlePageChange(pageNumber)}
+              disabled={isActive || isTransitioning}
             >
-              <Link href={createPageUrl(pageNumber)}>{pageNumber}</Link>
+              {pageNumber}
             </Button>
           );
         })}
@@ -108,18 +129,15 @@ export function Pagination({
       <Button
         variant="outline"
         size="sm"
-        asChild
-        disabled={currentPage === totalPages}
+        disabled={currentPage === totalPages || isTransitioning}
+        onClick={() => handlePageChange(currentPage + 1)}
       >
-        <Link
-          href={createPageUrl(currentPage + 1)}
-          className={
-            currentPage === totalPages ? 'pointer-events-none opacity-50' : ''
-          }
-        >
-          Next
+        Next
+        {isTransitioning ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
           <ChevronRight className="h-4 w-4" />
-        </Link>
+        )}
       </Button>
     </div>
   );

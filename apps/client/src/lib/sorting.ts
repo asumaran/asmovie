@@ -22,10 +22,13 @@ export const ACTOR_SORT_OPTIONS: SortOption[] = [
 
 // Search sorting options
 export const SEARCH_SORT_OPTIONS: SortOption[] = [
-  { value: 'relevance', label: 'Most Relevant' },
-  { value: 'rating-desc', label: 'Highest Rated' },
-  { value: 'year-desc', label: 'Newest First' },
-  { value: 'title-asc', label: 'A to Z' },
+  { value: 'createdAt', label: 'Most Relevant' },
+  { value: 'rating', label: 'Highest Rated' },
+  { value: 'releaseYear', label: 'Newest First' },
+  { value: 'title', label: 'A to Z' },
+  { value: 'name', label: 'Name' },
+  { value: 'director', label: 'Director' },
+  { value: 'nationality', label: 'Nationality' },
 ];
 
 export function getSortValue(

@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/navbar';
 import { ThemeProvider } from '@/components/theme-provider';
+import QueryProvider from '@/lib/query-client';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import type React from 'react';
@@ -24,15 +25,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar />
-          {children}
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            {children}
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
