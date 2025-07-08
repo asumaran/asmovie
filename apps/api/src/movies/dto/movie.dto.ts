@@ -6,6 +6,7 @@ import {
   Max,
   IsIn,
   IsNumber,
+  IsDecimal,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -16,6 +17,10 @@ export class CreateMovieDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  plot?: string;
 
   @IsInt()
   @Min(1900)
@@ -30,6 +35,30 @@ export class CreateMovieDto {
   @Min(1)
   @Type(() => Number)
   duration: number; // in minutes
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  budget?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  boxOffice?: number;
+
+  @IsOptional()
+  @IsString()
+  awards?: string;
+
+  @IsOptional()
+  @IsString()
+  writers?: string;
+
+  @IsOptional()
+  @IsString()
+  director?: string;
 }
 
 export class UpdateMovieDto {
@@ -40,6 +69,10 @@ export class UpdateMovieDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  plot?: string;
 
   @IsOptional()
   @IsInt()
@@ -57,6 +90,30 @@ export class UpdateMovieDto {
   @Min(1)
   @Type(() => Number)
   duration?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  budget?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  boxOffice?: number;
+
+  @IsOptional()
+  @IsString()
+  awards?: string;
+
+  @IsOptional()
+  @IsString()
+  writers?: string;
+
+  @IsOptional()
+  @IsString()
+  director?: string;
 }
 
 export class AddActorToMovieDto {
@@ -98,7 +155,15 @@ export class MovieFilterDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['title', 'releaseYear', 'createdAt', 'genre'])
+  @IsIn([
+    'title',
+    'releaseYear',
+    'createdAt',
+    'genre',
+    'director',
+    'budget',
+    'boxOffice',
+  ])
   sortBy?: string;
 
   @IsOptional()
@@ -138,7 +203,15 @@ export class MovieQueryDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['title', 'releaseYear', 'createdAt', 'genre'])
+  @IsIn([
+    'title',
+    'releaseYear',
+    'createdAt',
+    'genre',
+    'director',
+    'budget',
+    'boxOffice',
+  ])
   sortBy?: string;
 
   @IsOptional()

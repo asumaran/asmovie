@@ -17,9 +17,15 @@ model Movie {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
+  plot        String?
   releaseYear Int
   genre       String
   duration    Int // in minutes
+  budget      Decimal? // movie budget
+  boxOffice   Decimal? // box office earnings
+  awards      String? // awards and nominations
+  writers     String? // writers (comma-separated)
+  director    String? // director name
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -31,6 +37,7 @@ model Movie {
   @@index([title]) // For search optimization
   @@index([genre]) // For filtering by genre
   @@index([releaseYear]) // For filtering/sorting by year
+  @@index([director]) // For filtering by director
   @@index([title, genre]) // For combined search and filter
   @@index([createdAt]) // For sorting by creation date
   @@map("movies")

@@ -77,9 +77,10 @@ describe('Search Integration Tests', () => {
         .expect(400);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toContain('limit must be one of the following values: 5, 10, 15, 20');
+      expect(response.body.message).toContain(
+        'limit must be one of the following values: 5, 10, 15, 20',
+      );
     });
-
 
     it('should return 400 when sortBy is invalid', async () => {
       const response = await request(app.getHttpServer())
@@ -87,7 +88,9 @@ describe('Search Integration Tests', () => {
         .expect(400);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toContain('sortBy must be one of the following values: title, name, rating, releaseYear, createdAt');
+      expect(response.body.message).toContain(
+        'sortBy must be one of the following values: title, name, rating, releaseYear, createdAt, director, budget, boxOffice',
+      );
     });
 
     it('should return 400 when sortOrder is invalid', async () => {
@@ -96,7 +99,9 @@ describe('Search Integration Tests', () => {
         .expect(400);
 
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toContain('sortOrder must be one of the following values: asc, desc');
+      expect(response.body.message).toContain(
+        'sortOrder must be one of the following values: asc, desc',
+      );
     });
 
     it('should return empty results when no matches found', async () => {
@@ -180,8 +185,12 @@ describe('Search Integration Tests', () => {
 
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveLength(2);
-      expect(response.body.data.some((item: any) => item.type === 'movie')).toBe(true);
-      expect(response.body.data.some((item: any) => item.type === 'actor')).toBe(true);
+      expect(
+        response.body.data.some((item: any) => item.type === 'movie'),
+      ).toBe(true);
+      expect(
+        response.body.data.some((item: any) => item.type === 'actor'),
+      ).toBe(true);
     });
 
     it('should apply pagination correctly', async () => {
@@ -320,14 +329,18 @@ describe('Search Integration Tests', () => {
 
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveLength(2);
-      
-      const movieResult = response.body.data.find((item: any) => item.type === 'movie');
-      const actorResult = response.body.data.find((item: any) => item.type === 'actor');
-      
+
+      const movieResult = response.body.data.find(
+        (item: any) => item.type === 'movie',
+      );
+      const actorResult = response.body.data.find(
+        (item: any) => item.type === 'actor',
+      );
+
       expect(movieResult.actors).toHaveLength(1);
       expect(movieResult.actors[0].name).toBe('Connected Actor');
       expect(movieResult.actors[0].role).toBe('Main Character');
-      
+
       expect(actorResult.movies).toHaveLength(1);
       expect(actorResult.movies[0].title).toBe('Connected Movie');
       expect(actorResult.movies[0].role).toBe('Main Character');

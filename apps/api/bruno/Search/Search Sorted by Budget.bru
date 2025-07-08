@@ -1,0 +1,46 @@
+meta {
+  name: Search Sorted by Budget
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{api_url}}/search
+  body: none
+  auth: none
+}
+
+params:query {
+  q: movie
+  sortBy: budget
+  sortOrder: desc
+  ~page: 1
+  ~limit: 10
+}
+
+docs {
+  # Search Sorted by Budget
+  
+  Search for movies and actors sorted by budget (only affects movies).
+  Note: Actors don't have budgets, so they appear in results but are not affected by budget sort.
+  
+  ## Query Parameters
+  - `q` (required): Search query string
+  - `sortBy` (fixed): budget - sort by movie budget (only affects movies)
+  - `sortOrder` (optional): desc (highest budget first) or asc (lowest budget first)
+  - `page` (optional): Page number for pagination (default: 1)
+  - `limit` (optional): Number of items per page - 5, 10, 15, 20 (default: 10)
+  
+  ## Response
+  Returns results sorted by budget:
+  - Movies with higher budgets appear first (desc order)
+  - Movies without budgets appear last
+  - Actors appear in results but are not affected by budget sort
+  - Each result includes type indicator ("movie" or "actor")
+  
+  ## Example
+  ```
+  GET /search?q=movie&sortBy=budget&sortOrder=desc
+  GET /search?q=movie&sortBy=budget&sortOrder=asc
+  ```
+}

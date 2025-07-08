@@ -14,10 +14,18 @@ export class SearchQueryDto {
   @IsNotEmpty()
   q: string;
 
-
   @IsOptional()
   @IsString()
-  @IsIn(['title', 'name', 'rating', 'releaseYear', 'createdAt'])
+  @IsIn([
+    'title',
+    'name',
+    'rating',
+    'releaseYear',
+    'createdAt',
+    'director',
+    'budget',
+    'boxOffice',
+  ])
   sortBy?: string;
 
   @IsOptional()

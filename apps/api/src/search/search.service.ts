@@ -17,16 +17,18 @@ export class SearchService {
     private readonly configService: ConfigService,
   ) {}
 
-  async search(query: SearchQueryDto): Promise<PaginatedResponse<SearchItemDto>> {
+  async search(
+    query: SearchQueryDto,
+  ): Promise<PaginatedResponse<SearchItemDto>> {
     const { q, sortBy, sortOrder, page = 1, limit = 10 } = query;
 
     // Always search both movies and actors
     const movieResults = await this.searchMovies(q, sortBy, sortOrder, 1, 1000);
     const actorResults = await this.searchActors(q, sortBy, sortOrder, 1, 1000);
-    
+
     const allResults = [...movieResults.data, ...actorResults.data];
     const total = movieResults.total + actorResults.total;
-    
+
     const sortedResults = this.sortResults(allResults, sortBy, sortOrder);
     const paginatedResults = this.paginateResults(sortedResults, page, limit);
 
@@ -45,7 +47,11 @@ export class SearchService {
       OR: [
         { title: { contains: query, mode: 'insensitive' as const } },
         { description: { contains: query, mode: 'insensitive' as const } },
+        { plot: { contains: query, mode: 'insensitive' as const } },
         { genre: { contains: query, mode: 'insensitive' as const } },
+        { director: { contains: query, mode: 'insensitive' as const } },
+        { writers: { contains: query, mode: 'insensitive' as const } },
+        { awards: { contains: query, mode: 'insensitive' as const } },
       ],
     };
 
@@ -76,19 +82,29 @@ export class SearchService {
       type: 'movie' as const,
       title: movie.title,
       description: movie.description || undefined,
+      plot: movie.plot || undefined,
       releaseYear: movie.releaseYear,
       genre: movie.genre,
       duration: movie.duration,
-      averageRating: movie.ratings && movie.ratings.length > 0 
-        ? movie.ratings.reduce((sum, rating) => sum + rating.rating, 0) / movie.ratings.length
-        : undefined,
+      budget: movie.budget ? Number(movie.budget) : undefined,
+      boxOffice: movie.boxOffice ? Number(movie.boxOffice) : undefined,
+      awards: movie.awards || undefined,
+      writers: movie.writers || undefined,
+      director: movie.director || undefined,
+      averageRating:
+        movie.ratings && movie.ratings.length > 0
+          ? movie.ratings.reduce((sum, rating) => sum + rating.rating, 0) /
+            movie.ratings.length
+          : undefined,
       createdAt: movie.createdAt,
       updatedAt: movie.updatedAt,
-      actors: movie.actors ? movie.actors.map((movieActor) => ({
-        id: movieActor.actor.id,
-        name: movieActor.actor.name,
-        role: movieActor.role,
-      })) : [],
+      actors: movie.actors
+        ? movie.actors.map((movieActor) => ({
+            id: movieActor.actor.id,
+            name: movieActor.actor.name,
+            role: movieActor.role,
+          }))
+        : [],
     }));
 
     return { data, total };
@@ -137,11 +153,13 @@ export class SearchService {
       birthDate: actor.birthDate || undefined,
       createdAt: actor.createdAt,
       updatedAt: actor.updatedAt,
-      movies: actor.movies ? actor.movies.map((movieActor) => ({
-        id: movieActor.movie.id,
-        title: movieActor.movie.title,
-        role: movieActor.role,
-      })) : [],
+      movies: actor.movies
+        ? actor.movies.map((movieActor) => ({
+            id: movieActor.movie.id,
+            title: movieActor.movie.title,
+            role: movieActor.role,
+          }))
+        : [],
     }));
 
     return { data, total };
@@ -149,16 +167,22 @@ export class SearchService {
 
   private buildMovieOrderBy(sortBy?: string, sortOrder?: string) {
     const order = sortOrder === 'desc' ? 'desc' : 'asc';
-    
+
     switch (sortBy) {
       case 'title':
-        return { title: order as 'asc' | 'desc' };
+        return { title: order };
       case 'releaseYear':
-        return { releaseYear: order as 'asc' | 'desc' };
+        return { releaseYear: order };
       case 'rating':
-        return { ratings: { _count: order as 'asc' | 'desc' } };
+        return { ratings: { _count: order } };
+      case 'director':
+        return { director: order };
+      case 'budget':
+        return { budget: order };
+      case 'boxOffice':
+        return { boxOffice: order };
       case 'createdAt':
-        return { createdAt: order as 'asc' | 'desc' };
+        return { createdAt: order };
       default:
         return { createdAt: 'desc' as const };
     }
@@ -166,18 +190,22 @@ export class SearchService {
 
   private buildActorOrderBy(sortBy?: string, sortOrder?: string) {
     const order = sortOrder === 'desc' ? 'desc' : 'asc';
-    
+
     switch (sortBy) {
       case 'name':
-        return { name: order as 'asc' | 'desc' };
+        return { name: order };
       case 'createdAt':
-        return { createdAt: order as 'asc' | 'desc' };
+        return { createdAt: order };
       default:
         return { createdAt: 'desc' as const };
     }
   }
 
-  private sortResults(results: SearchItemDto[], sortBy?: string, sortOrder?: string): SearchItemDto[] {
+  private sortResults(
+    results: SearchItemDto[],
+    sortBy?: string,
+    sortOrder?: string,
+  ): SearchItemDto[] {
     if (!sortBy) return results;
 
     const order = sortOrder === 'desc' ? -1 : 1;
@@ -203,6 +231,18 @@ export class SearchService {
           aValue = a.releaseYear || 0;
           bValue = b.releaseYear || 0;
           break;
+        case 'director':
+          aValue = a.director || '';
+          bValue = b.director || '';
+          break;
+        case 'budget':
+          aValue = a.budget || 0;
+          bValue = b.budget || 0;
+          break;
+        case 'boxOffice':
+          aValue = a.boxOffice || 0;
+          bValue = b.boxOffice || 0;
+          break;
         case 'createdAt':
           aValue = a.createdAt;
           bValue = b.createdAt;
@@ -218,7 +258,11 @@ export class SearchService {
     });
   }
 
-  private paginateResults(results: SearchItemDto[], page: number, limit: number): SearchItemDto[] {
+  private paginateResults(
+    results: SearchItemDto[],
+    page: number,
+    limit: number,
+  ): SearchItemDto[] {
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     return results.slice(startIndex, endIndex);

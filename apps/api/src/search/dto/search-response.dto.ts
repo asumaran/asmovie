@@ -6,11 +6,17 @@ export class SearchItemDto {
   title?: string;
   name?: string;
   description?: string;
+  plot?: string;
   biography?: string;
   releaseYear?: number;
   birthDate?: Date;
   genre?: string;
   duration?: number;
+  budget?: number;
+  boxOffice?: number;
+  awards?: string;
+  writers?: string;
+  director?: string;
   averageRating?: number;
   createdAt: Date;
   updatedAt: Date;

@@ -26,10 +26,7 @@ describe('SearchService', () => {
           role: 'Hero',
         },
       ],
-      ratings: [
-        { rating: 8.5 },
-        { rating: 9.0 },
-      ],
+      ratings: [{ rating: 8.5 }, { rating: 9.0 }],
     },
   ];
 
@@ -142,8 +139,8 @@ describe('SearchService', () => {
       });
 
       expect(result.data).toHaveLength(2);
-      expect(result.data.some(item => item.type === 'movie')).toBe(true);
-      expect(result.data.some(item => item.type === 'actor')).toBe(true);
+      expect(result.data.some((item) => item.type === 'movie')).toBe(true);
+      expect(result.data.some((item) => item.type === 'actor')).toBe(true);
       expect(mockPrismaService.movie.findMany).toHaveBeenCalled();
       expect(mockPrismaService.actor.findMany).toHaveBeenCalled();
     });

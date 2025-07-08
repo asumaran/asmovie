@@ -18,9 +18,15 @@ body:json {
   {
     "title": "The Matrix",
     "description": "A computer programmer discovers that reality as he knows it is a simulation.",
+    "plot": "Neo, a computer programmer, is led to fight an underground war against powerful computers who have constructed his entire reality with a system called the Matrix.",
     "releaseYear": 1999,
     "genre": "Sci-Fi",
-    "duration": 136
+    "duration": 136,
+    "budget": 63000000,
+    "boxOffice": 467200000,
+    "awards": "Academy Award for Best Visual Effects, BAFTA Award for Best Achievement in Special Visual Effects",
+    "writers": "Lana Wachowski, Lilly Wachowski",
+    "director": "Lana Wachowski, Lilly Wachowski"
   }
 }
 
@@ -36,9 +42,15 @@ docs {
   {
     "title": "string (required)",
     "description": "string (optional)",
+    "plot": "string (optional)",
     "releaseYear": "number (required, 1900-2030)",
     "genre": "string (required)",
-    "duration": "number (required, minutes)"
+    "duration": "number (required, minutes)",
+    "budget": "number (optional, in dollars)",
+    "boxOffice": "number (optional, in dollars)",
+    "awards": "string (optional)",
+    "writers": "string (optional)",
+    "director": "string (optional)"
   }
   ```
   
