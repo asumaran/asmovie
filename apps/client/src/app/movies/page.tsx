@@ -1,8 +1,9 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { ItemsPerPageSelector } from '@/components/items-per-page-selector';
+import { Pagination } from '@/components/pagination';
+import { SortSelector } from '@/components/sort-selector';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -10,14 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Pagination } from '@/components/pagination';
-import { ItemsPerPageSelector } from '@/components/items-per-page-selector';
-import { SortSelector } from '@/components/sort-selector';
 import { getPaginatedMovies } from '@/lib/api';
 import { getCurrentPage, getItemsPerPage } from '@/lib/pagination';
 import { getSortValue, MOVIE_SORT_OPTIONS } from '@/lib/sorting';
-import { Loader2, Film } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 
 interface PaginatedMoviesResult {
   items: any[];
@@ -109,35 +109,15 @@ function MoviesContent() {
         </div>
       </div>
 
-      {/* Movies Grid */}
-      <div
-        className={`grid gap-6 ${
-          itemsPerPage === 5
-            ? 'md:grid-cols-2 lg:grid-cols-3'
-            : itemsPerPage === 10
-              ? 'md:grid-cols-3 lg:grid-cols-4'
-              : itemsPerPage === 15
-                ? 'md:grid-cols-3 lg:grid-cols-5'
-                : 'md:grid-cols-4 lg:grid-cols-5'
-        }`}
-      >
+      {/* Movies Grid - 5 columns */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {paginatedMovies.map((movie) => (
           <Link key={movie.id} href={`/movies/${movie.id}`}>
             <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Film className="h-4 w-4 text-muted-foreground" />
-                      <Badge variant="outline" className="text-xs">
-                        Movie
-                      </Badge>
-                    </div>
-                    <CardTitle
-                      className={`${itemsPerPage === 20 ? 'text-lg' : 'text-xl'}`}
-                    >
-                      {movie.title}
-                    </CardTitle>
+                    <CardTitle className="text-xl">{movie.title}</CardTitle>
                     <CardDescription>
                       {movie.releaseYear} • {movie.director}
                     </CardDescription>
@@ -150,32 +130,28 @@ function MoviesContent() {
               <CardContent>
                 <div className="space-y-3">
                   <Badge variant="outline">{movie.genre}</Badge>
-                  <p
-                    className={`text-sm text-muted-foreground ${itemsPerPage === 20 ? 'line-clamp-2' : ''}`}
-                  >
-                    {movie.description || movie.plot}
+                  <p className="text-sm text-muted-foreground">
+                    {movie.description}
                   </p>
-                  {itemsPerPage !== 20 && movie.actors && (
-                    <div>
-                      <h4 className="font-semibold text-sm mb-2">Cast:</h4>
-                      <div className="flex flex-wrap gap-1">
-                        {movie.actors.slice(0, 3).map((actor, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {actor.name}
-                          </Badge>
-                        ))}
-                        {movie.actors.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{movie.actors.length - 3} more
-                          </Badge>
-                        )}
-                      </div>
+                  <div>
+                    <h4 className="font-semibold text-sm mb-2">Cast:</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {movie.actors.slice(0, 3).map((actor, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs"
+                        >
+                          {actor.actor.name}
+                        </Badge>
+                      ))}
+                      {movie.actors.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{movie.actors.length - 3} more
+                        </Badge>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
