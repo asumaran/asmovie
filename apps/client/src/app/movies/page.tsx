@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { getPaginatedMovies, SearchItem } from '@/lib/api';
 import { getCurrentPage, getItemsPerPage } from '@/lib/pagination';
+import { getAverageRating } from '@/lib/ratings';
 import { MOVIE_SORT_OPTIONS } from '@/lib/sorting';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -53,12 +54,6 @@ interface PaginatedMoviesResult {
   itemsPerPage: number;
 }
 
-function getAverageRating(ratings?: MovieRating[]): string {
-  if (!ratings || ratings.length === 0) return 'N/A';
-  const avg = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
-  return avg.toFixed(1);
-}
-
 function MovieCard({ movie }: { movie: Movie }) {
   return (
     <Link key={movie.id} href={`/movies/${movie.id}`}>
@@ -71,7 +66,13 @@ function MovieCard({ movie }: { movie: Movie }) {
                 {movie.releaseYear} • {movie.director}
               </CardDescription>
             </div>
-            <Badge variant="secondary">{getAverageRating(movie.ratings)}</Badge>
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">
+                  {getAverageRating(movie.ratings)}
+                </Badge>
+              </div>
+            </div>
           </div>
         </CardHeader>
         <CardContent>

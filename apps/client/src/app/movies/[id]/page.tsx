@@ -17,176 +17,104 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/auth-context';
-import { getMovieById, deleteMovie } from '@/lib/api';
+import { deleteMovie, getMovieById } from '@/lib/api';
+import {
+  getAverageRating,
+  getAverageRatingNumber,
+  getHighestRating,
+  getLowestRating,
+  renderStars,
+} from '@/lib/ratings';
 import {
   AlertCircle,
+  ArrowLeft,
   Calendar,
   Clock,
   DollarSign,
   Loader2,
+  MessageSquare,
   Star,
   Trash2,
   Trophy,
   User,
 } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-function MovieLoadingSkeleton() {
-  return (
-    <div className="container mx-auto py-8">
-      {/* Back Button Skeleton */}
-      <div className="h-10 bg-muted rounded w-32 animate-pulse mb-6"></div>
-
-      {/* Movie Header Skeleton */}
-      <div className="mb-8">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <div className="h-12 bg-muted rounded w-96 animate-pulse mb-2"></div>
-            <div className="flex items-center gap-4">
-              <div className="h-4 bg-muted rounded w-20 animate-pulse"></div>
-              <div className="h-4 bg-muted rounded w-24 animate-pulse"></div>
-              <div className="h-6 bg-muted rounded w-16 animate-pulse"></div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-8 bg-muted rounded w-16 animate-pulse"></div>
-          </div>
-        </div>
-        <div className="h-6 bg-muted rounded w-full animate-pulse"></div>
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* Main Content Skeleton */}
-        <div className="lg:col-span-2 space-y-8">
-          <Card>
-            <CardHeader>
-              <div className="h-6 bg-muted rounded w-24 animate-pulse"></div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="h-4 bg-muted rounded w-full animate-pulse"></div>
-                <div className="h-4 bg-muted rounded w-full animate-pulse"></div>
-                <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sidebar Skeleton */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="h-6 bg-muted rounded w-32 animate-pulse"></div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="h-4 bg-muted rounded w-full animate-pulse"></div>
-              <div className="h-4 bg-muted rounded w-full animate-pulse"></div>
-              <div className="h-4 bg-muted rounded w-full animate-pulse"></div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Define el tipo Movie según tu modelo real
-interface Movie {
-  id: number;
-  title: string;
-  releaseYear?: number;
-  duration?: number | string;
-  genre?: string;
-  averageRating?: number;
-  description?: string;
-  plot?: string;
-  actors?: { id: number; name: string; role?: string }[];
-  awards?: string;
-  director?: string;
-  writers?: string;
-  budget?: number | string;
-  boxOffice?: number | string;
-}
-
-export default function MoviePage() {
-  const params = useParams();
-  const router = useRouter();
-  const id = params.id as string;
-  const [movie, setMovie] = useState<Movie | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const { user } = useAuth();
-
-  const handleDelete = async () => {
-    if (!movie) return;
-
-    setIsDeleting(true);
-    setDeleteError(null);
-
-    try {
-      await deleteMovie(movie.id);
-      // Redirect to movies page after successful deletion
-      router.push('/movies');
-    } catch (err: any) {
-      setDeleteError(err.message || 'Failed to delete movie');
-    } finally {
-      setIsDeleting(false);
-    }
+interface MoviePageProps {
+  params: {
+    id: string;
   };
+}
+
+export default function MoviePage({ params }: MoviePageProps) {
+  const movieId = Number.parseInt(params.id);
+  const [movie, setMovie] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchMovie() {
       try {
-        const movieId = Number.parseInt(id);
-        if (isNaN(movieId)) {
-          notFound();
-          return;
-        }
-
-        setIsLoading(true);
         const movieData = await getMovieById(movieId);
-
         if (!movieData) {
           notFound();
-          return;
         }
-
         setMovie(movieData);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load movie');
+      } catch (error) {
+        console.error('Error fetching movie:', error);
+        notFound();
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchMovie();
-  }, [id]);
+  }, [movieId]);
 
-  if (isLoading) {
-    return <MovieLoadingSkeleton />;
-  }
+  const handleDelete = async () => {
+    if (!movie) return;
 
-  if (error) {
-    return (
-      <div className="container mx-auto py-8">
-        <div className="text-center py-16">
-          <h2 className="text-2xl font-semibold mb-2">Error Loading Movie</h2>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()}>Try Again</Button>
-        </div>
-      </div>
-    );
-  }
+    // Check if user is authenticated
+    if (!user) {
+      setDeleteError('You must be logged in to delete a movie');
+      return;
+    }
 
-  if (!movie) {
-    notFound();
-  }
+    setIsDeleting(true);
+    setDeleteError('');
 
-  // Format budget and box office
+    try {
+      await deleteMovie(movie.id);
+      // Redirect to movies page after successful deletion
+      router.push('/movies');
+    } catch (error) {
+      setDeleteError(
+        error instanceof Error ? error.message : 'Failed to delete movie',
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) return 'Today';
+    if (diffInDays === 1) return 'Yesterday';
+    if (diffInDays < 7) return `${diffInDays} days ago`;
+    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
+    return `${Math.floor(diffInDays / 30)} months ago`;
+  };
+
+  // Format currency for budget and box office
   const formatCurrency = (amount: number | string | undefined) => {
     if (!amount) return null;
     if (typeof amount === 'string') return amount;
@@ -198,8 +126,30 @@ export default function MoviePage() {
     }).format(amount);
   };
 
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!movie) {
+    notFound();
+  }
+
   return (
     <div className="container mx-auto py-8">
+      {/* Back Button */}
+      <Button variant="ghost" asChild className="mb-6">
+        <Link href="/movies">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Movies
+        </Link>
+      </Button>
+
       {/* Movie Header */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
@@ -227,7 +177,7 @@ export default function MoviePage() {
             <div className="flex items-center gap-2">
               <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
               <span className="text-2xl font-bold">
-                {movie.averageRating?.toFixed(1) || 'N/A'}
+                {getAverageRating(movie.ratings)}
               </span>
               <span className="text-muted-foreground">/10</span>
             </div>
@@ -324,17 +274,64 @@ export default function MoviePage() {
                     >
                       <div>
                         <Link
-                          href={`/actors/${actor.id}`}
+                          href={`/actors/${actor.actor ? actor.actor.id : actor.id}`}
                           className="font-semibold hover:text-primary transition-colors"
                         >
-                          {actor.name}
+                          {actor.actor ? actor.actor.name : actor.name}
                         </Link>
                         {actor.role && (
                           <p className="text-sm text-muted-foreground">
-                            {actor.role}
+                            as {actor.role}
                           </p>
                         )}
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* User Ratings */}
+          {movie.ratings && movie.ratings.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5" />
+                  User Reviews ({movie.ratings.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {movie.ratings.map((rating, index) => (
+                    <div
+                      key={rating.id || index}
+                      className="border-b border-border pb-6 last:border-b-0 last:pb-0"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
+                            {renderStars(rating.rating / 2)}{' '}
+                            {/* Convert 10-point scale to 5-star */}
+                            <span className="font-semibold text-lg">
+                              {rating.rating}/10
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-muted-foreground">
+                            {rating.createdAt
+                              ? getTimeAgo(rating.createdAt)
+                              : 'Recently'}
+                          </p>
+                          <p className="text-sm font-medium">
+                            {rating.reviewer}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {rating.comment}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -406,7 +403,9 @@ export default function MoviePage() {
                 <div>
                   <h4 className="font-semibold mb-1">Duration</h4>
                   <p className="text-muted-foreground">
-                    {movie.duration} minutes
+                    {typeof movie.duration === 'number'
+                      ? `${movie.duration} minutes`
+                      : movie.duration}
                   </p>
                 </div>
               )}
@@ -443,6 +442,50 @@ export default function MoviePage() {
                     </p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Rating Summary */}
+          {movie.ratings && movie.ratings.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Rating Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold mb-2">
+                    {getAverageRating(movie.ratings)}/10
+                  </div>
+                  <div className="flex justify-center mb-2">
+                    {renderStars(getAverageRatingNumber(movie.ratings) / 2)}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Based on {movie.ratings.length} user review
+                    {movie.ratings.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Average User Rating:</span>
+                    <span className="font-medium">
+                      {getAverageRating(movie.ratings)}/10
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Highest Rating:</span>
+                    <span className="font-medium">
+                      {getHighestRating(movie.ratings)}/10
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Lowest Rating:</span>
+                    <span className="font-medium">
+                      {getLowestRating(movie.ratings)}/10
+                    </span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}
