@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { MovieSortOption } from '@/lib/sorting';
 import { ArrowUpDown } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -16,7 +17,7 @@ export type SortOption = {
 };
 
 interface SortSelectorProps {
-  options: SortOption[];
+  options: MovieSortOption[];
   currentValue: string;
   baseUrl: string;
 }
@@ -31,20 +32,23 @@ export function SortSelector({
 
   const handleValueChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams);
+    const selectedOption = options.find((opt) => opt.value === value);
+    if (!selectedOption) return;
 
-    // Set the new sort value
-    if (value === options[0].value) {
-      newParams.delete('sort'); // Default value, no need to store in URL
+    // Set sortBy and sortOrder explicitly
+    newParams.set('sortBy', selectedOption.value);
+    if (selectedOption.sortOrder) {
+      newParams.set('sortOrder', selectedOption.sortOrder);
     } else {
-      newParams.set('sort', value);
+      newParams.delete('sortOrder');
     }
-
+    // Remove legacy 'sort' param if present
+    newParams.delete('sort');
     // Reset to page 1 when changing sort
     newParams.delete('page');
 
     const queryString = newParams.toString();
     const newUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
-
     router.push(newUrl);
   };
 

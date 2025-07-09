@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card';
 import { getPaginatedMovies, SearchItem } from '@/lib/api';
 import { getCurrentPage, getItemsPerPage } from '@/lib/pagination';
-import { getSortValue, MOVIE_SORT_OPTIONS } from '@/lib/sorting';
+import { MOVIE_SORT_OPTIONS } from '@/lib/sorting';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -114,7 +114,11 @@ function MoviesContent() {
 
   const currentPage = getCurrentPage(searchParams);
   const itemsPerPage = getItemsPerPage(searchParams);
-  const sortBy = getSortValue(searchParams, MOVIE_SORT_OPTIONS[0].value);
+  const sortBy = searchParams.get('sortBy') || MOVIE_SORT_OPTIONS[0].value;
+  const sortOrder =
+    (searchParams.get('sortOrder') as 'asc' | 'desc') ||
+    (MOVIE_SORT_OPTIONS.find((opt) => opt.value === sortBy)?.sortOrder ??
+      'desc');
 
   function mapSearchItemToMovie(item: SearchItem): Movie {
     return {
@@ -142,6 +146,7 @@ function MoviesContent() {
           currentPage,
           itemsPerPage,
           sortBy,
+          sortOrder,
         );
         setMoviesData({
           ...result,
@@ -156,7 +161,7 @@ function MoviesContent() {
     }
 
     fetchMovies();
-  }, [currentPage, itemsPerPage, sortBy]);
+  }, [currentPage, itemsPerPage, sortBy, sortOrder]);
 
   if (error) {
     return (

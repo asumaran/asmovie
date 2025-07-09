@@ -1,22 +1,26 @@
 import type { SortOption } from '@/components/sort-selector';
 
 // Movie sorting options
-export const MOVIE_SORT_OPTIONS: SortOption[] = [
-  { value: 'createdAt', label: 'Recently Added' },
-  { value: 'releaseYear', label: 'Newest First' },
-  { value: 'title', label: 'A to Z' },
-  { value: 'director', label: 'Director' },
-  { value: 'genre', label: 'Genre' },
-  { value: 'budget', label: 'Budget' },
-  { value: 'boxOffice', label: 'Box Office' },
+export type MovieSortOption = SortOption & { sortOrder?: 'asc' | 'desc' };
+
+export const MOVIE_SORT_OPTIONS: MovieSortOption[] = [
+  { value: 'createdAt', label: 'Recently Added', sortOrder: 'desc' },
+  { value: 'releaseYear', label: 'Newest First', sortOrder: 'desc' },
+  { value: 'title', label: 'A to Z', sortOrder: 'asc' },
+  { value: 'director', label: 'Director', sortOrder: 'asc' },
+  { value: 'genre', label: 'Genre', sortOrder: 'asc' },
+  { value: 'budget', label: 'Budget', sortOrder: 'desc' },
+  { value: 'boxOffice', label: 'Box Office', sortOrder: 'desc' },
 ];
 
 // Actor sorting options
-export const ACTOR_SORT_OPTIONS: SortOption[] = [
-  { value: 'createdAt', label: 'Recently Added' },
-  { value: 'name', label: 'A to Z' },
-  { value: 'nationality', label: 'Nationality' },
-  { value: 'birthDate', label: 'Birth Date' },
+export type ActorSortOption = SortOption & { sortOrder?: 'asc' | 'desc' };
+
+export const ACTOR_SORT_OPTIONS: ActorSortOption[] = [
+  { value: 'createdAt', label: 'Recently Added', sortOrder: 'desc' },
+  { value: 'name', label: 'A to Z', sortOrder: 'asc' },
+  { value: 'nationality', label: 'Nationality', sortOrder: 'asc' },
+  { value: 'birthDate', label: 'Birth Date', sortOrder: 'desc' },
 ];
 
 // Search sorting options

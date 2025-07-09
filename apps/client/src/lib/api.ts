@@ -107,6 +107,7 @@ export async function getPaginatedMovies(
   page: number = 1,
   limit: number = 10,
   sortBy: string = 'createdAt',
+  sortOrder: 'asc' | 'desc' = 'desc',
 ): Promise<{
   items: SearchItem[];
   totalPages: number;
@@ -121,7 +122,7 @@ export async function getPaginatedMovies(
     searchParams.append('page', page.toString());
     searchParams.append('limit', limit.toString());
     searchParams.append('sortBy', sortBy);
-    searchParams.append('sortOrder', 'desc');
+    searchParams.append('sortOrder', sortOrder);
 
     const response = await fetch(
       `${API_BASE_URL}/movies?${searchParams.toString()}`,
@@ -180,6 +181,7 @@ export async function getPaginatedActors(
   page: number = 1,
   limit: number = 10,
   sortBy: string = 'createdAt',
+  sortOrder: 'asc' | 'desc' = 'desc',
 ): Promise<{
   items: SearchItem[];
   totalPages: number;
@@ -194,7 +196,7 @@ export async function getPaginatedActors(
     searchParams.append('page', page.toString());
     searchParams.append('limit', limit.toString());
     searchParams.append('sortBy', sortBy);
-    searchParams.append('sortOrder', 'desc');
+    searchParams.append('sortOrder', sortOrder);
 
     const response = await fetch(
       `${API_BASE_URL}/actors?${searchParams.toString()}`,

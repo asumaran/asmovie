@@ -1,8 +1,9 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { ItemsPerPageSelector } from '@/components/items-per-page-selector';
+import { Pagination } from '@/components/pagination';
+import { SortSelector } from '@/components/sort-selector';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -10,14 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Pagination } from '@/components/pagination';
-import { ItemsPerPageSelector } from '@/components/items-per-page-selector';
-import { SortSelector } from '@/components/sort-selector';
 import { getPaginatedActors } from '@/lib/api';
 import { getCurrentPage, getItemsPerPage } from '@/lib/pagination';
-import { getSortValue, ACTOR_SORT_OPTIONS } from '@/lib/sorting';
+import { ACTOR_SORT_OPTIONS } from '@/lib/sorting';
 import { Loader2, User } from 'lucide-react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 
 interface PaginatedActorsResult {
   items: any[];
@@ -39,7 +39,11 @@ function ActorsContent() {
 
   const currentPage = getCurrentPage(searchParams);
   const itemsPerPage = getItemsPerPage(searchParams);
-  const sortBy = getSortValue(searchParams, 'createdAt');
+  const sortBy = searchParams.get('sortBy') || ACTOR_SORT_OPTIONS[0].value;
+  const sortOrder =
+    (searchParams.get('sortOrder') as 'asc' | 'desc') ||
+    (ACTOR_SORT_OPTIONS.find((opt) => opt.value === sortBy)?.sortOrder ??
+      'desc');
 
   useEffect(() => {
     async function fetchActors() {
@@ -51,6 +55,7 @@ function ActorsContent() {
           currentPage,
           itemsPerPage,
           sortBy,
+          sortOrder,
         );
         setActorsData(result);
       } catch (err) {
@@ -62,7 +67,7 @@ function ActorsContent() {
     }
 
     fetchActors();
-  }, [currentPage, itemsPerPage, sortBy]);
+  }, [currentPage, itemsPerPage, sortBy, sortOrder]);
 
   if (error) {
     return (
