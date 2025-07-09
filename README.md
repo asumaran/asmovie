@@ -31,6 +31,7 @@ npm install
 cd apps/api
 npm run dev
 ```
+- The API will be available at [http://localhost:3001](http://localhost:3001)
 
 ### With Docker
 
@@ -38,6 +39,7 @@ npm run dev
 cd apps/api
 npm run dev:docker
 ```
+- The API will be available at [http://localhost:3001](http://localhost:3001)
 
 > **Note:** To stop the Docker containers, use:
 >
@@ -54,6 +56,7 @@ npm run dev:docker
 cd apps/client
 npm run dev
 ```
+- The client will be available at [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -72,6 +75,14 @@ npm run seed
 cd apps/api
 npx prisma migrate reset --force
 ```
+
+---
+
+## Default User for Login
+
+- After seeding the database, you can log in with the following default user:
+  - **Email:** admin@mail.test
+  - **Password:** password
 
 ---
 

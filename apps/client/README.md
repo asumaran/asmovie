@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ASMovie Client
 
-## Getting Started
+This is the frontend for the ASMovie system, built with Next.js and React.
 
-First, run the development server:
+## Requirements
+
+- Node.js >= 18.x
+- npm >= 9.x
+
+## Environment Setup
+
+1. Copy `.env.local` or `.env.production` as needed and set `NEXT_PUBLIC_API_URL` to the API base URL.
+   - For local development: `NEXT_PUBLIC_API_URL=http://localhost:3001`
+   - For production: `NEXT_PUBLIC_API_URL=https://api.asumaran.com` (or your deployed API URL)
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+## Running the Client
+
+### Local Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- The app will be available at [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Linting & Formatting
 
-To learn more about Next.js, take a look at the following resources:
+- Lint:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Format:
 
-## Deploy on Vercel
+```bash
+npm run format
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The client expects the API to be running and accessible at the URL specified in `NEXT_PUBLIC_API_URL`.
+- All authentication and protected endpoints are handled by the API.
+
+## Deployment
+
+- Deploy the client to [Vercel](https://vercel.com/) or any platform supporting Next.js.
+- Ensure `NEXT_PUBLIC_API_URL` is set to the correct API endpoint in your production environment.
+
+---
+
+For more details, see the codebase and environment files.
