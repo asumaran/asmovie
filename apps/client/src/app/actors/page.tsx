@@ -14,19 +14,109 @@ import {
 import { getPaginatedActors } from '@/lib/api';
 import { getCurrentPage, getItemsPerPage } from '@/lib/pagination';
 import { ACTOR_SORT_OPTIONS } from '@/lib/sorting';
-import { Loader2, User } from 'lucide-react';
+import { calculateAge } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
 interface PaginatedActorsResult {
-  items: any[];
+  items: Actor[];
   totalPages: number;
   totalItems: number;
   currentPage: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   itemsPerPage: number;
+}
+
+import type { SearchItem } from '@/lib/api';
+
+interface ActorMovie {
+  id: number;
+  title: string;
+  role?: string;
+}
+
+interface Actor {
+  id: number;
+  name: string;
+  nationality?: string;
+  birthDate?: string;
+  placeOfBirth?: string;
+  biography?: string;
+  movies?: ActorMovie[];
+}
+
+function ActorCard({ actor }: { actor: Actor }) {
+  const age = calculateAge(actor.birthDate);
+  return (
+    <Link key={actor.id} href={`/actors/${actor.id}`}>
+      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="text-xl">{actor.name}</CardTitle>
+              <CardDescription>
+                {actor.nationality}
+                {age !== null && ` • ${age} years old`}
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {actor.movies && actor.movies.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-sm mb-2">Known for:</h4>
+                <div className="flex flex-wrap gap-1">
+                  {actor.movies.slice(0, 3).map((movie) => (
+                    <Badge key={movie.id} variant="outline" className="text-xs">
+                      {movie.title}
+                    </Badge>
+                  ))}
+                  {actor.movies.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{actor.movies.length - 3} more
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            )}
+            <p className="text-sm text-muted-foreground line-clamp-3">
+              {actor.biography}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
+function ActorsGrid({ actors }: { actors: Actor[] }) {
+  return (
+    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      {actors.map((actor) => (
+        <ActorCard key={actor.id} actor={actor} />
+      ))}
+    </div>
+  );
+}
+
+function mapSearchItemToActor(item: SearchItem): Actor {
+  return {
+    id: item.id,
+    name: item.name || '',
+    nationality: item.nationality,
+    birthDate: item.birthDate,
+    placeOfBirth: item.placeOfBirth,
+    biography: item.biography,
+    movies: (item.movies || []).map((m) => ({
+      id: m.id,
+      title: m.title,
+      role: m.role,
+    })),
+  };
 }
 
 function ActorsContent() {
@@ -57,7 +147,10 @@ function ActorsContent() {
           sortBy,
           sortOrder,
         );
-        setActorsData(result);
+        setActorsData({
+          ...result,
+          items: result.items.map(mapSearchItemToActor),
+        });
       } catch (err) {
         setError('Failed to load actors. Please try again.');
         console.error('Error fetching actors:', err);
@@ -94,22 +187,6 @@ function ActorsContent() {
 
   const { items: paginatedActors, totalPages, totalItems } = actorsData;
 
-  // Calculate age from birthDate
-  const calculateAge = (birthDate: string) => {
-    if (!birthDate) return null;
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  };
-
   return (
     <>
       {/* Controls */}
@@ -129,99 +206,7 @@ function ActorsContent() {
         </div>
       </div>
 
-      {/* Actors Grid */}
-      <div
-        className={`grid gap-6 ${
-          itemsPerPage === 5
-            ? 'md:grid-cols-2 lg:grid-cols-3'
-            : itemsPerPage === 10
-              ? 'md:grid-cols-3 lg:grid-cols-4'
-              : itemsPerPage === 15
-                ? 'md:grid-cols-3 lg:grid-cols-5'
-                : 'md:grid-cols-4 lg:grid-cols-5'
-        }`}
-      >
-        {paginatedActors.map((actor) => {
-          const age = calculateAge(actor.birthDate);
-          return (
-            <Link key={actor.id} href={`/actors/${actor.id}`}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <Badge variant="outline" className="text-xs">
-                          Actor
-                        </Badge>
-                      </div>
-                      <CardTitle
-                        className={`${itemsPerPage === 20 ? 'text-lg' : 'text-xl'}`}
-                      >
-                        {actor.name}
-                      </CardTitle>
-                      <CardDescription>
-                        {actor.nationality}
-                        {age && ` • ${age} years old`}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {actor.placeOfBirth && (
-                      <div>
-                        <h4 className="font-semibold text-sm mb-1">
-                          Place of Birth:
-                        </h4>
-                        <p className="text-xs text-muted-foreground">
-                          {actor.placeOfBirth}
-                        </p>
-                      </div>
-                    )}
-                    {actor.movies && actor.movies.length > 0 && (
-                      <div>
-                        <h4 className="font-semibold text-sm mb-2">
-                          Known for:
-                        </h4>
-                        <div className="flex flex-wrap gap-1">
-                          {actor.movies
-                            .slice(0, itemsPerPage === 20 ? 2 : 3)
-                            .map((movie, index) => (
-                              <Badge
-                                key={index}
-                                variant="outline"
-                                className="text-xs"
-                              >
-                                {movie.title}
-                              </Badge>
-                            ))}
-                          {actor.movies.length >
-                            (itemsPerPage === 20 ? 2 : 3) && (
-                            <Badge variant="outline" className="text-xs">
-                              +
-                              {actor.movies.length -
-                                (itemsPerPage === 20 ? 2 : 3)}{' '}
-                              more
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    <p
-                      className={`text-sm text-muted-foreground ${
-                        itemsPerPage === 20 ? 'line-clamp-2' : 'line-clamp-3'
-                      }`}
-                    >
-                      {actor.biography}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
+      <ActorsGrid actors={paginatedActors} />
 
       <Pagination
         currentPage={currentPage}
@@ -296,6 +281,8 @@ function ActorsLoadingSkeleton({ itemsPerPage }: { itemsPerPage: number }) {
 }
 
 export default function ActorsPage() {
+  const searchParams = useSearchParams();
+  const itemsPerPage = getItemsPerPage(searchParams);
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -306,7 +293,7 @@ export default function ActorsPage() {
       </div>
 
       <Suspense
-        fallback={<ActorsLoadingSkeleton itemsPerPage={10} />}
+        fallback={<ActorsLoadingSkeleton itemsPerPage={itemsPerPage} />}
       >
         <ActorsContent />
       </Suspense>

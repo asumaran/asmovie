@@ -16,7 +16,13 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    // Prevent .d.ts files from being generated in the input folder
+    "declarationDir": "./dist/types"
   },
-  "exclude": ["infrastructure/**/*"]
+  "exclude": [
+    "infrastructure",
+    "dist",
+    "types"
+  ]
 }

@@ -11,12 +11,12 @@ export async function authenticatedFetch(
     throw new Error('No authentication token found. Please log in.');
   }
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
 
-  headers.Authorization = `Bearer ${token}`;
+  headers['Authorization'] = `Bearer ${token}`;
 
   const response = await fetch(url, {
     ...options,

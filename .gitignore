@@ -40,3 +40,4 @@ pids
 *.tmp
 *.temp
 /apps/api/infrastructure/cdk.out
+/apps/api/types
