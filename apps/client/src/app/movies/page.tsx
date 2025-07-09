@@ -54,6 +54,22 @@ interface PaginatedMoviesResult {
   itemsPerPage: number;
 }
 
+function mapSearchItemToMovie(item: SearchItem): Movie {
+  return {
+    id: item.id,
+    title: item.title || 'Untitled',
+    releaseYear: item.releaseYear,
+    director: item.director,
+    genre: item.genre,
+    description: item.description,
+    ratings: (item as { ratings?: MovieRating[] }).ratings ?? [],
+    actors: (item.actors ?? []).map((a) => ({
+      id: a.id,
+      name: a.actor.name,
+    })),
+  };
+}
+
 function MovieCard({ movie }: { movie: Movie }) {
   return (
     <Link key={movie.id} href={`/movies/${movie.id}`}>
@@ -105,6 +121,16 @@ function MovieCard({ movie }: { movie: Movie }) {
   );
 }
 
+function MoviesGrid({ movies }: { movies: Movie[] }) {
+  return (
+    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      {movies.map((movie) => (
+        <MovieCard key={movie.id} movie={movie} />
+      ))}
+    </div>
+  );
+}
+
 function MoviesContent() {
   const searchParams = useSearchParams();
   const [moviesData, setMoviesData] = useState<PaginatedMoviesResult | null>(
@@ -121,27 +147,10 @@ function MoviesContent() {
     (MOVIE_SORT_OPTIONS.find((opt) => opt.value === sortBy)?.sortOrder ??
       'desc');
 
-  function mapSearchItemToMovie(item: SearchItem): Movie {
-    return {
-      id: item.id,
-      title: item.title || 'Untitled',
-      releaseYear: item.releaseYear,
-      director: item.director,
-      genre: item.genre,
-      description: item.description,
-      ratings: (item as { ratings?: MovieRating[] }).ratings ?? [],
-      actors: (item.actors ?? []).map((a) => ({
-        id: a.id,
-        name: a.actor.name,
-      })),
-    };
-  }
-
   useEffect(() => {
     async function fetchMovies() {
       setIsLoading(true);
       setError(null);
-
       try {
         const result = await getPaginatedMovies(
           currentPage,
@@ -160,7 +169,6 @@ function MoviesContent() {
         setIsLoading(false);
       }
     }
-
     fetchMovies();
   }, [currentPage, itemsPerPage, sortBy, sortOrder]);
 
@@ -178,17 +186,13 @@ function MoviesContent() {
       </div>
     );
   }
-
   if (isLoading) {
     return <MoviesLoadingSkeleton itemsPerPage={itemsPerPage} />;
   }
-
   if (!moviesData) {
     return null;
   }
-
   const { items: paginatedMovies, totalPages, totalItems } = moviesData;
-
   return (
     <>
       {/* Controls */}
@@ -207,14 +211,7 @@ function MoviesContent() {
           <ItemsPerPageSelector currentValue={itemsPerPage} baseUrl="/movies" />
         </div>
       </div>
-
-      {/* Movies Grid - 5 columns */}
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {paginatedMovies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
-
+      <MoviesGrid movies={paginatedMovies} />
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -286,9 +283,7 @@ export default function MoviesPage() {
         </p>
       </div>
 
-      <Suspense
-        fallback={<MoviesLoadingSkeleton itemsPerPage={10} />}
-      >
+      <Suspense fallback={<MoviesLoadingSkeleton itemsPerPage={10} />}>
         <MoviesContent />
       </Suspense>
     </div>
