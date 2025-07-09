@@ -9,11 +9,11 @@ export class ASMovieEC2Stack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // Obtener el commit hash actual para forzar updates
+    // Get the current commit hash to force updates
     const currentCommit = this.getCurrentCommitHash();
     console.log(`🔍 Deploying commit: ${currentCommit}`);
 
-    // VPC para la infraestructura
+    // VPC for the infrastructure
     const vpc = new ec2.Vpc(this, 'ASMovieVPC', {
       maxAzs: 2,
       natGateways: 1,
@@ -31,14 +31,14 @@ export class ASMovieEC2Stack extends cdk.Stack {
       ],
     });
 
-    // Security Group para la instancia EC2
+    // Security Group for the EC2 instance
     const webServerSG = new ec2.SecurityGroup(this, 'WebServerSecurityGroup', {
       vpc,
       description: 'Security group for ASMovie API server',
       allowAllOutbound: true,
     });
 
-    // Permitir tráfico HTTP y HTTPS
+    // Allow HTTP and HTTPS traffic
     webServerSG.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(80),
@@ -60,7 +60,7 @@ export class ASMovieEC2Stack extends cdk.Stack {
       'Allow SSH',
     );
 
-    // Security Group para RDS
+    // Security Group for RDS
     const dbSecurityGroup = new ec2.SecurityGroup(
       this,
       'DatabaseSecurityGroup',
@@ -70,7 +70,7 @@ export class ASMovieEC2Stack extends cdk.Stack {
       },
     );
 
-    // Permitir conexión desde el servidor web a la base de datos
+    // Allow connection from the web server to the database
     dbSecurityGroup.addIngressRule(
       webServerSG,
       ec2.Port.tcp(5432),
@@ -93,13 +93,13 @@ export class ASMovieEC2Stack extends cdk.Stack {
       },
       securityGroups: [dbSecurityGroup],
       databaseName: 'asmovie',
-      removalPolicy: cdk.RemovalPolicy.DESTROY, // Solo para desarrollo
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // For development only
       deleteAutomatedBackups: true,
       backupRetention: cdk.Duration.days(0),
       deletionProtection: false,
     });
 
-    // IAM Role para la instancia EC2
+    // IAM Role for the EC2 instance
     const ec2Role = new iam.Role(this, 'EC2Role', {
       assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
       managedPolicies: [
@@ -109,36 +109,43 @@ export class ASMovieEC2Stack extends cdk.Stack {
       ],
     });
 
-    // Permitir a EC2 leer el secreto de la base de datos
+    // Allow EC2 to read the database secret
     if (database.secret) {
       database.secret.grantRead(ec2Role);
     }
 
-    // Script de inicialización para la instancia EC2
+    // Initialization script for the EC2 instance
     const userData = ec2.UserData.forLinux();
     userData.addCommands(
-      // Actualizar el sistema
+      // Update the system
       'yum update -y',
 
-      // Instalar Node.js 20
+      // Install Node.js 20
       'curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -',
       'yum install -y nodejs',
 
-      // Instalar Git y otras herramientas
-      'yum install -y git nginx postgresql15',
+      // Install Git and other tools (including certbot for SSL)
+      'yum install -y git nginx postgresql15 python3-certbot-nginx',
 
-      // Instalar PM2 globalmente
+      // Install PM2 globally
       'npm install -g pm2',
 
-      // Crear directorio para la aplicación
+      // Create directory for the application
       'mkdir -p /opt/asmovie',
       'chown ec2-user:ec2-user /opt/asmovie',
 
-      // Configurar Nginx como proxy reverso
-      'cat > /etc/nginx/conf.d/asmovie.conf << EOF',
+      // Configure Nginx as reverse proxy with SSL support
+      'cat > /etc/nginx/conf.d/asmovie.conf << "EOF"',
       'server {',
       '    listen 80;',
       '    server_name _;',
+      '',
+      "    # Allow HTTP for Let's Encrypt challenge",
+      '    location /.well-known/acme-challenge/ {',
+      '        root /var/www/html;',
+      '    }',
+      '',
+      '    # Redirect other HTTP requests to HTTPS (after SSL setup)',
       '    location / {',
       '        proxy_pass http://localhost:3001;',
       '        proxy_http_version 1.1;',
@@ -153,14 +160,48 @@ export class ASMovieEC2Stack extends cdk.Stack {
       '}',
       'EOF',
 
-      // Remover configuración por defecto de Nginx
+      // Remove default Nginx config
       'rm -f /etc/nginx/conf.d/default.conf',
 
-      // Habilitar y iniciar Nginx
+      // Create directory for Let\'s Encrypt challenge
+      'mkdir -p /var/www/html',
+
+      // Enable and start Nginx
       'systemctl enable nginx',
       'systemctl start nginx',
 
-      // Crear script de deployment
+      // Configure SSL with Let\'s Encrypt after the app is running
+      'cat > /opt/asmovie/setup-ssl.sh << "SSL_SCRIPT_EOF"',
+      '#!/bin/bash',
+      'set -e',
+      '',
+      'echo "🔒 Setting up SSL certificate with Let\'s Encrypt..."',
+      '',
+      '# Get the public hostname of the instance',
+      'PUBLIC_DNS=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)',
+      'echo "🌐 Public DNS: $PUBLIC_DNS"',
+      '',
+      '# Configure SSL only if we have a valid hostname',
+      'if [ ! -z "$PUBLIC_DNS" ] && [ "$PUBLIC_DNS" != "null" ]; then',
+      '    echo "📜 Requesting SSL certificate for $PUBLIC_DNS..."',
+      '    ',
+      '    # Request SSL certificate (non-interactive mode)',
+      '    certbot --nginx -d $PUBLIC_DNS --non-interactive --agree-tos --email admin@asmovie.com --redirect',
+      '    ',
+      '    # Set up automatic renewal',
+      '    systemctl enable certbot-timer',
+      '    systemctl start certbot-timer',
+      '    ',
+      '    echo "✅ SSL certificate configured successfully!"',
+      '    echo "🔒 Your API is now available at: https://$PUBLIC_DNS"',
+      'else',
+      '    echo "⚠️ Could not determine public DNS name, skipping SSL setup"',
+      'fi',
+      'SSL_SCRIPT_EOF',
+      '',
+      'chmod +x /opt/asmovie/setup-ssl.sh',
+
+      // Create deployment script
       'cat > /opt/asmovie/deploy.sh << "EOF"',
       '#!/bin/bash',
       'set -e',
@@ -172,44 +213,44 @@ export class ASMovieEC2Stack extends cdk.Stack {
       'REPO_DIR="/opt/asmovie/app"',
       'REPO_URL="https://github.com/asumaran/asmovie.git"',
       '',
-      '# Configurar git globalmente',
+      '# Configure git globally',
       'git config --global --add safe.directory $REPO_DIR || true',
       'git config --global user.email "deploy@asmovie.com" || true',
       'git config --global user.name "Deploy Bot" || true',
       '',
-      '# Forzar descarga del código más reciente',
+      '# Force download of the latest code',
       'if [ -d "$REPO_DIR" ]; then',
       '    echo "🧹 Removing existing repository directory..."',
       '    rm -rf $REPO_DIR',
       'fi',
       '',
-      'echo "� Cloning repository (fresh copy)..."',
+      'echo "📥 Cloning repository (fresh copy)..."',
       'git clone $REPO_URL $REPO_DIR',
       'cd $REPO_DIR',
       '',
-      '# Verificar que estamos en la rama main y en el último commit',
+      '# Ensure we are on the main branch and latest commit',
       'echo "🔍 Current commit: $(git log --oneline -1)"',
       'echo "📍 Current branch: $(git branch --show-current)"',
       '',
-      '# Cambiar al directorio de la API',
+      '# Change to API directory',
       'cd $REPO_DIR/apps/api',
       '',
-      '# Instalar dependencias',
+      '# Install dependencies',
       'echo "📦 Installing dependencies..."',
       'npm ci --production',
       '',
-      '# Instalar Prisma CLI',
+      '# Install Prisma CLI',
       'npm install prisma --save-dev',
       '',
-      '# Remover archivos de infrastructure para evitar conflictos de TypeScript',
+      '# Remove infrastructure files to prevent TypeScript conflicts',
       'echo "🧹 Removing infrastructure files to prevent TypeScript conflicts..."',
       'rm -rf infrastructure',
       '',
-      '# Construir la aplicación',
+      '# Build the application',
       'echo "🔨 Building application..."',
       'npm run build',
       '',
-      '# Obtener credenciales de la base de datos desde AWS Secrets Manager',
+      '# Get database credentials from AWS Secrets Manager',
       'echo "🔐 Getting database credentials..."',
       'DB_SECRET=$(aws secretsmanager get-secret-value --region ' +
         cdk.Aws.REGION +
@@ -221,7 +262,7 @@ export class ASMovieEC2Stack extends cdk.Stack {
       'DB_PASS=$(echo $DB_SECRET | jq -r .password)',
       'DB_NAME=$(echo $DB_SECRET | jq -r .dbname)',
       '',
-      '# Crear archivo .env para producción',
+      '# Create .env file for production',
       'cat > .env << EOL',
       'NODE_ENV=production',
       'PORT=3001',
@@ -244,20 +285,20 @@ export class ASMovieEC2Stack extends cdk.Stack {
       'ENABLE_METRICS=false',
       'EOL',
       '',
-      '# Validar que todas las variables de entorno estén configuradas',
+      '# Validate that all environment variables are set',
       'echo "🔍 Validating environment variables..."',
       'if [ -z "$DB_USER" ] || [ -z "$DB_PASS" ] || [ -z "$DB_HOST" ] || [ -z "$DB_NAME" ]; then',
       '    echo "❌ Database credentials are missing!"',
       '    exit 1',
       'fi',
       '',
-      '# Verificar que el archivo .env se creó correctamente',
+      '# Check that the .env file was created correctly',
       'if [ ! -f ".env" ]; then',
       '    echo "❌ .env file was not created!"',
       '    exit 1',
       'fi',
       '',
-      '# Verificar que las variables críticas están en el archivo',
+      '# Check that critical variables are in the file',
       'if ! grep -q "API_TOKEN" .env; then',
       '    echo "❌ API_TOKEN missing in .env file!"',
       '    exit 1',
@@ -270,19 +311,19 @@ export class ASMovieEC2Stack extends cdk.Stack {
       '',
       'echo "✅ Environment variables validated successfully"',
       '',
-      '# Ejecutar migraciones de base de datos',
+      '# Run database migrations',
       'echo "🗄️ Running database migrations..."',
       'npx prisma migrate deploy',
       '',
-      '# Generar Prisma Client',
+      '# Generate Prisma Client',
       'echo "🔧 Generating Prisma client..."',
       'npx prisma generate',
       '',
-      '# Ejecutar seed de datos',
+      '# Run data seed',
       'echo "🌱 Seeding database..."',
       'npm run seed',
       '',
-      '# Reiniciar la aplicación con PM2',
+      '# Restart the application with PM2',
       'echo "🔄 Starting application with PM2..."',
       'pm2 stop asmovie-api || true',
       'pm2 start npm --name asmovie-api -- run start:prod',
@@ -293,49 +334,49 @@ export class ASMovieEC2Stack extends cdk.Stack {
       'echo "🔗 Access via Nginx proxy on port 80"',
       'EOF',
 
-      // Hacer el script ejecutable
+      // Make the script executable
       'chmod +x /opt/asmovie/deploy.sh',
 
-      // Configurar PM2 para que se inicie automáticamente
+      // Configure PM2 to start automatically
       'sudo -u ec2-user bash -c "cd /home/ec2-user && pm2 startup systemd -u ec2-user --hp /home/ec2-user"',
 
-      // Instalar AWS CLI y jq
+      // Install AWS CLI and jq
       'yum install -y awscli jq',
 
-      // Ejecutar deployment automáticamente
+      // Run deployment automatically
       'echo "🚀 Starting automatic deployment..."',
       'cd /opt/asmovie',
       '',
-      '# Configurar git globalmente antes de cualquier operación',
+      '# Configure git globally before any operation',
       'git config --global --add safe.directory /opt/asmovie/app || true',
       'git config --global user.email "deploy@asmovie.com" || true',
       'git config --global user.name "Deploy Bot" || true',
       '',
-      '# Asegurar que tenemos una copia fresca del repositorio',
+      '# Ensure we have a fresh copy of the repository',
       'rm -rf app',
       'echo "📥 Cloning fresh repository copy..."',
       'git clone https://github.com/asumaran/asmovie.git app',
       'cd app',
       '',
-      '# Verificar commit actual',
+      '# Check current commit',
       'echo "🔍 Deploying commit: $(git log --oneline -1)"',
       'echo "📍 Branch: $(git branch --show-current)"',
       'cd app/apps/api',
 
-      // Instalar dependencias
+      // Install dependencies
       'echo "📦 Installing dependencies..."',
       'npm ci --production',
       'npm install prisma --save-dev',
 
-      // Remover infrastructure para evitar conflictos de TypeScript
+      // Remove infrastructure to prevent TypeScript conflicts
       'echo "🧹 Removing infrastructure files to prevent TypeScript conflicts..."',
       'rm -rf infrastructure',
 
-      // Construir aplicación
+      // Build application
       'echo "🔨 Building application..."',
       'npm run build',
 
-      // Crear .env automáticamente
+      // Create .env automatically
       'echo "🔐 Setting up environment..."',
       'DB_SECRET=$(aws secretsmanager get-secret-value --region ' +
         cdk.Aws.REGION +
@@ -365,7 +406,7 @@ export class ASMovieEC2Stack extends cdk.Stack {
       'DB_CONNECTION_TIMEOUT=5000',
       'AUTO_ENV_EOF',
 
-      // Ejecutar migraciones y seed
+      // Run migrations and seed
       'echo "🗄️ Running database migrations..."',
       'npx prisma migrate deploy',
       'echo "🔧 Generating Prisma client..."',
@@ -373,21 +414,21 @@ export class ASMovieEC2Stack extends cdk.Stack {
       'echo "🌱 Seeding database..."',
       'npm run seed',
 
-      // Iniciar con PM2
+      // Start with PM2
       'echo "🔄 Starting application with PM2..."',
       'pm2 stop asmovie-api || true',
       'pm2 delete asmovie-api || true',
       'pm2 start npm --name asmovie-api -- run start:prod',
       'pm2 save',
       '',
-      '# Registrar información del deployment',
+      '# Register deployment info',
       'echo "✅ Deployment completed successfully!"',
       'echo "🌐 API is running on port 3001"',
       'echo "🔗 Access via Nginx proxy on port 80"',
       'echo "📝 Deployed commit: $(git log --oneline -1)"',
       'echo "⏰ Deployment time: $(date)"',
       '',
-      '# Crear archivo de deployment info',
+      '# Create deployment info file',
       'cat > /opt/asmovie/deployment-info.json << DEPLOY_INFO_EOF',
       '{',
       '  "deploymentTime": "$(date -Iseconds)",',
@@ -401,14 +442,19 @@ export class ASMovieEC2Stack extends cdk.Stack {
       'pm2 save',
       'pm2 startup systemd -u root --hp /root',
 
-      // Mensaje de finalización
+      // Run SSL setup after deployment
+      'echo "🔒 Setting up SSL certificate..."',
+      'sleep 30', // Wait for the app to be fully initialized
+      '/opt/asmovie/setup-ssl.sh',
+
+      // Finish message
       'echo "✅ Complete automated deployment finished!"',
       'echo "🌐 API is running and accessible"',
 
       'echo "✅ EC2 instance setup completed!"',
     );
 
-    // Crear la instancia EC2
+    // Create the EC2 instance
     const webServer = new ec2.Instance(this, 'ASMovieWebServer', {
       vpc,
       vpcSubnets: {
@@ -422,14 +468,14 @@ export class ASMovieEC2Stack extends cdk.Stack {
       securityGroup: webServerSG,
       role: ec2Role,
       userData,
-      keyName: 'asmovie-keypair', // Necesitarás crear este key pair
+      keyName: 'asmovie-keypair', // You will need to create this key pair
     });
 
-    // Agregar tags para forzar recreación cuando cambie el código
+    // Add tags to force recreation when code changes
     cdk.Tags.of(webServer).add('DeploymentCommit', currentCommit);
     cdk.Tags.of(webServer).add('DeploymentTime', new Date().toISOString());
 
-    // Outputs útiles
+    // Useful outputs
     new cdk.CfnOutput(this, 'WebServerPublicIP', {
       value: webServer.instancePublicIp,
       description: 'Public IP of the web server',
@@ -456,8 +502,13 @@ export class ASMovieEC2Stack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, 'APIURL', {
+      value: `https://${webServer.instancePublicDnsName}`,
+      description: 'URL to access the API (HTTPS)',
+    });
+
+    new cdk.CfnOutput(this, 'APIURLHttp', {
       value: `http://${webServer.instancePublicDnsName}`,
-      description: 'URL to access the API',
+      description: 'URL to access the API (HTTP - will redirect to HTTPS)',
     });
 
     new cdk.CfnOutput(this, 'DeploymentCommand', {

@@ -83,9 +83,13 @@ STACK_EXISTS=$(aws cloudformation describe-stacks --stack-name ASMovieEC2Stack -
 DEPLOY_OUTPUT=$(npm run deploy 2>&1)
 echo "$DEPLOY_OUTPUT"
 
-# Extract API URL from CloudFormation outputs
-API_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "(APIURL|ASMovieEC2Stack\.APIURL)" | grep -o 'http://[^[:space:]]*' | head -1)
-EC2_HOST=$(echo "$API_URL" | sed 's|http://||')
+# Extract API URL from CloudFormation outputs (prefer HTTPS)
+API_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "(APIURL|ASMovieEC2Stack\.APIURL)" | grep -o 'https://[^[:space:]]*' | head -1)
+if [ -z "$API_URL" ]; then
+    # Fallback to HTTP if HTTPS not found
+    API_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "(APIURL|ASMovieEC2Stack\.APIURL)" | grep -o 'http://[^[:space:]]*' | head -1)
+fi
+EC2_HOST=$(echo "$API_URL" | sed 's|https\?://||')
 
 echo ""
 echo -e "${GREEN}🎉 Deployment Complete!${NC}"
