@@ -1,17 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import * as bcrypt from 'bcryptjs';
-import { UsersService } from './users.service';
-import { PrismaService } from '../common/prisma.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import * as bcrypt from "bcryptjs";
+import { UsersService } from "./users.service";
+import { PrismaService } from "../common/prisma.service";
 import {
   ResourceNotFoundException,
   DuplicateResourceException,
-} from '../common/exceptions/business.exception';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+} from "../common/exceptions/business.exception";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
-jest.mock('bcryptjs');
+jest.mock("bcryptjs");
 
-describe('UsersService', () => {
+describe("UsersService", () => {
   let service: UsersService;
 
   const mockPrismaService = {
@@ -27,10 +27,10 @@ describe('UsersService', () => {
 
   const mockUser = {
     id: 1,
-    email: 'test@example.com',
-    password: 'hashed-password',
-    firstName: 'Test',
-    lastName: 'User',
+    email: "test@example.com",
+    password: "hashed-password",
+    firstName: "Test",
+    lastName: "User",
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -52,35 +52,35 @@ describe('UsersService', () => {
     jest.clearAllMocks();
   });
 
-  describe('create', () => {
+  describe("create", () => {
     const createUserDto: CreateUserDto = {
-      email: 'test@example.com',
-      password: 'Password123!',
-      firstName: 'Test',
-      lastName: 'User',
+      email: "test@example.com",
+      password: "Password123!",
+      firstName: "Test",
+      lastName: "User",
     };
 
-    it('should create a new user successfully', async () => {
+    it("should create a new user successfully", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
-      (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
+      (bcrypt.hash as jest.Mock).mockResolvedValue("hashed-password");
       mockPrismaService.user.create.mockResolvedValue(mockUser);
 
       const result = await service.create(createUserDto);
 
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
-        where: { email: 'test@example.com' },
+        where: { email: "test@example.com" },
       });
-      expect(bcrypt.hash).toHaveBeenCalledWith('Password123!', 12);
+      expect(bcrypt.hash).toHaveBeenCalledWith("Password123!", 12);
       expect(mockPrismaService.user.create).toHaveBeenCalledWith({
         data: {
           ...createUserDto,
-          password: 'hashed-password',
+          password: "hashed-password",
         },
       });
       expect(result).toBeInstanceOf(Object);
     });
 
-    it('should throw DuplicateResourceException if user already exists', async () => {
+    it("should throw DuplicateResourceException if user already exists", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
       await expect(service.create(createUserDto)).rejects.toThrow(
@@ -89,25 +89,25 @@ describe('UsersService', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should return array of users without passwords', async () => {
+  describe("findAll", () => {
+    it("should return array of users without passwords", async () => {
       const users = [
         mockUser,
-        { ...mockUser, id: 2, email: 'test2@example.com' },
+        { ...mockUser, id: 2, email: "test2@example.com" },
       ];
       mockPrismaService.user.findMany.mockResolvedValue(users);
 
       const result = await service.findAll();
 
       expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       });
       expect(result).toHaveLength(2);
     });
   });
 
-  describe('findOne', () => {
-    it('should return user by id', async () => {
+  describe("findOne", () => {
+    it("should return user by id", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
       const result = await service.findOne(1);
@@ -118,7 +118,7 @@ describe('UsersService', () => {
       expect(result).toEqual(mockUser);
     });
 
-    it('should throw ResourceNotFoundException if user not found', async () => {
+    it("should throw ResourceNotFoundException if user not found", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
       await expect(service.findOne(999)).rejects.toThrow(
@@ -127,34 +127,34 @@ describe('UsersService', () => {
     });
   });
 
-  describe('findByEmail', () => {
-    it('should return user by email', async () => {
+  describe("findByEmail", () => {
+    it("should return user by email", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
-      const result = await service.findByEmail('test@example.com');
+      const result = await service.findByEmail("test@example.com");
 
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
-        where: { email: 'test@example.com' },
+        where: { email: "test@example.com" },
       });
       expect(result).toEqual(mockUser);
     });
 
-    it('should return null if user not found', async () => {
+    it("should return null if user not found", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      const result = await service.findByEmail('nonexistent@example.com');
+      const result = await service.findByEmail("nonexistent@example.com");
 
       expect(result).toBeNull();
     });
   });
 
-  describe('update', () => {
+  describe("update", () => {
     const updateUserDto: UpdateUserDto = {
-      firstName: 'Updated',
-      lastName: 'Name',
+      firstName: "Updated",
+      lastName: "Name",
     };
 
-    it('should update user successfully', async () => {
+    it("should update user successfully", async () => {
       const updatedUser = { ...mockUser, ...updateUserDto };
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       mockPrismaService.user.update.mockResolvedValue(updatedUser);
@@ -171,7 +171,7 @@ describe('UsersService', () => {
       expect(result).toBeInstanceOf(Object);
     });
 
-    it('should throw ResourceNotFoundException if user not found', async () => {
+    it("should throw ResourceNotFoundException if user not found", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
       await expect(service.update(999, updateUserDto)).rejects.toThrow(
@@ -180,8 +180,8 @@ describe('UsersService', () => {
     });
   });
 
-  describe('remove', () => {
-    it('should delete user successfully', async () => {
+  describe("remove", () => {
+    it("should delete user successfully", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       mockPrismaService.user.delete.mockResolvedValue(mockUser);
 
@@ -195,7 +195,7 @@ describe('UsersService', () => {
       });
     });
 
-    it('should throw ResourceNotFoundException if user not found', async () => {
+    it("should throw ResourceNotFoundException if user not found", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
       await expect(service.remove(999)).rejects.toThrow(
@@ -204,75 +204,75 @@ describe('UsersService', () => {
     });
   });
 
-  describe('validatePassword', () => {
-    it('should return true for valid password', async () => {
+  describe("validatePassword", () => {
+    it("should return true for valid password", async () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       const result = await service.validatePassword(
         mockUser,
-        'correctPassword',
+        "correctPassword",
       );
 
       expect(bcrypt.compare).toHaveBeenCalledWith(
-        'correctPassword',
-        'hashed-password',
+        "correctPassword",
+        "hashed-password",
       );
       expect(result).toBe(true);
     });
 
-    it('should return false for invalid password', async () => {
+    it("should return false for invalid password", async () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      const result = await service.validatePassword(mockUser, 'wrongPassword');
+      const result = await service.validatePassword(mockUser, "wrongPassword");
 
       expect(bcrypt.compare).toHaveBeenCalledWith(
-        'wrongPassword',
-        'hashed-password',
+        "wrongPassword",
+        "hashed-password",
       );
       expect(result).toBe(false);
     });
   });
 
-  describe('changePassword', () => {
-    it('should change password successfully', async () => {
+  describe("changePassword", () => {
+    it("should change password successfully", async () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-      (bcrypt.hash as jest.Mock).mockResolvedValue('new-hashed-password');
+      (bcrypt.hash as jest.Mock).mockResolvedValue("new-hashed-password");
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      const updatedUser = { ...mockUser, password: 'new-hashed-password' };
+      const updatedUser = { ...mockUser, password: "new-hashed-password" };
       mockPrismaService.user.update.mockResolvedValue(updatedUser);
 
       const result = await service.changePassword(
         1,
-        'currentPassword',
-        'newPassword',
+        "currentPassword",
+        "newPassword",
       );
 
       expect(bcrypt.compare).toHaveBeenCalledWith(
-        'currentPassword',
-        'hashed-password',
+        "currentPassword",
+        "hashed-password",
       );
-      expect(bcrypt.hash).toHaveBeenCalledWith('newPassword', 12);
+      expect(bcrypt.hash).toHaveBeenCalledWith("newPassword", 12);
       expect(mockPrismaService.user.update).toHaveBeenCalledWith({
         where: { id: 1 },
-        data: { password: 'new-hashed-password' },
+        data: { password: "new-hashed-password" },
       });
       expect(result).toBeInstanceOf(Object);
     });
 
-    it('should throw ResourceNotFoundException if user not found', async () => {
+    it("should throw ResourceNotFoundException if user not found", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.changePassword(999, 'current', 'new'),
+        service.changePassword(999, "current", "new"),
       ).rejects.toThrow(ResourceNotFoundException);
     });
 
-    it('should throw Error if current password is incorrect', async () => {
+    it("should throw Error if current password is incorrect", async () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
       await expect(
-        service.changePassword(1, 'wrongPassword', 'newPassword'),
+        service.changePassword(1, "wrongPassword", "newPassword"),
       ).rejects.toThrow(Error);
     });
   });

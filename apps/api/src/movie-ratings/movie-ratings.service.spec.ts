@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MovieRatingsService } from './movie-ratings.service';
-import { PrismaService } from '../common/prisma.service';
-import { NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from "@nestjs/testing";
+import { MovieRatingsService } from "./movie-ratings.service";
+import { PrismaService } from "../common/prisma.service";
+import { NotFoundException } from "@nestjs/common";
 
-describe('MovieRatingsService', () => {
+describe("MovieRatingsService", () => {
   let service: MovieRatingsService;
 
   const mockPrismaService = {
@@ -38,20 +38,20 @@ describe('MovieRatingsService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should create a movie rating', async () => {
+  describe("create", () => {
+    it("should create a movie rating", async () => {
       const createRatingDto = {
         movieId: 1,
-        reviewer: 'user1',
+        reviewer: "user1",
         rating: 8.5,
-        comment: 'Great movie!',
+        comment: "Great movie!",
       };
 
-      const mockMovie = { id: 1, title: 'Test Movie' };
+      const mockMovie = { id: 1, title: "Test Movie" };
       const expectedRating = {
         id: 1,
         ...createRatingDto,
@@ -77,12 +77,12 @@ describe('MovieRatingsService', () => {
       expect(result).toEqual(expectedRating);
     });
 
-    it('should throw NotFoundException if movie not found', async () => {
+    it("should throw NotFoundException if movie not found", async () => {
       const createRatingDto = {
         movieId: 999,
-        reviewer: 'user1',
+        reviewer: "user1",
         rating: 8.5,
-        comment: 'Great movie!',
+        comment: "Great movie!",
       };
 
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
@@ -95,16 +95,16 @@ describe('MovieRatingsService', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should return all ratings', async () => {
+  describe("findAll", () => {
+    it("should return all ratings", async () => {
       const expectedRatings = [
         {
           id: 1,
           movieId: 1,
-          userId: 'user1',
+          userId: "user1",
           rating: 8.5,
-          review: 'Great movie!',
-          movie: { id: 1, title: 'Test Movie' },
+          review: "Great movie!",
+          movie: { id: 1, title: "Test Movie" },
         },
       ];
 
@@ -118,23 +118,23 @@ describe('MovieRatingsService', () => {
           movie: true,
         },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       });
       expect(result).toEqual(expectedRatings);
     });
   });
 
-  describe('findOne', () => {
-    it('should return a rating by id', async () => {
+  describe("findOne", () => {
+    it("should return a rating by id", async () => {
       const ratingId = 1;
       const expectedRating = {
         id: ratingId,
         movieId: 1,
-        userId: 'user1',
+        userId: "user1",
         rating: 8.5,
-        review: 'Great movie!',
-        movie: { id: 1, title: 'Test Movie' },
+        review: "Great movie!",
+        movie: { id: 1, title: "Test Movie" },
       };
 
       mockPrismaService.movieRating.findUnique.mockResolvedValue(
@@ -152,7 +152,7 @@ describe('MovieRatingsService', () => {
       expect(result).toEqual(expectedRating);
     });
 
-    it('should throw NotFoundException if rating not found', async () => {
+    it("should throw NotFoundException if rating not found", async () => {
       const ratingId = 999;
 
       mockPrismaService.movieRating.findUnique.mockResolvedValue(null);
@@ -163,21 +163,21 @@ describe('MovieRatingsService', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update a rating', async () => {
+  describe("update", () => {
+    it("should update a rating", async () => {
       const ratingId = 1;
       const updateRatingDto = {
         rating: 9.0,
-        review: 'Amazing movie!',
+        review: "Amazing movie!",
       };
 
       const existingRating = {
         id: ratingId,
         movieId: 1,
-        userId: 'user1',
+        userId: "user1",
         rating: 8.5,
-        review: 'Great movie!',
-        movie: { id: 1, title: 'Test Movie' },
+        review: "Great movie!",
+        movie: { id: 1, title: "Test Movie" },
       };
 
       const updatedRating = {
@@ -202,7 +202,7 @@ describe('MovieRatingsService', () => {
       expect(result).toEqual(updatedRating);
     });
 
-    it('should throw NotFoundException if rating not found', async () => {
+    it("should throw NotFoundException if rating not found", async () => {
       const ratingId = 999;
       const updateRatingDto = { rating: 9.0 };
 
@@ -214,15 +214,15 @@ describe('MovieRatingsService', () => {
     });
   });
 
-  describe('remove', () => {
-    it('should remove a rating', async () => {
+  describe("remove", () => {
+    it("should remove a rating", async () => {
       const ratingId = 1;
       const mockRating = {
         id: ratingId,
         movieId: 1,
-        userId: 'user1',
+        userId: "user1",
         rating: 8.5,
-        review: 'Great movie!',
+        review: "Great movie!",
       };
 
       mockPrismaService.movieRating.findUnique.mockResolvedValue(mockRating);
@@ -236,7 +236,7 @@ describe('MovieRatingsService', () => {
       expect(result).toEqual(mockRating);
     });
 
-    it('should throw NotFoundException if rating not found', async () => {
+    it("should throw NotFoundException if rating not found", async () => {
       const ratingId = 999;
 
       mockPrismaService.movieRating.findUnique.mockResolvedValue(null);
@@ -247,24 +247,24 @@ describe('MovieRatingsService', () => {
     });
   });
 
-  describe('getMovieRatings', () => {
-    it('should return ratings for a specific movie', async () => {
+  describe("getMovieRatings", () => {
+    it("should return ratings for a specific movie", async () => {
       const movieId = 1;
-      const mockMovie = { id: movieId, title: 'Test Movie' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
       const expectedRatings = [
         {
           id: 1,
           movieId,
-          reviewer: 'user1',
+          reviewer: "user1",
           rating: 8.5,
-          comment: 'Great movie!',
+          comment: "Great movie!",
         },
         {
           id: 2,
           movieId,
-          reviewer: 'user2',
+          reviewer: "user2",
           rating: 9.0,
-          comment: 'Amazing!',
+          comment: "Amazing!",
         },
       ];
 
@@ -279,13 +279,13 @@ describe('MovieRatingsService', () => {
       expect(mockPrismaService.movieRating.findMany).toHaveBeenCalledWith({
         where: { movieId },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       });
       expect(result).toEqual(expectedRatings);
     });
 
-    it('should throw NotFoundException if movie not found', async () => {
+    it("should throw NotFoundException if movie not found", async () => {
       const movieId = 999;
 
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
@@ -296,10 +296,10 @@ describe('MovieRatingsService', () => {
     });
   });
 
-  describe('getAverageRating', () => {
-    it('should return average rating for a movie', async () => {
+  describe("getAverageRating", () => {
+    it("should return average rating for a movie", async () => {
       const movieId = 1;
-      const mockMovie = { id: movieId, title: 'Test Movie' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
       const mockAggregate = {
         _avg: { rating: 8.75 },
         _count: { rating: 4 },
@@ -328,9 +328,9 @@ describe('MovieRatingsService', () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it('should return 0 average if no ratings exist', async () => {
+    it("should return 0 average if no ratings exist", async () => {
       const movieId = 1;
-      const mockMovie = { id: movieId, title: 'Test Movie' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
       const mockAggregate = {
         _avg: { rating: null },
         _count: { rating: 0 },
@@ -351,7 +351,7 @@ describe('MovieRatingsService', () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it('should throw NotFoundException if movie not found', async () => {
+    it("should throw NotFoundException if movie not found", async () => {
       const movieId = 999;
 
       mockPrismaService.movie.findUnique.mockResolvedValue(null);

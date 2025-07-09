@@ -3,14 +3,14 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import {
   ApiResponse,
   ApiListResponse,
   PaginationMeta,
-} from '../dto/api-response.dto';
+} from "../dto/api-response.dto";
 
 interface PaginatedData<T> {
   data: T[];
@@ -35,20 +35,20 @@ export class ResponseInterceptor<T>
         // If data has a 'data' property and 'meta' property, it's a paginated response
         if (
           data &&
-          typeof data === 'object' &&
-          'data' in data &&
-          'meta' in data
+          typeof data === "object" &&
+          "data" in data &&
+          "meta" in data
         ) {
           const paginatedData = data as PaginatedData<T>;
           return ApiListResponse.success(
             paginatedData.data,
-            'Success',
+            "Success",
             paginatedData.meta,
           );
         }
 
         // For regular responses, wrap in ApiResponse
-        return ApiResponse.success(data as T, 'Success');
+        return ApiResponse.success(data as T, "Success");
       }),
     );
   }

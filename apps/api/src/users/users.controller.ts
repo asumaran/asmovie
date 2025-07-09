@@ -11,16 +11,16 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Request,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserResponseDto } from './dto/user-response.dto';
-import { ChangePasswordDto } from '../auth/dto/change-password.dto';
-import { ApiOrJwtSimpleGuard } from '../common/guards/api-or-jwt-simple.guard';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+} from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { UserResponseDto } from "./dto/user-response.dto";
+import { ChangePasswordDto } from "../auth/dto/change-password.dto";
+import { ApiOrJwtSimpleGuard } from "../common/guards/api-or-jwt-simple.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-@Controller('users')
+@Controller("users")
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -37,39 +37,39 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get(":id")
   @UseGuards(ApiOrJwtSimpleGuard)
   async findOne(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
   ): Promise<UserResponseDto> {
     return this.usersService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @UseGuards(ApiOrJwtSimpleGuard)
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @UseGuards(ApiOrJwtSimpleGuard)
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async remove(@Param("id", ParseIntPipe) id: number): Promise<void> {
     return this.usersService.remove(id);
   }
 
-  @Post(':id/change-password')
+  @Post(":id/change-password")
   @UseGuards(JwtAuthGuard)
   async changePassword(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
     @Body() changePasswordDto: ChangePasswordDto,
     @Request() req: any,
   ): Promise<UserResponseDto> {
     // Users can only change their own password
     if (req.user.id !== id) {
-      throw new Error('You can only change your own password');
+      throw new Error("You can only change your own password");
     }
 
     return this.usersService.changePassword(

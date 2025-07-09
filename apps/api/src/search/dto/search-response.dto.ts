@@ -1,8 +1,8 @@
-import { Type } from 'class-transformer';
+import { Type } from "class-transformer";
 
 export class SearchItemDto {
   id: number;
-  type: 'movie' | 'actor';
+  type: "movie" | "actor";
   title?: string;
   name?: string;
   description?: string;

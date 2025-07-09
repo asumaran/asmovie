@@ -1,11 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
-import { CreateUserDto } from '../users/dto/create-user.dto';
-import { LoginDto } from './dto/login.dto';
-import { AuthResponseDto } from './dto/auth-response.dto';
-import { UserResponseDto } from '../users/dto/user-response.dto';
-import { User } from '@prisma/client';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { UsersService } from "../users/users.service";
+import { CreateUserDto } from "../users/dto/create-user.dto";
+import { LoginDto } from "./dto/login.dto";
+import { AuthResponseDto } from "./dto/auth-response.dto";
+import { UserResponseDto } from "../users/dto/user-response.dto";
+import { User } from "@prisma/client";
 
 export interface JwtPayload {
   sub: number;
@@ -32,11 +32,11 @@ export class AuthService {
     const user = await this.validateUser(loginDto.email, loginDto.password);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedException('Account is deactivated');
+      throw new UnauthorizedException("Account is deactivated");
     }
 
     const userResponse = new UserResponseDto(user);
@@ -89,7 +89,7 @@ export class AuthService {
     try {
       return await this.jwtService.verifyAsync(token);
     } catch {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException("Invalid token");
     }
   }
 }

@@ -1,4 +1,8 @@
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query';
 
 interface SearchServerProps {
   children: React.ReactNode;

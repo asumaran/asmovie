@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import { ExecutionContext, CallHandler, Logger } from '@nestjs/common';
-import { of, throwError } from 'rxjs';
+import { ExecutionContext, CallHandler, Logger } from "@nestjs/common";
+import { of, throwError } from "rxjs";
 import {
   PerformanceInterceptor,
   DetailedPerformanceInterceptor,
-} from './performance.interceptor';
+} from "./performance.interceptor";
 
-describe('PerformanceInterceptor', () => {
+describe("PerformanceInterceptor", () => {
   let interceptor: PerformanceInterceptor;
   let mockExecutionContext: ExecutionContext;
   let mockCallHandler: CallHandler;
@@ -19,11 +19,11 @@ describe('PerformanceInterceptor', () => {
     interceptor = new PerformanceInterceptor();
 
     const mockRequest = {
-      method: 'GET',
-      url: '/test',
-      ip: '127.0.0.1',
+      method: "GET",
+      url: "/test",
+      ip: "127.0.0.1",
       headers: {
-        'user-agent': 'Test Agent',
+        "user-agent": "Test Agent",
       },
     };
 
@@ -38,24 +38,24 @@ describe('PerformanceInterceptor', () => {
     } as any;
 
     // Mock the logger
-    loggerSpy = jest.spyOn(Logger.prototype, 'debug').mockImplementation();
-    jest.spyOn(Logger.prototype, 'log').mockImplementation();
-    jest.spyOn(Logger.prototype, 'warn').mockImplementation();
-    jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    loggerSpy = jest.spyOn(Logger.prototype, "debug").mockImplementation();
+    jest.spyOn(Logger.prototype, "log").mockImplementation();
+    jest.spyOn(Logger.prototype, "warn").mockImplementation();
+    jest.spyOn(Logger.prototype, "error").mockImplementation();
 
     // Mock console.log for metrics collection
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
 
     // Ensure we're not in test environment for metrics collection
-    process.env.NODE_ENV = 'development';
+    process.env.NODE_ENV = "development";
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  describe('intercept', () => {
-    it('should log request start and end for successful requests', (done) => {
+  describe("intercept", () => {
+    it("should log request start and end for successful requests", (done) => {
       const testData = { success: true };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
@@ -70,7 +70,7 @@ describe('PerformanceInterceptor', () => {
 
           // Check that debug log was called for request start
           expect(loggerSpy).toHaveBeenCalledWith(
-            '[REQUEST START] GET /test - IP: 127.0.0.1',
+            "[REQUEST START] GET /test - IP: 127.0.0.1",
           );
 
           // Check that performance log was called
@@ -79,12 +79,12 @@ describe('PerformanceInterceptor', () => {
               /\[REQUEST END\] GET \/test - \d+ms - SUCCESS/,
             ),
             expect.objectContaining({
-              method: 'GET',
-              url: '/test',
+              method: "GET",
+              url: "/test",
               duration: expect.stringMatching(/\d+ms/),
-              status: 'SUCCESS',
-              ip: '127.0.0.1',
-              userAgent: 'Test Agent',
+              status: "SUCCESS",
+              ip: "127.0.0.1",
+              userAgent: "Test Agent",
               timestamp: expect.stringMatching(
                 /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
               ),
@@ -96,7 +96,7 @@ describe('PerformanceInterceptor', () => {
       });
     });
 
-    it('should log performance metrics for slow requests', (done) => {
+    it("should log performance metrics for slow requests", (done) => {
       const testData = { success: true };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
@@ -122,10 +122,10 @@ describe('PerformanceInterceptor', () => {
               /\[SLOW REQUEST\] GET \/test - 2000ms - SUCCESS/,
             ),
             expect.objectContaining({
-              method: 'GET',
-              url: '/test',
-              duration: '2000ms',
-              status: 'SUCCESS',
+              method: "GET",
+              url: "/test",
+              duration: "2000ms",
+              status: "SUCCESS",
               slow: true,
             }),
           );
@@ -136,9 +136,9 @@ describe('PerformanceInterceptor', () => {
       });
     });
 
-    it('should log errors with stack trace', (done) => {
-      const error = new Error('Test error');
-      error.stack = 'Error stack trace';
+    it("should log errors with stack trace", (done) => {
+      const error = new Error("Test error");
+      error.stack = "Error stack trace";
       mockCallHandler.handle = jest
         .fn()
         .mockReturnValue(throwError(() => error));
@@ -154,11 +154,11 @@ describe('PerformanceInterceptor', () => {
           expect(Logger.prototype.error).toHaveBeenCalledWith(
             expect.stringMatching(/\[REQUEST ERROR\] GET \/test - \d+ms/),
             expect.objectContaining({
-              method: 'GET',
-              url: '/test',
-              status: 'ERROR',
-              error: 'Test error',
-              stack: 'Error stack trace',
+              method: "GET",
+              url: "/test",
+              status: "ERROR",
+              error: "Test error",
+              stack: "Error stack trace",
             }),
           );
 
@@ -167,11 +167,11 @@ describe('PerformanceInterceptor', () => {
       });
     });
 
-    it('should handle missing user-agent header', (done) => {
+    it("should handle missing user-agent header", (done) => {
       const mockRequestNoUserAgent = {
-        method: 'POST',
-        url: '/api/test',
-        ip: '192.168.1.1',
+        method: "POST",
+        url: "/api/test",
+        ip: "192.168.1.1",
         headers: {},
       };
 
@@ -181,7 +181,7 @@ describe('PerformanceInterceptor', () => {
         }),
       } as any;
 
-      const testData = { result: 'success' };
+      const testData = { result: "success" };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
       const result$ = interceptor.intercept(
@@ -196,7 +196,7 @@ describe('PerformanceInterceptor', () => {
               /\[REQUEST END\] POST \/api\/test - \d+ms - SUCCESS/,
             ),
             expect.objectContaining({
-              userAgent: 'Unknown',
+              userAgent: "Unknown",
             }),
           );
           done();
@@ -204,15 +204,15 @@ describe('PerformanceInterceptor', () => {
       });
     });
 
-    it('should collect metrics with proper endpoint grouping', (done) => {
-      const testData = { data: 'test' };
+    it("should collect metrics with proper endpoint grouping", (done) => {
+      const testData = { data: "test" };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
       const mockRequestWithQuery = {
-        method: 'GET',
-        url: '/api/movies?page=1&limit=10',
-        ip: '127.0.0.1',
-        headers: { 'user-agent': 'Test' },
+        method: "GET",
+        url: "/api/movies?page=1&limit=10",
+        ip: "127.0.0.1",
+        headers: { "user-agent": "Test" },
       };
 
       const mockContextWithQuery = {
@@ -231,10 +231,10 @@ describe('PerformanceInterceptor', () => {
           // Check that metrics were collected with query params removed
           const loggedMetrics = JSON.parse(consoleLogSpy.mock.calls[0][0]);
           expect(loggedMetrics).toEqual({
-            type: 'api_performance_metric',
-            endpoint: 'GET /api/movies',
+            type: "api_performance_metric",
+            endpoint: "GET /api/movies",
             duration: expect.any(Number),
-            status: 'SUCCESS',
+            status: "SUCCESS",
             timestamp: expect.stringMatching(
               /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
             ),
@@ -244,11 +244,11 @@ describe('PerformanceInterceptor', () => {
       });
     });
 
-    it('should not collect metrics in test environment', (done) => {
+    it("should not collect metrics in test environment", (done) => {
       // Set test environment
-      process.env.NODE_ENV = 'test';
+      process.env.NODE_ENV = "test";
 
-      const testData = { data: 'test' };
+      const testData = { data: "test" };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
       const result$ = interceptor.intercept(
@@ -265,13 +265,13 @@ describe('PerformanceInterceptor', () => {
       });
     });
 
-    it('should truncate long user agent strings', (done) => {
-      const longUserAgent = 'A'.repeat(200);
+    it("should truncate long user agent strings", (done) => {
+      const longUserAgent = "A".repeat(200);
       const mockRequestLongUA = {
-        method: 'GET',
-        url: '/test',
-        ip: '127.0.0.1',
-        headers: { 'user-agent': longUserAgent },
+        method: "GET",
+        url: "/test",
+        ip: "127.0.0.1",
+        headers: { "user-agent": longUserAgent },
       };
 
       const mockContextLongUA = {
@@ -300,7 +300,7 @@ describe('PerformanceInterceptor', () => {
   });
 });
 
-describe('DetailedPerformanceInterceptor', () => {
+describe("DetailedPerformanceInterceptor", () => {
   let interceptor: DetailedPerformanceInterceptor;
   let mockExecutionContext: ExecutionContext;
   let mockCallHandler: CallHandler;
@@ -309,14 +309,14 @@ describe('DetailedPerformanceInterceptor', () => {
     interceptor = new DetailedPerformanceInterceptor();
 
     const mockRequest = {
-      method: 'POST',
-      url: '/api/movies',
-      body: { title: 'Test Movie' },
-      query: { page: '1' },
-      params: { id: '123' },
+      method: "POST",
+      url: "/api/movies",
+      body: { title: "Test Movie" },
+      query: { page: "1" },
+      params: { id: "123" },
       headers: {
-        'user-agent': 'Test Agent',
-        'content-type': 'application/json',
+        "user-agent": "Test Agent",
+        "content-type": "application/json",
       },
     };
 
@@ -335,17 +335,17 @@ describe('DetailedPerformanceInterceptor', () => {
       handle: jest.fn(),
     } as any;
 
-    jest.spyOn(Logger.prototype, 'warn').mockImplementation();
-    jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    jest.spyOn(Logger.prototype, "warn").mockImplementation();
+    jest.spyOn(Logger.prototype, "error").mockImplementation();
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  describe('intercept', () => {
-    it('should log detailed metrics for slow requests', (done) => {
-      const testData = { id: 1, title: 'Test Movie' };
+  describe("intercept", () => {
+    it("should log detailed metrics for slow requests", (done) => {
+      const testData = { id: 1, title: "Test Movie" };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
       // Mock process.hrtime.bigint to simulate slow request
@@ -365,19 +365,19 @@ describe('DetailedPerformanceInterceptor', () => {
       result$.subscribe({
         next: () => {
           expect(Logger.prototype.warn).toHaveBeenCalledWith(
-            '[DETAILED METRICS] SUCCESS',
+            "[DETAILED METRICS] SUCCESS",
             expect.objectContaining({
-              method: 'POST',
-              url: '/api/movies',
+              method: "POST",
+              url: "/api/movies",
               statusCode: 200,
-              duration: '600.00ms',
+              duration: "600.00ms",
               memoryUsage: expect.objectContaining({
                 delta: expect.any(Object),
                 current: expect.any(Object),
               }),
               requestSize: expect.any(Number),
               responseSize: expect.any(Number),
-              status: 'SUCCESS',
+              status: "SUCCESS",
             }),
           );
 
@@ -387,8 +387,8 @@ describe('DetailedPerformanceInterceptor', () => {
       });
     });
 
-    it('should log detailed metrics for error requests', (done) => {
-      const error = new Error('Database error');
+    it("should log detailed metrics for error requests", (done) => {
+      const error = new Error("Database error");
       mockCallHandler.handle = jest
         .fn()
         .mockReturnValue(throwError(() => error));
@@ -401,11 +401,11 @@ describe('DetailedPerformanceInterceptor', () => {
       result$.subscribe({
         error: () => {
           expect(Logger.prototype.warn).toHaveBeenCalledWith(
-            '[DETAILED METRICS] ERROR',
+            "[DETAILED METRICS] ERROR",
             expect.objectContaining({
-              status: 'ERROR',
-              method: 'POST',
-              url: '/api/movies',
+              status: "ERROR",
+              method: "POST",
+              url: "/api/movies",
             }),
           );
           done();
@@ -413,8 +413,8 @@ describe('DetailedPerformanceInterceptor', () => {
       });
     });
 
-    it('should warn about high memory usage', (done) => {
-      const testData = { data: 'test' };
+    it("should warn about high memory usage", (done) => {
+      const testData = { data: "test" };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
       // Mock memory usage to simulate high memory delta
@@ -445,9 +445,9 @@ describe('DetailedPerformanceInterceptor', () => {
       result$.subscribe({
         next: () => {
           expect(Logger.prototype.warn).toHaveBeenCalledWith(
-            '[MEMORY WARNING] High memory usage detected',
+            "[MEMORY WARNING] High memory usage detected",
             expect.objectContaining({
-              endpoint: 'POST /api/movies',
+              endpoint: "POST /api/movies",
               memoryDelta: 15 * 1024 * 1024,
               duration: expect.any(Number),
             }),
@@ -459,8 +459,8 @@ describe('DetailedPerformanceInterceptor', () => {
       });
     });
 
-    it('should calculate request size correctly', (done) => {
-      const testData = { result: 'success' };
+    it("should calculate request size correctly", (done) => {
+      const testData = { result: "success" };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
       // Force a slow request to trigger detailed logging
@@ -481,7 +481,7 @@ describe('DetailedPerformanceInterceptor', () => {
         next: () => {
           // The request size should include headers, body, and query parameters
           const logCall = (Logger.prototype.warn as jest.Mock).mock.calls.find(
-            (call) => call[0] === '[DETAILED METRICS] SUCCESS',
+            (call) => call[0] === "[DETAILED METRICS] SUCCESS",
           );
           expect(logCall[1].requestSize).toBeGreaterThan(0);
 
@@ -491,12 +491,12 @@ describe('DetailedPerformanceInterceptor', () => {
       });
     });
 
-    it('should calculate response size correctly', (done) => {
+    it("should calculate response size correctly", (done) => {
       const testData = {
         id: 1,
-        title: 'Large Response',
-        description: 'A'.repeat(1000),
-        metadata: { tags: ['action', 'drama'], rating: 8.5 },
+        title: "Large Response",
+        description: "A".repeat(1000),
+        metadata: { tags: ["action", "drama"], rating: 8.5 },
       };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
@@ -517,7 +517,7 @@ describe('DetailedPerformanceInterceptor', () => {
       result$.subscribe({
         next: () => {
           const logCall = (Logger.prototype.warn as jest.Mock).mock.calls.find(
-            (call) => call[0] === '[DETAILED METRICS] SUCCESS',
+            (call) => call[0] === "[DETAILED METRICS] SUCCESS",
           );
           expect(logCall[1].responseSize).toBeGreaterThan(1000); // Should be size of JSON.stringify(testData)
 
@@ -527,7 +527,7 @@ describe('DetailedPerformanceInterceptor', () => {
       });
     });
 
-    it('should not log detailed metrics for fast requests without errors', (done) => {
+    it("should not log detailed metrics for fast requests without errors", (done) => {
       const testData = { success: true };
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
@@ -549,7 +549,7 @@ describe('DetailedPerformanceInterceptor', () => {
         next: () => {
           // Should not log detailed metrics for fast requests
           expect(Logger.prototype.warn).not.toHaveBeenCalledWith(
-            '[DETAILED METRICS] SUCCESS',
+            "[DETAILED METRICS] SUCCESS",
             expect.any(Object),
           );
 
@@ -559,10 +559,10 @@ describe('DetailedPerformanceInterceptor', () => {
       });
     });
 
-    it('should handle requests without body, query, or specific headers', (done) => {
+    it("should handle requests without body, query, or specific headers", (done) => {
       const minimalRequest = {
-        method: 'GET',
-        url: '/health',
+        method: "GET",
+        url: "/health",
         headers: {},
       };
 
@@ -573,7 +573,7 @@ describe('DetailedPerformanceInterceptor', () => {
         }),
       } as any;
 
-      const testData = 'OK';
+      const testData = "OK";
       mockCallHandler.handle = jest.fn().mockReturnValue(of(testData));
 
       // Force slow request to trigger logging
@@ -590,10 +590,10 @@ describe('DetailedPerformanceInterceptor', () => {
       result$.subscribe({
         next: () => {
           expect(Logger.prototype.warn).toHaveBeenCalledWith(
-            '[DETAILED METRICS] SUCCESS',
+            "[DETAILED METRICS] SUCCESS",
             expect.objectContaining({
-              method: 'GET',
-              url: '/health',
+              method: "GET",
+              url: "/health",
               requestSize: expect.any(Number),
               responseSize: expect.any(Number),
             }),

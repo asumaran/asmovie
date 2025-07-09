@@ -1,4 +1,4 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus } from "@nestjs/common";
 import {
   BusinessException,
   DuplicateResourceException,
@@ -6,7 +6,7 @@ import {
   InvalidRelationshipException,
   ValidationException,
   BusinessExceptionDetails,
-} from './business.exception';
+} from "./business.exception";
 
 interface BusinessExceptionResponse {
   error: string;
@@ -15,33 +15,33 @@ interface BusinessExceptionResponse {
   details?: BusinessExceptionDetails;
 }
 
-describe('Business Exceptions', () => {
-  describe('BusinessException', () => {
-    it('should create exception with default status code', () => {
-      const message = 'Business rule violation';
+describe("Business Exceptions", () => {
+  describe("BusinessException", () => {
+    it("should create exception with default status code", () => {
+      const message = "Business rule violation";
       const exception = new BusinessException(message);
 
       expect(exception.getStatus()).toBe(HttpStatus.BAD_REQUEST);
       expect(exception.message).toBe(message);
 
       const response = exception.getResponse() as BusinessExceptionResponse;
-      expect(response.error).toBe('Business Rule Violation');
+      expect(response.error).toBe("Business Rule Violation");
       expect(response.message).toBe(message);
       expect(response.timestamp).toBeDefined();
       expect(response.details).toBeUndefined();
     });
 
-    it('should create exception with custom status code', () => {
-      const message = 'Unauthorized operation';
+    it("should create exception with custom status code", () => {
+      const message = "Unauthorized operation";
       const exception = new BusinessException(message, HttpStatus.UNAUTHORIZED);
 
       expect(exception.getStatus()).toBe(HttpStatus.UNAUTHORIZED);
       expect(exception.message).toBe(message);
     });
 
-    it('should create exception with details', () => {
-      const message = 'Business rule violation';
-      const details = { field: 'value', reason: 'invalid' };
+    it("should create exception with details", () => {
+      const message = "Business rule violation";
+      const details = { field: "value", reason: "invalid" };
       const exception = new BusinessException(
         message,
         HttpStatus.BAD_REQUEST,
@@ -52,8 +52,8 @@ describe('Business Exceptions', () => {
       expect(response.details).toEqual(details);
     });
 
-    it('should include timestamp in response', () => {
-      const exception = new BusinessException('Test');
+    it("should include timestamp in response", () => {
+      const exception = new BusinessException("Test");
       const response = exception.getResponse() as BusinessExceptionResponse;
 
       expect(response.timestamp).toBeDefined();
@@ -61,11 +61,11 @@ describe('Business Exceptions', () => {
     });
   });
 
-  describe('DuplicateResourceException', () => {
-    it('should create exception with proper message and details', () => {
-      const resource = 'User';
-      const field = 'email';
-      const value = 'test@example.com';
+  describe("DuplicateResourceException", () => {
+    it("should create exception with proper message and details", () => {
+      const resource = "User";
+      const field = "email";
+      const value = "test@example.com";
 
       const exception = new DuplicateResourceException(resource, field, value);
 
@@ -75,27 +75,27 @@ describe('Business Exceptions', () => {
       );
 
       const response = exception.getResponse() as BusinessExceptionResponse;
-      expect(response.error).toBe('Business Rule Violation');
+      expect(response.error).toBe("Business Rule Violation");
       expect(response.details).toEqual({ resource, field, value });
     });
 
-    it('should handle special characters in values', () => {
+    it("should handle special characters in values", () => {
       const exception = new DuplicateResourceException(
-        'Movie',
-        'title',
+        "Movie",
+        "title",
         'Test "Movie" #1',
       );
 
       expect(exception.message).toBe(
-        'Movie with title \'Test "Movie" #1\' already exists',
+        "Movie with title 'Test \"Movie\" #1' already exists",
       );
     });
   });
 
-  describe('ResourceNotFoundException', () => {
-    it('should create exception with string identifier', () => {
-      const resource = 'Movie';
-      const identifier = '123';
+  describe("ResourceNotFoundException", () => {
+    it("should create exception with string identifier", () => {
+      const resource = "Movie";
+      const identifier = "123";
 
       const exception = new ResourceNotFoundException(resource, identifier);
 
@@ -108,8 +108,8 @@ describe('Business Exceptions', () => {
       expect(response.details).toEqual({ resource, identifier });
     });
 
-    it('should create exception with numeric identifier', () => {
-      const resource = 'Actor';
+    it("should create exception with numeric identifier", () => {
+      const resource = "Actor";
       const identifier = 456;
 
       const exception = new ResourceNotFoundException(resource, identifier);
@@ -123,9 +123,9 @@ describe('Business Exceptions', () => {
       expect(response.details).toEqual({ resource, identifier });
     });
 
-    it('should handle complex identifiers', () => {
-      const resource = 'MovieActor';
-      const identifier = 'movieId:1, actorId:2';
+    it("should handle complex identifiers", () => {
+      const resource = "MovieActor";
+      const identifier = "movieId:1, actorId:2";
 
       const exception = new ResourceNotFoundException(resource, identifier);
 
@@ -135,9 +135,9 @@ describe('Business Exceptions', () => {
     });
   });
 
-  describe('InvalidRelationshipException', () => {
-    it('should create exception with default status', () => {
-      const message = 'Invalid relationship between entities';
+  describe("InvalidRelationshipException", () => {
+    it("should create exception with default status", () => {
+      const message = "Invalid relationship between entities";
 
       const exception = new InvalidRelationshipException(message);
 
@@ -145,15 +145,15 @@ describe('Business Exceptions', () => {
       expect(exception.message).toBe(message);
 
       const response = exception.getResponse() as BusinessExceptionResponse;
-      expect(response.error).toBe('Business Rule Violation');
+      expect(response.error).toBe("Business Rule Violation");
     });
 
-    it('should create exception with details', () => {
-      const message = 'Cannot relate these entities';
+    it("should create exception with details", () => {
+      const message = "Cannot relate these entities";
       const details = {
-        sourceEntity: 'Movie',
-        targetEntity: 'Actor',
-        reason: 'Already exists',
+        sourceEntity: "Movie",
+        targetEntity: "Actor",
+        reason: "Already exists",
       };
 
       const exception = new InvalidRelationshipException(message, details);
@@ -163,13 +163,13 @@ describe('Business Exceptions', () => {
     });
   });
 
-  describe('ValidationException', () => {
-    it('should create exception with validation errors', () => {
-      const message = 'Validation failed';
+  describe("ValidationException", () => {
+    it("should create exception with validation errors", () => {
+      const message = "Validation failed";
       const validationErrors = [
-        'Title is required',
-        'Release year must be a number',
-        'Duration must be positive',
+        "Title is required",
+        "Release year must be a number",
+        "Duration must be positive",
       ];
 
       const exception = new ValidationException(message, validationErrors);
@@ -181,8 +181,8 @@ describe('Business Exceptions', () => {
       expect(response.details?.validationErrors).toEqual(validationErrors);
     });
 
-    it('should handle empty validation errors array', () => {
-      const message = 'Validation failed';
+    it("should handle empty validation errors array", () => {
+      const message = "Validation failed";
       const validationErrors: string[] = [];
 
       const exception = new ValidationException(message, validationErrors);
@@ -191,9 +191,9 @@ describe('Business Exceptions', () => {
       expect(response.details?.validationErrors).toEqual([]);
     });
 
-    it('should handle single validation error', () => {
-      const message = 'Validation failed';
-      const validationErrors = ['Required field missing'];
+    it("should handle single validation error", () => {
+      const message = "Validation failed";
+      const validationErrors = ["Required field missing"];
 
       const exception = new ValidationException(message, validationErrors);
 
@@ -202,19 +202,19 @@ describe('Business Exceptions', () => {
     });
   });
 
-  describe('Exception inheritance', () => {
-    it('should properly inherit from BusinessException', () => {
+  describe("Exception inheritance", () => {
+    it("should properly inherit from BusinessException", () => {
       const duplicateException = new DuplicateResourceException(
-        'User',
-        'email',
-        'test@test.com',
+        "User",
+        "email",
+        "test@test.com",
       );
-      const notFoundException = new ResourceNotFoundException('Movie', 1);
+      const notFoundException = new ResourceNotFoundException("Movie", 1);
       const relationshipException = new InvalidRelationshipException(
-        'Invalid relation',
+        "Invalid relation",
       );
-      const validationException = new ValidationException('Validation failed', [
-        'Error',
+      const validationException = new ValidationException("Validation failed", [
+        "Error",
       ]);
 
       expect(duplicateException).toBeInstanceOf(BusinessException);
@@ -223,27 +223,27 @@ describe('Business Exceptions', () => {
       expect(validationException).toBeInstanceOf(BusinessException);
     });
 
-    it('should have consistent error structure across all exceptions', () => {
+    it("should have consistent error structure across all exceptions", () => {
       const exceptions = [
-        new DuplicateResourceException('User', 'email', 'test@test.com'),
-        new ResourceNotFoundException('Movie', 1),
-        new InvalidRelationshipException('Invalid relation'),
-        new ValidationException('Validation failed', ['Error']),
+        new DuplicateResourceException("User", "email", "test@test.com"),
+        new ResourceNotFoundException("Movie", 1),
+        new InvalidRelationshipException("Invalid relation"),
+        new ValidationException("Validation failed", ["Error"]),
       ];
 
       exceptions.forEach((exception) => {
         const response = exception.getResponse() as BusinessExceptionResponse;
-        expect(response).toHaveProperty('error', 'Business Rule Violation');
-        expect(response).toHaveProperty('message');
-        expect(response).toHaveProperty('timestamp');
-        expect(typeof response.timestamp).toBe('string');
+        expect(response).toHaveProperty("error", "Business Rule Violation");
+        expect(response).toHaveProperty("message");
+        expect(response).toHaveProperty("timestamp");
+        expect(typeof response.timestamp).toBe("string");
       });
     });
   });
 
-  describe('Error response structure', () => {
-    it('should have consistent timestamp format', () => {
-      const exception = new BusinessException('Test message');
+  describe("Error response structure", () => {
+    it("should have consistent timestamp format", () => {
+      const exception = new BusinessException("Test message");
       const response = exception.getResponse() as BusinessExceptionResponse;
 
       // Should be valid ISO string
@@ -253,9 +253,9 @@ describe('Business Exceptions', () => {
       );
     });
 
-    it('should preserve all error information', () => {
-      const message = 'Custom error message';
-      const details = { customField: 'customValue' };
+    it("should preserve all error information", () => {
+      const message = "Custom error message";
+      const details = { customField: "customValue" };
 
       const exception = new BusinessException(
         message,
@@ -264,7 +264,7 @@ describe('Business Exceptions', () => {
       );
       const response = exception.getResponse() as BusinessExceptionResponse;
 
-      expect(response.error).toBe('Business Rule Violation');
+      expect(response.error).toBe("Business Rule Violation");
       expect(response.message).toBe(message);
       expect(response.details).toEqual(details);
       expect(response.timestamp).toBeDefined();

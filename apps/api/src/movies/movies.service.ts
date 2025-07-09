@@ -1,22 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../common/prisma.service';
-import { QueryBuilderService } from '../common/services/query-builder.service';
-import { TransactionService } from '../common/services/transaction.service';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { PrismaService } from "../common/prisma.service";
+import { QueryBuilderService } from "../common/services/query-builder.service";
+import { TransactionService } from "../common/services/transaction.service";
 import {
   ResourceNotFoundException,
   DuplicateResourceException,
-} from '../common/exceptions/business.exception';
+} from "../common/exceptions/business.exception";
 import {
   PaginatedResponse,
   PaginationHelper,
-} from '../common/interfaces/paginated-response.interface';
+} from "../common/interfaces/paginated-response.interface";
 import {
   CreateMovieDto,
   UpdateMovieDto,
   AddActorToMovieDto,
   MovieFilterDto,
-} from './dto/movie.dto';
+} from "./dto/movie.dto";
 
 @Injectable()
 export class MoviesService {
@@ -48,7 +48,7 @@ export class MoviesService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<PaginatedResponse<any>> {
     const defaultLimit = this.configService.get<number>(
-      'pagination.defaultLimit',
+      "pagination.defaultLimit",
       10,
     );
     const effectiveLimit = limit ?? defaultLimit;
@@ -68,7 +68,7 @@ export class MoviesService {
     const orderBy = this.queryBuilder.buildOrderBy(
       filters.sortBy,
       filters.sortOrder,
-      { createdAt: 'desc' as const },
+      { createdAt: "desc" as const },
     );
 
     const queryOptions = this.queryBuilder.buildPaginatedQuery({
@@ -100,7 +100,7 @@ export class MoviesService {
     });
 
     if (!movie) {
-      throw new ResourceNotFoundException('Movie', id);
+      throw new ResourceNotFoundException("Movie", id);
     }
 
     return movie;
@@ -136,7 +136,7 @@ export class MoviesService {
     });
 
     if (!actor) {
-      throw new ResourceNotFoundException('Actor', addActorDto.actorId);
+      throw new ResourceNotFoundException("Actor", addActorDto.actorId);
     }
 
     // Check if relationship already exists
@@ -155,8 +155,8 @@ export class MoviesService {
 
     if (existingRelation) {
       throw new DuplicateResourceException(
-        'Movie-Actor relationship',
-        'actor',
+        "Movie-Actor relationship",
+        "actor",
         `${actor.name} in ${movie.title}`,
       );
     }
@@ -196,7 +196,7 @@ export class MoviesService {
 
     if (!relation) {
       throw new ResourceNotFoundException(
-        'Movie-Actor relationship',
+        "Movie-Actor relationship",
         `movieId:${movieId}, actorId:${actorId}`,
       );
     }
@@ -227,7 +227,7 @@ export class MoviesService {
         },
       },
       orderBy: {
-        role: 'asc',
+        role: "asc",
       },
     });
   }

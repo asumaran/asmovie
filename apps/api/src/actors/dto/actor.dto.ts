@@ -7,8 +7,8 @@ import {
   IsInt,
   Min,
   Max,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+} from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreateActorDto {
   @IsString()
@@ -70,13 +70,13 @@ export class ActorFilterDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['name', 'createdAt', 'birthDate', 'nationality'])
+  @IsIn(["name", "createdAt", "birthDate", "nationality"])
   sortBy?: string;
 
   @IsOptional()
   @IsString()
-  @IsIn(['asc', 'desc'])
-  sortOrder?: 'asc' | 'desc';
+  @IsIn(["asc", "desc"])
+  sortOrder?: "asc" | "desc";
 }
 
 export class ActorQueryDto {
@@ -87,13 +87,13 @@ export class ActorQueryDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['name', 'createdAt', 'birthDate', 'nationality'])
+  @IsIn(["name", "createdAt", "birthDate", "nationality"])
   sortBy?: string;
 
   @IsOptional()
   @IsString()
-  @IsIn(['asc', 'desc'])
-  sortOrder?: 'asc' | 'desc';
+  @IsIn(["asc", "desc"])
+  sortOrder?: "asc" | "desc";
 
   // Pagination parameters
   @IsOptional()

@@ -3,7 +3,13 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Pagination } from '@/components/pagination';
 import { ItemsPerPageSelector } from '@/components/items-per-page-selector';
@@ -25,7 +31,9 @@ interface PaginatedActorsResult {
 
 function ActorsContent() {
   const searchParams = useSearchParams();
-  const [actorsData, setActorsData] = useState<PaginatedActorsResult | null>(null);
+  const [actorsData, setActorsData] = useState<PaginatedActorsResult | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +47,11 @@ function ActorsContent() {
       setError(null);
 
       try {
-        const result = await getPaginatedActors(currentPage, itemsPerPage, sortBy);
+        const result = await getPaginatedActors(
+          currentPage,
+          itemsPerPage,
+          sortBy,
+        );
         setActorsData(result);
       } catch (err) {
         setError('Failed to load actors. Please try again.');
@@ -84,7 +96,10 @@ function ActorsContent() {
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
       age--;
     }
     return age;
@@ -95,11 +110,16 @@ function ActorsContent() {
       {/* Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="text-sm text-muted-foreground">
-          Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of{' '}
-          {totalItems} actors
+          Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
+          {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{' '}
+          actors
         </div>
         <div className="flex flex-col sm:flex-row gap-4">
-          <SortSelector options={ACTOR_SORT_OPTIONS} currentValue={sortBy} baseUrl="/actors" />
+          <SortSelector
+            options={ACTOR_SORT_OPTIONS}
+            currentValue={sortBy}
+            baseUrl="/actors"
+          />
           <ItemsPerPageSelector currentValue={itemsPerPage} baseUrl="/actors" />
         </div>
       </div>
@@ -130,7 +150,9 @@ function ActorsContent() {
                           Actor
                         </Badge>
                       </div>
-                      <CardTitle className={`${itemsPerPage === 20 ? 'text-lg' : 'text-xl'}`}>
+                      <CardTitle
+                        className={`${itemsPerPage === 20 ? 'text-lg' : 'text-xl'}`}
+                      >
                         {actor.name}
                       </CardTitle>
                       <CardDescription>
@@ -144,22 +166,38 @@ function ActorsContent() {
                   <div className="space-y-3">
                     {actor.placeOfBirth && (
                       <div>
-                        <h4 className="font-semibold text-sm mb-1">Place of Birth:</h4>
-                        <p className="text-xs text-muted-foreground">{actor.placeOfBirth}</p>
+                        <h4 className="font-semibold text-sm mb-1">
+                          Place of Birth:
+                        </h4>
+                        <p className="text-xs text-muted-foreground">
+                          {actor.placeOfBirth}
+                        </p>
                       </div>
                     )}
                     {actor.movies && actor.movies.length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-sm mb-2">Known for:</h4>
+                        <h4 className="font-semibold text-sm mb-2">
+                          Known for:
+                        </h4>
                         <div className="flex flex-wrap gap-1">
-                          {actor.movies.slice(0, itemsPerPage === 20 ? 2 : 3).map((movie, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {movie.title}
-                            </Badge>
-                          ))}
-                          {actor.movies.length > (itemsPerPage === 20 ? 2 : 3) && (
+                          {actor.movies
+                            .slice(0, itemsPerPage === 20 ? 2 : 3)
+                            .map((movie, index) => (
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="text-xs"
+                              >
+                                {movie.title}
+                              </Badge>
+                            ))}
+                          {actor.movies.length >
+                            (itemsPerPage === 20 ? 2 : 3) && (
                             <Badge variant="outline" className="text-xs">
-                              +{actor.movies.length - (itemsPerPage === 20 ? 2 : 3)} more
+                              +
+                              {actor.movies.length -
+                                (itemsPerPage === 20 ? 2 : 3)}{' '}
+                              more
                             </Badge>
                           )}
                         </div>
@@ -180,7 +218,12 @@ function ActorsContent() {
         })}
       </div>
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/actors" searchParams={searchParams} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl="/actors"
+        searchParams={searchParams}
+      />
     </>
   );
 }
@@ -192,7 +235,9 @@ function ActorsLoadingSkeleton({ itemsPerPage }: { itemsPerPage: number }) {
       <div className="text-center py-8 mb-6">
         <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary mb-4" />
         <h2 className="text-xl font-semibold mb-2">Loading Actors...</h2>
-        <p className="text-muted-foreground">Please wait while we fetch the latest actors</p>
+        <p className="text-muted-foreground">
+          Please wait while we fetch the latest actors
+        </p>
       </div>
 
       {/* Controls skeleton */}
@@ -253,10 +298,14 @@ export default function ActorsPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Actors</h1>
-        <p className="text-muted-foreground">Meet talented actors from around the world</p>
+        <p className="text-muted-foreground">
+          Meet talented actors from around the world
+        </p>
       </div>
 
-      <Suspense fallback={<ActorsLoadingSkeleton itemsPerPage={itemsPerPage} />}>
+      <Suspense
+        fallback={<ActorsLoadingSkeleton itemsPerPage={itemsPerPage} />}
+      >
         <ActorsContent />
       </Suspense>
     </div>

@@ -1,12 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { MovieRatingsController } from './movie-ratings.controller';
-import { MovieRatingsService } from './movie-ratings.service';
-import { PrismaService } from '../common/prisma.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { BadRequestException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import { MovieRatingsController } from "./movie-ratings.controller";
+import { MovieRatingsService } from "./movie-ratings.service";
+import { PrismaService } from "../common/prisma.service";
 
-describe('MovieRatingsController', () => {
+describe("MovieRatingsController", () => {
   let controller: MovieRatingsController;
   let service: MovieRatingsService;
 
@@ -15,7 +15,7 @@ describe('MovieRatingsController', () => {
   };
 
   const mockConfigService = {
-    get: jest.fn().mockReturnValue('test-api-secret'),
+    get: jest.fn().mockReturnValue("test-api-secret"),
   };
 
   const mockJwtService = {
@@ -55,12 +55,12 @@ describe('MovieRatingsController', () => {
     service = module.get<MovieRatingsService>(MovieRatingsService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 
-  describe('findAll', () => {
-    it('should call service with undefined when no movieId is provided', async () => {
+  describe("findAll", () => {
+    it("should call service with undefined when no movieId is provided", async () => {
       mockMovieRatingsService.findAll.mockResolvedValue([]);
 
       await controller.findAll();
@@ -68,25 +68,25 @@ describe('MovieRatingsController', () => {
       expect(service.findAll).toHaveBeenCalledWith(undefined);
     });
 
-    it('should call service with parsed movieId when valid movieId is provided', async () => {
+    it("should call service with parsed movieId when valid movieId is provided", async () => {
       mockMovieRatingsService.findAll.mockResolvedValue([]);
 
-      await controller.findAll('123');
+      await controller.findAll("123");
 
       expect(service.findAll).toHaveBeenCalledWith(123);
     });
 
-    it('should throw BadRequestException when movieId is not a valid number', () => {
-      expect(() => controller.findAll('invalid')).toThrow(BadRequestException);
-      expect(() => controller.findAll('invalid')).toThrow(
-        'movieId must be a valid number',
+    it("should throw BadRequestException when movieId is not a valid number", () => {
+      expect(() => controller.findAll("invalid")).toThrow(BadRequestException);
+      expect(() => controller.findAll("invalid")).toThrow(
+        "movieId must be a valid number",
       );
     });
 
     it('should call service with parsed movieId when movieId is "0"', async () => {
       mockMovieRatingsService.findAll.mockResolvedValue([]);
 
-      await controller.findAll('0');
+      await controller.findAll("0");
 
       expect(service.findAll).toHaveBeenCalledWith(0);
     });

@@ -3,7 +3,13 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Pagination } from '@/components/pagination';
 import { ItemsPerPageSelector } from '@/components/items-per-page-selector';
@@ -26,7 +32,9 @@ interface PaginatedMoviesResult {
 function MoviesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [moviesData, setMoviesData] = useState<PaginatedMoviesResult | null>(null);
+  const [moviesData, setMoviesData] = useState<PaginatedMoviesResult | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +48,11 @@ function MoviesContent() {
       setError(null);
 
       try {
-        const result = await getPaginatedMovies(currentPage, itemsPerPage, sortBy);
+        const result = await getPaginatedMovies(
+          currentPage,
+          itemsPerPage,
+          sortBy,
+        );
         setMoviesData(result);
       } catch (err) {
         setError('Failed to load movies. Please try again.');
@@ -83,11 +95,16 @@ function MoviesContent() {
       {/* Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="text-sm text-muted-foreground">
-          Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of{' '}
-          {totalItems} movies
+          Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
+          {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{' '}
+          movies
         </div>
         <div className="flex flex-col sm:flex-row gap-4">
-          <SortSelector options={MOVIE_SORT_OPTIONS} currentValue={sortBy} baseUrl="/movies" />
+          <SortSelector
+            options={MOVIE_SORT_OPTIONS}
+            currentValue={sortBy}
+            baseUrl="/movies"
+          />
           <ItemsPerPageSelector currentValue={itemsPerPage} baseUrl="/movies" />
         </div>
       </div>
@@ -116,20 +133,26 @@ function MoviesContent() {
                         Movie
                       </Badge>
                     </div>
-                    <CardTitle className={`${itemsPerPage === 20 ? 'text-lg' : 'text-xl'}`}>
+                    <CardTitle
+                      className={`${itemsPerPage === 20 ? 'text-lg' : 'text-xl'}`}
+                    >
                       {movie.title}
                     </CardTitle>
                     <CardDescription>
                       {movie.releaseYear} • {movie.director}
                     </CardDescription>
                   </div>
-                  <Badge variant="secondary">{movie.averageRating?.toFixed(1) || 'N/A'}</Badge>
+                  <Badge variant="secondary">
+                    {movie.averageRating?.toFixed(1) || 'N/A'}
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <Badge variant="outline">{movie.genre}</Badge>
-                  <p className={`text-sm text-muted-foreground ${itemsPerPage === 20 ? 'line-clamp-2' : ''}`}>
+                  <p
+                    className={`text-sm text-muted-foreground ${itemsPerPage === 20 ? 'line-clamp-2' : ''}`}
+                  >
                     {movie.description || movie.plot}
                   </p>
                   {itemsPerPage !== 20 && movie.actors && (
@@ -137,7 +160,11 @@ function MoviesContent() {
                       <h4 className="font-semibold text-sm mb-2">Cast:</h4>
                       <div className="flex flex-wrap gap-1">
                         {movie.actors.slice(0, 3).map((actor, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="text-xs"
+                          >
                             {actor.name}
                           </Badge>
                         ))}
@@ -156,7 +183,12 @@ function MoviesContent() {
         ))}
       </div>
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/movies" searchParams={searchParams} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl="/movies"
+        searchParams={searchParams}
+      />
     </>
   );
 }
@@ -168,7 +200,9 @@ function MoviesLoadingSkeleton({ itemsPerPage }: { itemsPerPage: number }) {
       <div className="text-center py-8 mb-6">
         <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary mb-4" />
         <h2 className="text-xl font-semibold mb-2">Loading Movies...</h2>
-        <p className="text-muted-foreground">Please wait while we fetch the latest movies</p>
+        <p className="text-muted-foreground">
+          Please wait while we fetch the latest movies
+        </p>
       </div>
 
       {/* Controls skeleton */}
@@ -229,10 +263,14 @@ export default function MoviesPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Movies</h1>
-        <p className="text-muted-foreground">Discover amazing movies and their details</p>
+        <p className="text-muted-foreground">
+          Discover amazing movies and their details
+        </p>
       </div>
 
-      <Suspense fallback={<MoviesLoadingSkeleton itemsPerPage={itemsPerPage} />}>
+      <Suspense
+        fallback={<MoviesLoadingSkeleton itemsPerPage={itemsPerPage} />}
+      >
         <MoviesContent />
       </Suspense>
     </div>

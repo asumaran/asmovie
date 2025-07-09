@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class QueryBuilderService {
@@ -101,11 +101,11 @@ export class QueryBuilderService {
     return {
       ...(search && {
         OR: [
-          { title: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
+          { title: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
         ],
       }),
-      ...(genre && { genre: { equals: genre, mode: 'insensitive' } }),
+      ...(genre && { genre: { equals: genre, mode: "insensitive" } }),
       ...(releaseYear && { releaseYear }),
       ...((minRating !== undefined || maxRating !== undefined) && {
         ratings: {
@@ -133,8 +133,8 @@ export class QueryBuilderService {
     return {
       ...(search && {
         OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { biography: { contains: search, mode: 'insensitive' } },
+          { name: { contains: search, mode: "insensitive" } },
+          { biography: { contains: search, mode: "insensitive" } },
         ],
       }),
       ...(birthYearFrom &&
@@ -152,14 +152,14 @@ export class QueryBuilderService {
    */
   buildOrderBy<T extends Record<string, unknown>>(
     sortBy?: string,
-    sortOrder: 'asc' | 'desc' = 'asc',
+    sortOrder: "asc" | "desc" = "asc",
     defaultSort: T = {} as T,
   ): T {
     if (!sortBy) {
       return defaultSort;
     }
 
-    const orderBy = {} as Record<string, 'asc' | 'desc'>;
+    const orderBy = {} as Record<string, "asc" | "desc">;
     orderBy[sortBy] = sortOrder;
     return orderBy as T;
   }

@@ -37,10 +37,10 @@ export function Pagination({
 
   const handlePageChange = (page: number) => {
     if (page === currentPage || isTransitioning) return;
-    
+
     setIsTransitioning(true);
     const url = createPageUrl(page);
-    
+
     router.push(url, { scroll: false });
     setIsTransitioning(false);
   };
@@ -80,9 +80,9 @@ export function Pagination({
   return (
     <div className="flex items-center justify-center space-x-2 mt-8">
       {/* Previous Button */}
-      <Button 
-        variant="outline" 
-        size="sm" 
+      <Button
+        variant="outline"
+        size="sm"
         disabled={currentPage === 1 || isTransitioning}
         onClick={() => handlePageChange(currentPage - 1)}
       >

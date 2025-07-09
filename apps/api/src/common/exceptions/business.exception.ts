@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 export interface BusinessExceptionDetails {
   [key: string]: unknown;
@@ -12,7 +12,7 @@ export class BusinessException extends HttpException {
   ) {
     super(
       {
-        error: 'Business Rule Violation',
+        error: "Business Rule Violation",
         message,
         details,
         timestamp: new Date().toISOString(),

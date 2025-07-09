@@ -8,9 +8,9 @@ import {
   ExecutionContext,
   CallHandler,
   Logger,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { tap } from "rxjs/operators";
 
 @Injectable()
 export class PerformanceInterceptor implements NestInterceptor {
@@ -25,7 +25,7 @@ export class PerformanceInterceptor implements NestInterceptor {
       headers: Record<string, string>;
     };
     const { method, url, ip, headers } = request;
-    const userAgent = headers['user-agent'] ?? 'Unknown';
+    const userAgent = headers["user-agent"] ?? "Unknown";
     const startTime = Date.now();
 
     // Log request start
@@ -35,7 +35,7 @@ export class PerformanceInterceptor implements NestInterceptor {
       tap({
         next: () => {
           const duration = Date.now() - startTime;
-          this.logPerformance(method, url, duration, 'SUCCESS', ip, userAgent);
+          this.logPerformance(method, url, duration, "SUCCESS", ip, userAgent);
         },
         error: (error) => {
           const duration = Date.now() - startTime;
@@ -43,7 +43,7 @@ export class PerformanceInterceptor implements NestInterceptor {
             method,
             url,
             duration,
-            'ERROR',
+            "ERROR",
             ip,
             userAgent,
             error,
@@ -57,7 +57,7 @@ export class PerformanceInterceptor implements NestInterceptor {
     method: string,
     url: string,
     duration: number,
-    status: 'SUCCESS' | 'ERROR',
+    status: "SUCCESS" | "ERROR",
     ip: string,
     userAgent: string,
     error?: any,
@@ -86,7 +86,7 @@ export class PerformanceInterceptor implements NestInterceptor {
     }
 
     // Log errors with stack trace
-    if (status === 'ERROR' && error) {
+    if (status === "ERROR" && error) {
       this.logger.error(`[REQUEST ERROR] ${method} ${url} - ${duration}ms`, {
         ...logData,
         error: error.message,
@@ -102,7 +102,7 @@ export class PerformanceInterceptor implements NestInterceptor {
     method: string,
     url: string,
     duration: number,
-    status: 'SUCCESS' | 'ERROR',
+    status: "SUCCESS" | "ERROR",
   ): void {
     // Here you could send metrics to external monitoring services like:
     // - Prometheus
@@ -111,14 +111,14 @@ export class PerformanceInterceptor implements NestInterceptor {
     // - Custom analytics service
 
     // Example: Simple in-memory metrics (replace with real implementation)
-    const endpoint = `${method} ${url.split('?')[0]}`; // Remove query params for grouping
+    const endpoint = `${method} ${url.split("?")[0]}`; // Remove query params for grouping
 
     // Store metrics in a way that could be exported
     // This is a placeholder for real metrics collection
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== "test") {
       console.log(
         JSON.stringify({
-          type: 'api_performance_metric',
+          type: "api_performance_metric",
           endpoint,
           duration,
           status,
@@ -148,7 +148,7 @@ export class DetailedPerformanceInterceptor implements NestInterceptor {
             response,
             startTime,
             startMemory,
-            'SUCCESS',
+            "SUCCESS",
             data,
           );
         },
@@ -158,7 +158,7 @@ export class DetailedPerformanceInterceptor implements NestInterceptor {
             response,
             startTime,
             startMemory,
-            'ERROR',
+            "ERROR",
             null,
           );
         },
@@ -171,7 +171,7 @@ export class DetailedPerformanceInterceptor implements NestInterceptor {
     response: any,
     startTime: bigint,
     startMemory: NodeJS.MemoryUsage,
-    status: 'SUCCESS' | 'ERROR',
+    status: "SUCCESS" | "ERROR",
     responseData?: any,
   ): void {
     const endTime = process.hrtime.bigint();
@@ -196,14 +196,14 @@ export class DetailedPerformanceInterceptor implements NestInterceptor {
       },
       requestSize: this.calculateRequestSize(request),
       responseSize: this.calculateResponseSize(responseData),
-      userAgent: request.headers['user-agent'],
-      contentType: request.headers['content-type'],
+      userAgent: request.headers["user-agent"],
+      contentType: request.headers["content-type"],
       status,
       timestamp: new Date().toISOString(),
     };
 
     // Only log detailed metrics for slow requests or errors
-    if (duration > 500 || status === 'ERROR') {
+    if (duration > 500 || status === "ERROR") {
       this.logger.warn(`[DETAILED METRICS] ${status}`, metrics);
     }
 

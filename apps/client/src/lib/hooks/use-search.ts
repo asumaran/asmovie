@@ -31,8 +31,10 @@ export function useSearch(params: SearchParams) {
     refetchOnMount: false,
     retry: (failureCount, error) => {
       // Don't retry on validation errors
-      if (error.message.includes('Search query is required') || 
-          error.message.includes('Invalid response format')) {
+      if (
+        error.message.includes('Search query is required') ||
+        error.message.includes('Invalid response format')
+      ) {
         return false;
       }
       return failureCount < 3;

@@ -7,7 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { getActorById } from '@/lib/api';
-import { ArrowLeft, Calendar, MapPin, Trophy, Film, Loader2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  Trophy,
+  Film,
+  Loader2,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface ActorPageProps {
@@ -92,7 +99,7 @@ export default function ActorPage({ params }: ActorPageProps) {
 
         setIsLoading(true);
         const actorData = await getActorById(actorId);
-        
+
         if (!actorData) {
           notFound();
           return;
@@ -119,9 +126,7 @@ export default function ActorPage({ params }: ActorPageProps) {
         <div className="text-center py-16">
           <h2 className="text-2xl font-semibold mb-2">Error Loading Actor</h2>
           <p className="text-muted-foreground mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()}>
-            Try Again
-          </Button>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
     );
@@ -138,7 +143,10 @@ export default function ActorPage({ params }: ActorPageProps) {
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
       age--;
     }
     return age;
@@ -151,7 +159,7 @@ export default function ActorPage({ params }: ActorPageProps) {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -185,7 +193,9 @@ export default function ActorPage({ params }: ActorPageProps) {
                   <span>{actor.placeOfBirth}</span>
                 </div>
               )}
-              {actor.nationality && <Badge variant="outline">{actor.nationality}</Badge>}
+              {actor.nationality && (
+                <Badge variant="outline">{actor.nationality}</Badge>
+              )}
             </div>
           </div>
           {age && (
@@ -208,7 +218,9 @@ export default function ActorPage({ params }: ActorPageProps) {
                 <CardTitle>Biography</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground leading-relaxed">{actor.biography}</p>
+                <p className="text-muted-foreground leading-relaxed">
+                  {actor.biography}
+                </p>
               </CardContent>
             </Card>
           )}
@@ -225,7 +237,10 @@ export default function ActorPage({ params }: ActorPageProps) {
               <CardContent>
                 <div className="space-y-4">
                   {actor.movies.map((movie, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 rounded-lg border">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 rounded-lg border"
+                    >
                       <div>
                         <Link
                           href={`/movies/${movie.id}`}
@@ -233,7 +248,11 @@ export default function ActorPage({ params }: ActorPageProps) {
                         >
                           {movie.title}
                         </Link>
-                        {movie.role && <p className="text-sm text-muted-foreground">as {movie.role}</p>}
+                        {movie.role && (
+                          <p className="text-sm text-muted-foreground">
+                            as {movie.role}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -262,7 +281,9 @@ export default function ActorPage({ params }: ActorPageProps) {
                 <>
                   <div>
                     <h4 className="font-semibold mb-1">Date of Birth</h4>
-                    <p className="text-muted-foreground">{formatDate(actor.birthDate)}</p>
+                    <p className="text-muted-foreground">
+                      {formatDate(actor.birthDate)}
+                    </p>
                   </div>
                   <Separator />
                 </>
@@ -272,7 +293,9 @@ export default function ActorPage({ params }: ActorPageProps) {
                 <>
                   <div>
                     <h4 className="font-semibold mb-1">Place of Birth</h4>
-                    <p className="text-muted-foreground">{actor.placeOfBirth}</p>
+                    <p className="text-muted-foreground">
+                      {actor.placeOfBirth}
+                    </p>
                   </div>
                   <Separator />
                 </>

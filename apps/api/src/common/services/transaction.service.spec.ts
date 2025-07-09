@@ -3,11 +3,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Test, TestingModule } from '@nestjs/testing';
-import { TransactionService } from './transaction.service';
-import { PrismaService } from '../prisma.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { TransactionService } from "./transaction.service";
+import { PrismaService } from "../prisma.service";
 
-describe('TransactionService', () => {
+describe("TransactionService", () => {
   let service: TransactionService;
 
   const mockPrismaService = {
@@ -50,13 +50,13 @@ describe('TransactionService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe('executeTransaction', () => {
-    it('should execute transaction successfully', async () => {
-      const mockResult = { id: 1, title: 'Test Movie' };
+  describe("executeTransaction", () => {
+    it("should execute transaction successfully", async () => {
+      const mockResult = { id: 1, title: "Test Movie" };
       const mockOperation = jest.fn().mockResolvedValue(mockResult);
 
       mockPrismaService.$transaction.mockImplementation((operation) =>
@@ -77,13 +77,13 @@ describe('TransactionService', () => {
       expect(result).toEqual(mockResult);
     });
 
-    it('should execute transaction with custom options', async () => {
-      const mockResult = 'success';
+    it("should execute transaction with custom options", async () => {
+      const mockResult = "success";
       const mockOperation = jest.fn().mockResolvedValue(mockResult);
       const options = {
         maxWait: 3000,
         timeout: 8000,
-        isolationLevel: 'ReadCommitted' as any,
+        isolationLevel: "ReadCommitted" as any,
       };
 
       mockPrismaService.$transaction.mockImplementation((operation) =>
@@ -99,24 +99,24 @@ describe('TransactionService', () => {
       expect(result).toEqual(mockResult);
     });
 
-    it('should throw error when transaction fails', async () => {
-      const error = new Error('Transaction failed');
+    it("should throw error when transaction fails", async () => {
+      const error = new Error("Transaction failed");
       const mockOperation = jest.fn().mockRejectedValue(error);
 
       mockPrismaService.$transaction.mockRejectedValue(error);
 
       await expect(service.executeTransaction(mockOperation)).rejects.toThrow(
-        'Transaction failed',
+        "Transaction failed",
       );
       expect(mockPrismaService.$transaction).toHaveBeenCalled();
     });
   });
 
-  describe('executeMultipleOperations', () => {
-    it('should execute multiple operations in transaction', async () => {
+  describe("executeMultipleOperations", () => {
+    it("should execute multiple operations in transaction", async () => {
       const operations = {
-        operation1: jest.fn().mockResolvedValue('result1'),
-        operation2: jest.fn().mockResolvedValue('result2'),
+        operation1: jest.fn().mockResolvedValue("result1"),
+        operation2: jest.fn().mockResolvedValue("result2"),
       };
 
       mockPrismaService.$transaction.mockImplementation((operation) =>
@@ -126,24 +126,24 @@ describe('TransactionService', () => {
       const result = await service.executeMultipleOperations(operations);
 
       expect(result).toEqual({
-        operation1: 'result1',
-        operation2: 'result2',
+        operation1: "result1",
+        operation2: "result2",
       });
       expect(operations.operation1).toHaveBeenCalledWith(mockPrismaService);
       expect(operations.operation2).toHaveBeenCalledWith(mockPrismaService);
     });
   });
 
-  describe('deleteMovieWithRelations', () => {
-    it('should delete movie with all relations and return the deleted movie', async () => {
+  describe("deleteMovieWithRelations", () => {
+    it("should delete movie with all relations and return the deleted movie", async () => {
       const movieId = 1;
       const mockDeletedMovie = {
         id: movieId,
-        title: 'Test Movie',
+        title: "Test Movie",
         releaseYear: 2023,
-        genre: 'Action',
+        genre: "Action",
         duration: 120,
-        description: 'Test description',
+        description: "Test description",
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -177,8 +177,8 @@ describe('TransactionService', () => {
     });
   });
 
-  describe('deleteActorWithRelations', () => {
-    it('should delete actor with all relations', async () => {
+  describe("deleteActorWithRelations", () => {
+    it("should delete actor with all relations", async () => {
       const actorId = 1;
 
       mockPrismaService.$transaction.mockImplementation((operation) =>
@@ -205,17 +205,17 @@ describe('TransactionService', () => {
     });
   });
 
-  describe('createMovieWithActors', () => {
-    it('should create movie with actors in transaction', async () => {
+  describe("createMovieWithActors", () => {
+    it("should create movie with actors in transaction", async () => {
       const movieData = {
-        title: 'Test Movie',
-        description: 'Test Description',
+        title: "Test Movie",
+        description: "Test Description",
         releaseYear: 2023,
-        genre: 'Action',
+        genre: "Action",
         duration: 120,
       };
       const actorIds = [1, 2];
-      const roles = ['Lead', 'Supporting'];
+      const roles = ["Lead", "Supporting"];
 
       const mockMovie = { id: 1, ...movieData };
       const mockMovieWithActors = {
@@ -225,15 +225,15 @@ describe('TransactionService', () => {
             id: 1,
             movieId: 1,
             actorId: 1,
-            role: 'Lead',
-            actor: { id: 1, name: 'Actor 1' },
+            role: "Lead",
+            actor: { id: 1, name: "Actor 1" },
           },
           {
             id: 2,
             movieId: 1,
             actorId: 2,
-            role: 'Supporting',
-            actor: { id: 2, name: 'Actor 2' },
+            role: "Supporting",
+            actor: { id: 2, name: "Actor 2" },
           },
         ],
       };
@@ -264,8 +264,8 @@ describe('TransactionService', () => {
       });
       expect(mockPrismaService.movieActor.createMany).toHaveBeenCalledWith({
         data: [
-          { movieId: 1, actorId: 1, role: 'Lead' },
-          { movieId: 1, actorId: 2, role: 'Supporting' },
+          { movieId: 1, actorId: 1, role: "Lead" },
+          { movieId: 1, actorId: 2, role: "Supporting" },
         ],
       });
       expect(mockPrismaService.movie.findUnique).toHaveBeenCalledWith({
@@ -282,8 +282,8 @@ describe('TransactionService', () => {
       expect(result).toEqual(mockMovieWithActors);
     });
 
-    it('should use default role when not provided', async () => {
-      const movieData = { title: 'Test Movie' } as any;
+    it("should use default role when not provided", async () => {
+      const movieData = { title: "Test Movie" } as any;
       const actorIds = [1];
       const roles = [];
 
@@ -305,19 +305,19 @@ describe('TransactionService', () => {
       await transactionOperation(mockPrismaService);
 
       expect(mockPrismaService.movieActor.createMany).toHaveBeenCalledWith({
-        data: [{ movieId: 1, actorId: 1, role: 'Actor' }],
+        data: [{ movieId: 1, actorId: 1, role: "Actor" }],
       });
     });
   });
 
-  describe('updateMovieWithRelations', () => {
-    it('should update movie and handle actor relationships', async () => {
+  describe("updateMovieWithRelations", () => {
+    it("should update movie and handle actor relationships", async () => {
       const movieId = 1;
-      const movieData = { title: 'Updated Movie' };
+      const movieData = { title: "Updated Movie" };
       const actorUpdates = {
-        add: [{ actorId: 3, role: 'New Actor' }],
+        add: [{ actorId: 3, role: "New Actor" }],
         remove: [1],
-        update: [{ id: 2, role: 'Updated Role' }],
+        update: [{ id: 2, role: "Updated Role" }],
       };
 
       const mockUpdatedMovie = { id: movieId, ...movieData };
@@ -360,19 +360,19 @@ describe('TransactionService', () => {
         where: { movieId, actorId: { in: [1] } },
       });
       expect(mockPrismaService.movieActor.createMany).toHaveBeenCalledWith({
-        data: [{ movieId, actorId: 3, role: 'New Actor' }],
+        data: [{ movieId, actorId: 3, role: "New Actor" }],
       });
       expect(mockPrismaService.movieActor.update).toHaveBeenCalledWith({
         where: { id: 2 },
-        data: { role: 'Updated Role' },
+        data: { role: "Updated Role" },
       });
 
       expect(result).toEqual(mockMovieWithRelations);
     });
 
-    it('should update movie without actor updates', async () => {
+    it("should update movie without actor updates", async () => {
       const movieId = 1;
-      const movieData = { title: 'Updated Movie' };
+      const movieData = { title: "Updated Movie" };
 
       const mockUpdatedMovie = { id: movieId, ...movieData };
       const mockMovieWithRelations = {
@@ -406,26 +406,26 @@ describe('TransactionService', () => {
     });
   });
 
-  describe('batchCreateRatings', () => {
-    it('should create multiple ratings in transaction', async () => {
+  describe("batchCreateRatings", () => {
+    it("should create multiple ratings in transaction", async () => {
       const ratings = [
-        { movieId: 1, rating: 8.5, comment: 'Great movie', reviewer: 'User1' },
-        { movieId: 1, rating: 9.0, comment: 'Excellent', reviewer: 'User2' },
+        { movieId: 1, rating: 8.5, comment: "Great movie", reviewer: "User1" },
+        { movieId: 1, rating: 9.0, comment: "Excellent", reviewer: "User2" },
       ];
 
-      const mockMovie = { id: 1, title: 'Test Movie' };
+      const mockMovie = { id: 1, title: "Test Movie" };
       const mockRatings = [
         {
           id: 1,
           ...ratings[0],
           createdAt: new Date(),
-          movie: { id: 1, title: 'Test Movie' },
+          movie: { id: 1, title: "Test Movie" },
         },
         {
           id: 2,
           ...ratings[1],
           createdAt: new Date(),
-          movie: { id: 1, title: 'Test Movie' },
+          movie: { id: 1, title: "Test Movie" },
         },
       ];
 
@@ -446,13 +446,13 @@ describe('TransactionService', () => {
       expect(result).toEqual(mockRatings);
     });
 
-    it('should throw error when movie not found', async () => {
+    it("should throw error when movie not found", async () => {
       const ratings = [
         {
           movieId: 999,
           rating: 8.5,
-          comment: 'Great movie',
-          reviewer: 'User1',
+          comment: "Great movie",
+          reviewer: "User1",
         },
       ];
 
@@ -462,7 +462,7 @@ describe('TransactionService', () => {
       );
 
       await expect(service.batchCreateRatings(ratings)).rejects.toThrow(
-        'Movie with ID 999 not found',
+        "Movie with ID 999 not found",
       );
     });
   });

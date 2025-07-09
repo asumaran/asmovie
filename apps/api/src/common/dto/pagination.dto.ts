@@ -1,5 +1,5 @@
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
+import { IsOptional, IsInt, Min, Max } from "class-validator";
+import { Type, Transform } from "class-transformer";
 
 export class PaginationDto {
   @IsOptional()
@@ -15,7 +15,7 @@ export class PaginationDto {
   @Type(() => Number)
   @Transform(
     ({ value }) =>
-      value ?? parseInt(process.env.PAGINATION_DEFAULT_LIMIT ?? '10', 10),
+      value ?? parseInt(process.env.PAGINATION_DEFAULT_LIMIT ?? "10", 10),
   )
   limit?: number = 10;
 }

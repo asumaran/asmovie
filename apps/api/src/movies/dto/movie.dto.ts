@@ -7,8 +7,8 @@ import {
   IsIn,
   IsNumber,
   IsDecimal,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+} from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreateMovieDto {
   @IsString()
@@ -156,20 +156,20 @@ export class MovieFilterDto {
   @IsOptional()
   @IsString()
   @IsIn([
-    'title',
-    'releaseYear',
-    'createdAt',
-    'genre',
-    'director',
-    'budget',
-    'boxOffice',
+    "title",
+    "releaseYear",
+    "createdAt",
+    "genre",
+    "director",
+    "budget",
+    "boxOffice",
   ])
   sortBy?: string;
 
   @IsOptional()
   @IsString()
-  @IsIn(['asc', 'desc'])
-  sortOrder?: 'asc' | 'desc';
+  @IsIn(["asc", "desc"])
+  sortOrder?: "asc" | "desc";
 }
 
 export class MovieQueryDto {
@@ -204,20 +204,20 @@ export class MovieQueryDto {
   @IsOptional()
   @IsString()
   @IsIn([
-    'title',
-    'releaseYear',
-    'createdAt',
-    'genre',
-    'director',
-    'budget',
-    'boxOffice',
+    "title",
+    "releaseYear",
+    "createdAt",
+    "genre",
+    "director",
+    "budget",
+    "boxOffice",
   ])
   sortBy?: string;
 
   @IsOptional()
   @IsString()
-  @IsIn(['asc', 'desc'])
-  sortOrder?: 'asc' | 'desc';
+  @IsIn(["asc", "desc"])
+  sortOrder?: "asc" | "desc";
 
   // Pagination parameters
   @IsOptional()

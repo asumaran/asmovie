@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ActorsService } from './actors.service';
-import { PrismaService } from '../common/prisma.service';
-import { QueryBuilderService } from '../common/services/query-builder.service';
-import { ConfigService } from '@nestjs/config';
-import { NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from "@nestjs/testing";
+import { ActorsService } from "./actors.service";
+import { PrismaService } from "../common/prisma.service";
+import { QueryBuilderService } from "../common/services/query-builder.service";
+import { ConfigService } from "@nestjs/config";
+import { NotFoundException } from "@nestjs/common";
 
-describe('ActorsService', () => {
+describe("ActorsService", () => {
   let service: ActorsService;
 
   const mockPrismaService = {
@@ -31,7 +31,7 @@ describe('ActorsService', () => {
         },
       },
     }),
-    buildOrderBy: jest.fn().mockReturnValue({ createdAt: 'desc' }),
+    buildOrderBy: jest.fn().mockReturnValue({ createdAt: "desc" }),
     buildPaginatedQuery: jest
       .fn()
       .mockImplementation(({ page, limit, include, where }) => ({
@@ -39,7 +39,7 @@ describe('ActorsService', () => {
         take: limit,
         include,
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       })),
   };
 
@@ -71,16 +71,16 @@ describe('ActorsService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should create an actor', async () => {
+  describe("create", () => {
+    it("should create an actor", async () => {
       const createActorDto = {
-        name: 'Test Actor',
-        biography: 'Test Bio',
-        birthDate: '1990-01-01',
+        name: "Test Actor",
+        biography: "Test Bio",
+        birthDate: "1990-01-01",
       };
 
       const expectedActor = {
@@ -112,12 +112,12 @@ describe('ActorsService', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should return paginated actors', async () => {
+  describe("findAll", () => {
+    it("should return paginated actors", async () => {
       const expectedActors = [
         {
           id: 1,
-          name: 'Actor 1',
+          name: "Actor 1",
           movies: [],
         },
       ];
@@ -136,7 +136,7 @@ describe('ActorsService', () => {
       expect(mockQueryBuilderService.buildOrderBy).toHaveBeenCalledWith(
         undefined,
         undefined,
-        { createdAt: 'desc' },
+        { createdAt: "desc" },
       );
       expect(mockQueryBuilderService.buildPaginatedQuery).toHaveBeenCalledWith({
         page: 1,
@@ -149,7 +149,7 @@ describe('ActorsService', () => {
           },
         },
         where: {},
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       });
       expect(result).toEqual({
         meta: {
@@ -164,12 +164,12 @@ describe('ActorsService', () => {
       });
     });
 
-    it('should return paginated actors filtered by search term', async () => {
-      const searchTerm = 'leonardo';
+    it("should return paginated actors filtered by search term", async () => {
+      const searchTerm = "leonardo";
       const expectedActors = [
         {
           id: 1,
-          name: 'Leonardo DiCaprio',
+          name: "Leonardo DiCaprio",
           movies: [],
         },
       ];
@@ -188,7 +188,7 @@ describe('ActorsService', () => {
       expect(mockQueryBuilderService.buildOrderBy).toHaveBeenCalledWith(
         undefined,
         undefined,
-        { createdAt: 'desc' },
+        { createdAt: "desc" },
       );
       expect(mockQueryBuilderService.buildPaginatedQuery).toHaveBeenCalledWith({
         page: 1,
@@ -201,7 +201,7 @@ describe('ActorsService', () => {
           },
         },
         where: {},
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       });
       expect(result).toEqual({
         meta: {
@@ -216,11 +216,11 @@ describe('ActorsService', () => {
       });
     });
 
-    it('should use default values when called without parameters', async () => {
+    it("should use default values when called without parameters", async () => {
       const expectedActors = [
         {
           id: 1,
-          name: 'Actor 1',
+          name: "Actor 1",
           movies: [],
         },
       ];
@@ -240,7 +240,7 @@ describe('ActorsService', () => {
       expect(mockQueryBuilderService.buildOrderBy).toHaveBeenCalledWith(
         undefined,
         undefined,
-        { createdAt: 'desc' },
+        { createdAt: "desc" },
       );
       expect(mockQueryBuilderService.buildPaginatedQuery).toHaveBeenCalledWith({
         page: 1,
@@ -253,7 +253,7 @@ describe('ActorsService', () => {
           },
         },
         where: {},
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       });
       expect(result).toEqual({
         meta: {
@@ -269,12 +269,12 @@ describe('ActorsService', () => {
     });
   });
 
-  describe('findOne', () => {
-    it('should return an actor by id', async () => {
+  describe("findOne", () => {
+    it("should return an actor by id", async () => {
       const actorId = 1;
       const expectedActor = {
         id: actorId,
-        name: 'Test Actor',
+        name: "Test Actor",
         movies: [],
       };
 
@@ -295,7 +295,7 @@ describe('ActorsService', () => {
       expect(result).toEqual(expectedActor);
     });
 
-    it('should throw NotFoundException if actor not found', async () => {
+    it("should throw NotFoundException if actor not found", async () => {
       const actorId = 999;
 
       mockPrismaService.actor.findUnique.mockResolvedValue(null);
@@ -306,19 +306,19 @@ describe('ActorsService', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update an actor', async () => {
+  describe("update", () => {
+    it("should update an actor", async () => {
       const actorId = 1;
       const updateActorDto = {
-        name: 'Updated Actor',
-        biography: 'Updated Bio',
+        name: "Updated Actor",
+        biography: "Updated Bio",
       };
 
       const existingActor = {
         id: actorId,
-        name: 'Original Actor',
-        biography: 'Original Bio',
-        birthDate: '1990-01-01',
+        name: "Original Actor",
+        biography: "Original Bio",
+        birthDate: "1990-01-01",
         movies: [],
       };
 
@@ -346,9 +346,9 @@ describe('ActorsService', () => {
       expect(result).toEqual(updatedActor);
     });
 
-    it('should throw NotFoundException if actor not found', async () => {
+    it("should throw NotFoundException if actor not found", async () => {
       const actorId = 999;
-      const updateActorDto = { name: 'Updated Actor' };
+      const updateActorDto = { name: "Updated Actor" };
 
       mockPrismaService.actor.findUnique.mockResolvedValue(null);
 
@@ -358,12 +358,12 @@ describe('ActorsService', () => {
     });
   });
 
-  describe('remove', () => {
-    it('should remove an actor', async () => {
+  describe("remove", () => {
+    it("should remove an actor", async () => {
       const actorId = 1;
       const mockActor = {
         id: actorId,
-        name: 'Test Actor',
+        name: "Test Actor",
         movies: [],
       };
 
@@ -378,7 +378,7 @@ describe('ActorsService', () => {
       expect(result).toEqual(mockActor);
     });
 
-    it('should throw NotFoundException if actor not found', async () => {
+    it("should throw NotFoundException if actor not found", async () => {
       const actorId = 999;
 
       mockPrismaService.actor.findUnique.mockResolvedValue(null);
@@ -389,28 +389,28 @@ describe('ActorsService', () => {
     });
   });
 
-  describe('getMovies', () => {
-    it('should return movies for an actor', async () => {
+  describe("getMovies", () => {
+    it("should return movies for an actor", async () => {
       const actorId = 1;
-      const mockActor = { id: actorId, name: 'Test Actor' };
+      const mockActor = { id: actorId, name: "Test Actor" };
       const mockMovieActors = [
         {
           id: 1,
           movieId: 1,
           actorId,
-          role: 'Lead Actor',
+          role: "Lead Actor",
           movie: {
             id: 1,
-            title: 'Test Movie',
-            description: 'Test Description',
+            title: "Test Movie",
+            description: "Test Description",
           },
         },
       ];
       const expectedMovies = [
         {
           id: 1,
-          title: 'Test Movie',
-          description: 'Test Description',
+          title: "Test Movie",
+          description: "Test Description",
         },
       ];
 
@@ -432,7 +432,7 @@ describe('ActorsService', () => {
       expect(result).toEqual(expectedMovies);
     });
 
-    it('should throw NotFoundException if actor not found', async () => {
+    it("should throw NotFoundException if actor not found", async () => {
       const actorId = 999;
 
       mockPrismaService.actor.findUnique.mockResolvedValue(null);

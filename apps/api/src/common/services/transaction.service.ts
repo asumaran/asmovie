@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma.service';
+import { Injectable, Logger } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { PrismaService } from "../prisma.service";
 
 @Injectable()
 export class TransactionService {
@@ -123,7 +123,7 @@ export class TransactionService {
       const movieActorData = actorIds.map((actorId, index) => ({
         movieId: movie.id,
         actorId,
-        role: roles[index] || 'Actor',
+        role: roles[index] || "Actor",
       }));
 
       await tx.movieActor.createMany({

@@ -1,8 +1,8 @@
 {
   "folders": [
     {
-      "path": "./apps/api"
-    }
+      "path": "./apps/api",
+    },
   ],
   "settings": {
     "jest.jestCommandLine": "npm test",
@@ -14,6 +14,6 @@
     "jest.debugMode": true,
     "testing.automaticallyOpenPeekView": "never",
     "testing.defaultGutterClickAction": "run",
-    "testing.gutterEnabled": true
-  }
+    "testing.gutterEnabled": true,
+  },
 }

@@ -7,7 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { getMovieById } from '@/lib/api';
-import { ArrowLeft, Calendar, Clock, DollarSign, Star, Trophy, User, Loader2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  DollarSign,
+  Star,
+  Trophy,
+  User,
+  Loader2,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface MoviePageProps {
@@ -91,7 +100,7 @@ export default function MoviePage({ params }: MoviePageProps) {
 
         setIsLoading(true);
         const movieData = await getMovieById(movieId);
-        
+
         if (!movieData) {
           notFound();
           return;
@@ -118,9 +127,7 @@ export default function MoviePage({ params }: MoviePageProps) {
         <div className="text-center py-16">
           <h2 className="text-2xl font-semibold mb-2">Error Loading Movie</h2>
           <p className="text-muted-foreground mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()}>
-            Try Again
-          </Button>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
     );
@@ -173,11 +180,15 @@ export default function MoviePage({ params }: MoviePageProps) {
           </div>
           <div className="flex items-center gap-2">
             <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-            <span className="text-2xl font-bold">{movie.averageRating?.toFixed(1) || 'N/A'}</span>
+            <span className="text-2xl font-bold">
+              {movie.averageRating?.toFixed(1) || 'N/A'}
+            </span>
             <span className="text-muted-foreground">/10</span>
           </div>
         </div>
-        <p className="text-lg text-muted-foreground">{movie.description || movie.plot}</p>
+        <p className="text-lg text-muted-foreground">
+          {movie.description || movie.plot}
+        </p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
@@ -190,7 +201,9 @@ export default function MoviePage({ params }: MoviePageProps) {
                 <CardTitle>Plot</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground leading-relaxed">{movie.plot}</p>
+                <p className="text-muted-foreground leading-relaxed">
+                  {movie.plot}
+                </p>
               </CardContent>
             </Card>
           )}
@@ -207,7 +220,10 @@ export default function MoviePage({ params }: MoviePageProps) {
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {movie.actors.map((actor, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 rounded-lg border"
+                    >
                       <div>
                         <Link
                           href={`/actors/${actor.id}`}
@@ -216,7 +232,9 @@ export default function MoviePage({ params }: MoviePageProps) {
                           {actor.name}
                         </Link>
                         {actor.role && (
-                          <p className="text-sm text-muted-foreground">{actor.role}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {actor.role}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -289,7 +307,9 @@ export default function MoviePage({ params }: MoviePageProps) {
               {movie.duration && (
                 <div>
                   <h4 className="font-semibold mb-1">Duration</h4>
-                  <p className="text-muted-foreground">{movie.duration} minutes</p>
+                  <p className="text-muted-foreground">
+                    {movie.duration} minutes
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -309,7 +329,9 @@ export default function MoviePage({ params }: MoviePageProps) {
                   <>
                     <div>
                       <h4 className="font-semibold mb-1">Budget</h4>
-                      <p className="text-muted-foreground">{formatCurrency(movie.budget)}</p>
+                      <p className="text-muted-foreground">
+                        {formatCurrency(movie.budget)}
+                      </p>
                     </div>
                     <Separator />
                   </>
@@ -318,7 +340,9 @@ export default function MoviePage({ params }: MoviePageProps) {
                 {movie.boxOffice && (
                   <div>
                     <h4 className="font-semibold mb-1">Box Office</h4>
-                    <p className="text-muted-foreground">{formatCurrency(movie.boxOffice)}</p>
+                    <p className="text-muted-foreground">
+                      {formatCurrency(movie.boxOffice)}
+                    </p>
                   </div>
                 )}
               </CardContent>

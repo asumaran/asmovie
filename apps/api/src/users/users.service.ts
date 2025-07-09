@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../common/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserResponseDto } from './dto/user-response.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../common/prisma.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { UserResponseDto } from "./dto/user-response.dto";
 import {
   DuplicateResourceException,
   ResourceNotFoundException,
-} from '../common/exceptions/business.exception';
-import * as bcrypt from 'bcryptjs';
-import { User } from '@prisma/client';
+} from "../common/exceptions/business.exception";
+import * as bcrypt from "bcryptjs";
+import { User } from "@prisma/client";
 
 @Injectable()
 export class UsersService {
@@ -22,8 +22,8 @@ export class UsersService {
 
     if (existingUser) {
       throw new DuplicateResourceException(
-        'User',
-        'email',
+        "User",
+        "email",
         createUserDto.email,
       );
     }
@@ -44,7 +44,7 @@ export class UsersService {
 
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.prisma.user.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return users.map((user) => new UserResponseDto(user));
@@ -56,7 +56,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new ResourceNotFoundException('User', id);
+      throw new ResourceNotFoundException("User", id);
     }
 
     return new UserResponseDto(user);
@@ -83,8 +83,8 @@ export class UsersService {
 
       if (conflictUser && conflictUser.id !== id) {
         throw new DuplicateResourceException(
-          'User',
-          'email',
+          "User",
+          "email",
           updateUserDto.email,
         );
       }
@@ -120,7 +120,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new ResourceNotFoundException('User', id);
+      throw new ResourceNotFoundException("User", id);
     }
 
     const isCurrentPasswordValid = await this.validatePassword(
@@ -128,7 +128,7 @@ export class UsersService {
       currentPassword,
     );
     if (!isCurrentPasswordValid) {
-      throw new Error('Current password is incorrect');
+      throw new Error("Current password is incorrect");
     }
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 12);

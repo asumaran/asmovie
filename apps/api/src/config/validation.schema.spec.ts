@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { validationSchema } from './validation.schema';
+import { validationSchema } from "./validation.schema";
 
 // Base test data that includes required fields
 const baseTestData = {
-  DATABASE_URL: 'postgres://localhost/test',
-  API_TOKEN: 'test-api-secret-123',
+  DATABASE_URL: "postgres://localhost/test",
+  API_TOKEN: "test-api-secret-123",
 };
 
-describe('Validation Schema', () => {
-  describe('NODE_ENV validation', () => {
-    it('should accept valid NODE_ENV values', () => {
-      const validValues = ['development', 'production', 'test'];
+describe("Validation Schema", () => {
+  describe("NODE_ENV validation", () => {
+    it("should accept valid NODE_ENV values", () => {
+      const validValues = ["development", "production", "test"];
 
       validValues.forEach((value) => {
         const { error } = validationSchema.validate({
@@ -22,23 +22,23 @@ describe('Validation Schema', () => {
       });
     });
 
-    it('should reject invalid NODE_ENV values', () => {
+    it("should reject invalid NODE_ENV values", () => {
       const { error } = validationSchema.validate({
         ...baseTestData,
-        NODE_ENV: 'invalid',
+        NODE_ENV: "invalid",
       });
       expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain('must be one of');
+      expect(error?.details[0].message).toContain("must be one of");
     });
 
-    it('should use default value for NODE_ENV', () => {
+    it("should use default value for NODE_ENV", () => {
       const { value } = validationSchema.validate(baseTestData);
-      expect(value.NODE_ENV).toBe('development');
+      expect(value.NODE_ENV).toBe("development");
     });
   });
 
-  describe('PORT validation', () => {
-    it('should accept valid port numbers', () => {
+  describe("PORT validation", () => {
+    it("should accept valid port numbers", () => {
       const validPorts = [3000, 3001, 8080, 80, 443];
 
       validPorts.forEach((port) => {
@@ -50,27 +50,27 @@ describe('Validation Schema', () => {
       });
     });
 
-    it('should use default value for PORT', () => {
+    it("should use default value for PORT", () => {
       const { value } = validationSchema.validate(baseTestData);
       expect(value.PORT).toBe(3001);
     });
   });
 
-  describe('DATABASE_URL validation', () => {
-    it('should require DATABASE_URL', () => {
+  describe("DATABASE_URL validation", () => {
+    it("should require DATABASE_URL", () => {
       const { error } = validationSchema.validate({
-        API_TOKEN: 'test-api-secret-123',
+        API_TOKEN: "test-api-secret-123",
       });
       expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain('DATABASE_URL');
+      expect(error?.details[0].message).toContain("DATABASE_URL");
     });
 
-    it('should accept valid database URLs', () => {
+    it("should accept valid database URLs", () => {
       const validUrls = [
-        'postgres://user:pass@localhost:5432/dbname',
-        'postgresql://user:pass@localhost:5432/dbname',
-        'postgres://localhost/dbname',
-        'postgresql://localhost/dbname',
+        "postgres://user:pass@localhost:5432/dbname",
+        "postgresql://user:pass@localhost:5432/dbname",
+        "postgres://localhost/dbname",
+        "postgresql://localhost/dbname",
       ];
 
       validUrls.forEach((url) => {
@@ -83,8 +83,8 @@ describe('Validation Schema', () => {
     });
   });
 
-  describe('DB_MAX_CONNECTIONS validation', () => {
-    it('should accept valid connection numbers', () => {
+  describe("DB_MAX_CONNECTIONS validation", () => {
+    it("should accept valid connection numbers", () => {
       const validConnections = [5, 10, 20, 50];
 
       validConnections.forEach((connections) => {
@@ -96,14 +96,14 @@ describe('Validation Schema', () => {
       });
     });
 
-    it('should use default value for DB_MAX_CONNECTIONS', () => {
+    it("should use default value for DB_MAX_CONNECTIONS", () => {
       const { value } = validationSchema.validate(baseTestData);
       expect(value.DB_MAX_CONNECTIONS).toBe(10);
     });
   });
 
-  describe('DB_CONNECTION_TIMEOUT validation', () => {
-    it('should accept valid timeout values', () => {
+  describe("DB_CONNECTION_TIMEOUT validation", () => {
+    it("should accept valid timeout values", () => {
       const validTimeouts = [1000, 5000, 10000, 30000];
 
       validTimeouts.forEach((timeout) => {
@@ -115,19 +115,19 @@ describe('Validation Schema', () => {
       });
     });
 
-    it('should use default value for DB_CONNECTION_TIMEOUT', () => {
+    it("should use default value for DB_CONNECTION_TIMEOUT", () => {
       const { value } = validationSchema.validate(baseTestData);
       expect(value.DB_CONNECTION_TIMEOUT).toBe(5000);
     });
   });
 
-  describe('Security configuration validation', () => {
-    describe('ALLOWED_ORIGINS', () => {
-      it('should accept valid origin strings', () => {
+  describe("Security configuration validation", () => {
+    describe("ALLOWED_ORIGINS", () => {
+      it("should accept valid origin strings", () => {
         const validOrigins = [
-          'http://localhost:3000',
-          'https://example.com',
-          'http://localhost:3000,https://example.com',
+          "http://localhost:3000",
+          "https://example.com",
+          "http://localhost:3000,https://example.com",
         ];
 
         validOrigins.forEach((origin) => {
@@ -139,14 +139,14 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should be optional', () => {
+      it("should be optional", () => {
         const { error } = validationSchema.validate(baseTestData);
         expect(error).toBeUndefined();
       });
     });
 
-    describe('RATE_LIMIT_WINDOW', () => {
-      it('should accept valid window values', () => {
+    describe("RATE_LIMIT_WINDOW", () => {
+      it("should accept valid window values", () => {
         const validWindows = [60000, 900000, 3600000]; // 1min, 15min, 1hour
 
         validWindows.forEach((window) => {
@@ -158,14 +158,14 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for RATE_LIMIT_WINDOW', () => {
+      it("should use default value for RATE_LIMIT_WINDOW", () => {
         const { value } = validationSchema.validate(baseTestData);
         expect(value.RATE_LIMIT_WINDOW).toBe(900000);
       });
     });
 
-    describe('RATE_LIMIT_MAX', () => {
-      it('should accept valid rate limit values', () => {
+    describe("RATE_LIMIT_MAX", () => {
+      it("should accept valid rate limit values", () => {
         const validLimits = [10, 50, 100, 1000];
 
         validLimits.forEach((limit) => {
@@ -177,17 +177,17 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for RATE_LIMIT_MAX', () => {
+      it("should use default value for RATE_LIMIT_MAX", () => {
         const { value } = validationSchema.validate(baseTestData);
         expect(value.RATE_LIMIT_MAX).toBe(100);
       });
     });
 
-    describe('JWT_SECRET', () => {
-      it('should accept valid JWT secrets', () => {
+    describe("JWT_SECRET", () => {
+      it("should accept valid JWT secrets", () => {
         const validSecrets = [
-          'this-is-a-very-long-jwt-secret-key-that-meets-minimum-requirements',
-          'another-jwt-secret-that-is-long-enough-for-security',
+          "this-is-a-very-long-jwt-secret-key-that-meets-minimum-requirements",
+          "another-jwt-secret-that-is-long-enough-for-security",
         ];
 
         validSecrets.forEach((secret) => {
@@ -199,24 +199,24 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should reject JWT secrets that are too short', () => {
+      it("should reject JWT secrets that are too short", () => {
         const { error } = validationSchema.validate({
           ...baseTestData,
-          JWT_SECRET: 'short',
+          JWT_SECRET: "short",
         });
         expect(error).toBeDefined();
-        expect(error?.details[0].message).toContain('length must be at least');
+        expect(error?.details[0].message).toContain("length must be at least");
       });
 
-      it('should be optional', () => {
+      it("should be optional", () => {
         const { error } = validationSchema.validate(baseTestData);
         expect(error).toBeUndefined();
       });
     });
 
-    describe('JWT_EXPIRES_IN', () => {
-      it('should accept valid expiration strings', () => {
-        const validExpirations = ['1h', '24h', '7d', '30d'];
+    describe("JWT_EXPIRES_IN", () => {
+      it("should accept valid expiration strings", () => {
+        const validExpirations = ["1h", "24h", "7d", "30d"];
 
         validExpirations.forEach((expiration) => {
           const { error } = validationSchema.validate({
@@ -227,40 +227,40 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for JWT_EXPIRES_IN', () => {
+      it("should use default value for JWT_EXPIRES_IN", () => {
         const { value } = validationSchema.validate(baseTestData);
-        expect(value.JWT_EXPIRES_IN).toBe('1h');
+        expect(value.JWT_EXPIRES_IN).toBe("1h");
       });
     });
 
-    describe('API_TOKEN', () => {
-      it('should require API_TOKEN', () => {
+    describe("API_TOKEN", () => {
+      it("should require API_TOKEN", () => {
         const { error } = validationSchema.validate({
-          DATABASE_URL: 'postgres://localhost/test',
+          DATABASE_URL: "postgres://localhost/test",
         });
         expect(error).toBeDefined();
-        expect(error?.details[0].message).toContain('API_TOKEN');
+        expect(error?.details[0].message).toContain("API_TOKEN");
       });
 
-      it('should accept valid API_TOKEN', () => {
+      it("should accept valid API_TOKEN", () => {
         const { error } = validationSchema.validate(baseTestData);
         expect(error).toBeUndefined();
       });
 
-      it('should reject API_TOKEN that is too short', () => {
+      it("should reject API_TOKEN that is too short", () => {
         const { error } = validationSchema.validate({
           ...baseTestData,
-          API_TOKEN: 'short',
+          API_TOKEN: "short",
         });
         expect(error).toBeDefined();
-        expect(error?.details[0].message).toContain('length must be at least');
+        expect(error?.details[0].message).toContain("length must be at least");
       });
     });
   });
 
-  describe('Performance configuration validation', () => {
-    describe('SLOW_QUERY_THRESHOLD', () => {
-      it('should accept valid threshold values', () => {
+  describe("Performance configuration validation", () => {
+    describe("SLOW_QUERY_THRESHOLD", () => {
+      it("should accept valid threshold values", () => {
         const validThresholds = [500, 1000, 2000, 5000];
 
         validThresholds.forEach((threshold) => {
@@ -272,14 +272,14 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for SLOW_QUERY_THRESHOLD', () => {
+      it("should use default value for SLOW_QUERY_THRESHOLD", () => {
         const { value } = validationSchema.validate(baseTestData);
         expect(value.SLOW_QUERY_THRESHOLD).toBe(1000);
       });
     });
 
-    describe('MAX_MEMORY_USAGE', () => {
-      it('should accept valid memory values', () => {
+    describe("MAX_MEMORY_USAGE", () => {
+      it("should accept valid memory values", () => {
         const validMemory = [1048576, 10485760, 52428800]; // 1MB, 10MB, 50MB
 
         validMemory.forEach((memory) => {
@@ -291,16 +291,16 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for MAX_MEMORY_USAGE', () => {
+      it("should use default value for MAX_MEMORY_USAGE", () => {
         const { value } = validationSchema.validate(baseTestData);
         expect(value.MAX_MEMORY_USAGE).toBe(10485760);
       });
     });
   });
 
-  describe('Pagination configuration validation', () => {
-    describe('PAGINATION_DEFAULT_LIMIT', () => {
-      it('should accept valid default limit values', () => {
+  describe("Pagination configuration validation", () => {
+    describe("PAGINATION_DEFAULT_LIMIT", () => {
+      it("should accept valid default limit values", () => {
         const validLimits = [5, 10, 20, 50];
 
         validLimits.forEach((limit) => {
@@ -312,14 +312,14 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for PAGINATION_DEFAULT_LIMIT', () => {
+      it("should use default value for PAGINATION_DEFAULT_LIMIT", () => {
         const { value } = validationSchema.validate(baseTestData);
         expect(value.PAGINATION_DEFAULT_LIMIT).toBe(10);
       });
     });
 
-    describe('PAGINATION_MAX_LIMIT', () => {
-      it('should accept valid max limit values', () => {
+    describe("PAGINATION_MAX_LIMIT", () => {
+      it("should accept valid max limit values", () => {
         const validMaxLimits = [50, 100, 200, 500];
 
         validMaxLimits.forEach((limit) => {
@@ -331,17 +331,17 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for PAGINATION_MAX_LIMIT', () => {
+      it("should use default value for PAGINATION_MAX_LIMIT", () => {
         const { value } = validationSchema.validate(baseTestData);
         expect(value.PAGINATION_MAX_LIMIT).toBe(100);
       });
     });
   });
 
-  describe('Logging configuration validation', () => {
-    describe('LOG_LEVEL', () => {
-      it('should accept valid log levels', () => {
-        const validLevels = ['error', 'warn', 'info', 'debug'];
+  describe("Logging configuration validation", () => {
+    describe("LOG_LEVEL", () => {
+      it("should accept valid log levels", () => {
+        const validLevels = ["error", "warn", "info", "debug"];
 
         validLevels.forEach((level) => {
           const { error } = validationSchema.validate({
@@ -352,23 +352,23 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should reject invalid log levels', () => {
+      it("should reject invalid log levels", () => {
         const { error } = validationSchema.validate({
           ...baseTestData,
-          LOG_LEVEL: 'invalid',
+          LOG_LEVEL: "invalid",
         });
         expect(error).toBeDefined();
-        expect(error?.details[0].message).toContain('must be one of');
+        expect(error?.details[0].message).toContain("must be one of");
       });
 
-      it('should use default value for LOG_LEVEL', () => {
+      it("should use default value for LOG_LEVEL", () => {
         const { value } = validationSchema.validate(baseTestData);
-        expect(value.LOG_LEVEL).toBe('info');
+        expect(value.LOG_LEVEL).toBe("info");
       });
     });
 
-    describe('ENABLE_DETAILED_LOGS', () => {
-      it('should accept boolean values', () => {
+    describe("ENABLE_DETAILED_LOGS", () => {
+      it("should accept boolean values", () => {
         [true, false].forEach((value) => {
           const { error } = validationSchema.validate({
             ...baseTestData,
@@ -378,16 +378,16 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for ENABLE_DETAILED_LOGS', () => {
+      it("should use default value for ENABLE_DETAILED_LOGS", () => {
         const { value } = validationSchema.validate(baseTestData);
         expect(value.ENABLE_DETAILED_LOGS).toBe(false);
       });
     });
   });
 
-  describe('Feature Flags validation', () => {
-    describe('ENABLE_METRICS', () => {
-      it('should accept boolean values', () => {
+  describe("Feature Flags validation", () => {
+    describe("ENABLE_METRICS", () => {
+      it("should accept boolean values", () => {
         [true, false].forEach((value) => {
           const { error } = validationSchema.validate({
             ...baseTestData,
@@ -397,68 +397,68 @@ describe('Validation Schema', () => {
         });
       });
 
-      it('should use default value for ENABLE_METRICS', () => {
+      it("should use default value for ENABLE_METRICS", () => {
         const { value } = validationSchema.validate(baseTestData);
         expect(value.ENABLE_METRICS).toBe(false);
       });
 
-      it('should reject non-boolean values for ENABLE_METRICS', () => {
+      it("should reject non-boolean values for ENABLE_METRICS", () => {
         const { error } = validationSchema.validate({
-          DATABASE_URL: 'postgres://localhost/test',
-          ENABLE_METRICS: '1',
-          API_TOKEN: 'test-secret-16chars',
+          DATABASE_URL: "postgres://localhost/test",
+          ENABLE_METRICS: "1",
+          API_TOKEN: "test-secret-16chars",
         });
         expect(error).toBeDefined();
-        expect(error?.details[0].message).toContain('must be a boolean');
+        expect(error?.details[0].message).toContain("must be a boolean");
       });
     });
   });
 
-  describe('Complete configuration validation', () => {
-    it('should validate a minimal configuration with defaults', () => {
+  describe("Complete configuration validation", () => {
+    it("should validate a minimal configuration with defaults", () => {
       const minimalConfig = {
-        DATABASE_URL: 'postgres://localhost/test_db',
-        API_TOKEN: 'test-api-secret-for-development',
+        DATABASE_URL: "postgres://localhost/test_db",
+        API_TOKEN: "test-api-secret-for-development",
       };
 
       const { error, value } = validationSchema.validate(minimalConfig);
       expect(error).toBeUndefined();
 
       // Should have all default values
-      expect(value.NODE_ENV).toBe('development');
+      expect(value.NODE_ENV).toBe("development");
       expect(value.PORT).toBe(3001);
       expect(value.DB_MAX_CONNECTIONS).toBe(10);
       expect(value.DB_CONNECTION_TIMEOUT).toBe(5000);
       expect(value.RATE_LIMIT_WINDOW).toBe(900000);
       expect(value.RATE_LIMIT_MAX).toBe(100);
-      expect(value.JWT_EXPIRES_IN).toBe('1h');
+      expect(value.JWT_EXPIRES_IN).toBe("1h");
       expect(value.SLOW_QUERY_THRESHOLD).toBe(1000);
       expect(value.MAX_MEMORY_USAGE).toBe(10485760);
       expect(value.PAGINATION_DEFAULT_LIMIT).toBe(10);
       expect(value.PAGINATION_MAX_LIMIT).toBe(100);
-      expect(value.LOG_LEVEL).toBe('info');
+      expect(value.LOG_LEVEL).toBe("info");
       expect(value.ENABLE_DETAILED_LOGS).toBe(false);
       expect(value.ENABLE_METRICS).toBe(false);
     });
 
-    it('should validate a complete configuration', () => {
+    it("should validate a complete configuration", () => {
       const completeConfig = {
-        NODE_ENV: 'production',
+        NODE_ENV: "production",
         PORT: 8080,
-        DATABASE_URL: 'postgres://user:pass@localhost:5432/prod_db',
+        DATABASE_URL: "postgres://user:pass@localhost:5432/prod_db",
         DB_MAX_CONNECTIONS: 20,
         DB_CONNECTION_TIMEOUT: 10000,
-        ALLOWED_ORIGINS: 'https://example.com,https://www.example.com',
+        ALLOWED_ORIGINS: "https://example.com,https://www.example.com",
         RATE_LIMIT_WINDOW: 600000,
         RATE_LIMIT_MAX: 200,
-        JWT_SECRET: 'production-jwt-secret-key-that-is-very-secure-and-long',
-        JWT_EXPIRES_IN: '24h',
-        API_TOKEN: 'production-api-secret-key',
+        JWT_SECRET: "production-jwt-secret-key-that-is-very-secure-and-long",
+        JWT_EXPIRES_IN: "24h",
+        API_TOKEN: "production-api-secret-key",
         SLOW_QUERY_THRESHOLD: 2000,
         MAX_MEMORY_USAGE: 52428800,
         PAGINATION_DEFAULT_LIMIT: 20,
         PAGINATION_MAX_LIMIT: 200,
-        LOG_LEVEL: 'warn',
+        LOG_LEVEL: "warn",
         ENABLE_DETAILED_LOGS: true,
         ENABLE_METRICS: true,
       };
@@ -468,9 +468,9 @@ describe('Validation Schema', () => {
       expect(value).toMatchObject(completeConfig);
     });
 
-    it('should fail validation if required fields are missing', () => {
+    it("should fail validation if required fields are missing", () => {
       const incompleteConfig = {
-        NODE_ENV: 'production',
+        NODE_ENV: "production",
         PORT: 8080,
         // Missing DATABASE_URL and API_TOKEN
       };
@@ -478,30 +478,30 @@ describe('Validation Schema', () => {
       const { error } = validationSchema.validate(incompleteConfig);
       expect(error).toBeDefined();
       expect(error?.details).toHaveLength(1); // Joi returns first error by default
-      expect(error?.details[0].path).toContain('DATABASE_URL'); // First required field missing
+      expect(error?.details[0].path).toContain("DATABASE_URL"); // First required field missing
     });
 
-    it('should validate test environment configuration', () => {
+    it("should validate test environment configuration", () => {
       const testConfig = {
-        API_TOKEN: 'test-secret-16chars',
-        DATABASE_URL: 'postgresql://localhost:5432/asmovie_test',
+        API_TOKEN: "test-secret-16chars",
+        DATABASE_URL: "postgresql://localhost:5432/asmovie_test",
         ENABLE_DETAILED_LOGS: false,
         ENABLE_METRICS: false,
-        LOG_LEVEL: 'error',
-        NODE_ENV: 'test',
+        LOG_LEVEL: "error",
+        NODE_ENV: "test",
       };
 
       const { error } = validationSchema.validate(testConfig);
       expect(error).toBeUndefined();
     });
 
-    it('should provide helpful error messages for multiple validation failures', () => {
+    it("should provide helpful error messages for multiple validation failures", () => {
       const invalidConfig = {
-        NODE_ENV: 'invalid',
-        PORT: 'not-a-number',
-        LOG_LEVEL: 'trace',
-        ENABLE_METRICS: 'maybe',
-        JWT_SECRET: 'too-short',
+        NODE_ENV: "invalid",
+        PORT: "not-a-number",
+        LOG_LEVEL: "trace",
+        ENABLE_METRICS: "maybe",
+        JWT_SECRET: "too-short",
       };
 
       const { error } = validationSchema.validate(invalidConfig, {
@@ -513,20 +513,20 @@ describe('Validation Schema', () => {
       // Should include various validation errors
       const errorMessages =
         error?.details.map((detail) => detail.message) ?? [];
-      expect(errorMessages.some((msg) => msg.includes('NODE_ENV'))).toBe(true);
-      expect(errorMessages.some((msg) => msg.includes('DATABASE_URL'))).toBe(
+      expect(errorMessages.some((msg) => msg.includes("NODE_ENV"))).toBe(true);
+      expect(errorMessages.some((msg) => msg.includes("DATABASE_URL"))).toBe(
         true,
       );
     });
   });
 
-  describe('Edge cases and type coercion', () => {
-    it('should handle string numbers correctly', () => {
+  describe("Edge cases and type coercion", () => {
+    it("should handle string numbers correctly", () => {
       const { error, value } = validationSchema.validate({
-        DATABASE_URL: 'postgres://localhost/test',
-        API_TOKEN: 'test-secret-16chars',
-        PORT: '3000',
-        DB_MAX_CONNECTIONS: '15',
+        DATABASE_URL: "postgres://localhost/test",
+        API_TOKEN: "test-secret-16chars",
+        PORT: "3000",
+        DB_MAX_CONNECTIONS: "15",
       });
 
       expect(error).toBeUndefined();
@@ -534,12 +534,12 @@ describe('Validation Schema', () => {
       expect(value.DB_MAX_CONNECTIONS).toBe(15);
     });
 
-    it('should handle boolean strings correctly', () => {
+    it("should handle boolean strings correctly", () => {
       const { error, value } = validationSchema.validate({
-        DATABASE_URL: 'postgres://localhost/test',
-        API_TOKEN: 'test-secret-16chars',
-        ENABLE_METRICS: 'true',
-        ENABLE_DETAILED_LOGS: 'false',
+        DATABASE_URL: "postgres://localhost/test",
+        API_TOKEN: "test-secret-16chars",
+        ENABLE_METRICS: "true",
+        ENABLE_DETAILED_LOGS: "false",
       });
 
       expect(error).toBeUndefined();
@@ -547,23 +547,23 @@ describe('Validation Schema', () => {
       expect(value.ENABLE_DETAILED_LOGS).toBe(false);
     });
 
-    it('should reject invalid boolean strings', () => {
+    it("should reject invalid boolean strings", () => {
       const { error } = validationSchema.validate({
-        DATABASE_URL: 'postgres://localhost/test',
-        API_TOKEN: 'test-secret-16chars',
-        ENABLE_METRICS: 'yes',
+        DATABASE_URL: "postgres://localhost/test",
+        API_TOKEN: "test-secret-16chars",
+        ENABLE_METRICS: "yes",
       });
 
       expect(error).toBeDefined();
-      expect(error?.details[0].message).toContain('must be a boolean');
+      expect(error?.details[0].message).toContain("must be a boolean");
     });
 
-    it('should handle empty strings appropriately', () => {
+    it("should handle empty strings appropriately", () => {
       const { error } = validationSchema.validate({
-        DATABASE_URL: '',
-        LOG_LEVEL: '',
-        JWT_SECRET: '',
-        API_TOKEN: '', // Include API_TOKEN since it's required
+        DATABASE_URL: "",
+        LOG_LEVEL: "",
+        JWT_SECRET: "",
+        API_TOKEN: "", // Include API_TOKEN since it's required
       });
 
       expect(error).toBeDefined();
@@ -571,16 +571,16 @@ describe('Validation Schema', () => {
       expect(
         error?.details.some(
           (detail) =>
-            detail.path.includes('DATABASE_URL') &&
-            detail.message.includes('not allowed to be empty'),
+            detail.path.includes("DATABASE_URL") &&
+            detail.message.includes("not allowed to be empty"),
         ),
       ).toBe(true);
     });
 
-    it('should handle whitespace-only strings', () => {
+    it("should handle whitespace-only strings", () => {
       const { error } = validationSchema.validate({
-        DATABASE_URL: '   ',
-        API_TOKEN: '\t\n  ',
+        DATABASE_URL: "   ",
+        API_TOKEN: "\t\n  ",
       });
 
       expect(error).toBeDefined();
@@ -588,7 +588,7 @@ describe('Validation Schema', () => {
       expect(error?.details.length).toBeGreaterThan(0);
     });
 
-    it('should handle large numeric values', () => {
+    it("should handle large numeric values", () => {
       const { error, value } = validationSchema.validate({
         ...baseTestData,
         PORT: 65535,
@@ -604,34 +604,34 @@ describe('Validation Schema', () => {
       expect(value.MAX_MEMORY_USAGE).toBe(1073741824);
     });
 
-    it('should handle special characters in string fields', () => {
+    it("should handle special characters in string fields", () => {
       const { error, value } = validationSchema.validate({
         DATABASE_URL:
-          'postgres://user:p@ss!word$123@localhost:5432/db-name_test',
-        API_TOKEN: 'api-secret-with-special-chars!@#$%^&*()',
-        JWT_SECRET: 'jwt-secret-with-unicode-chars-äöü-and-numbers-123456789',
+          "postgres://user:p@ss!word$123@localhost:5432/db-name_test",
+        API_TOKEN: "api-secret-with-special-chars!@#$%^&*()",
+        JWT_SECRET: "jwt-secret-with-unicode-chars-äöü-and-numbers-123456789",
         ALLOWED_ORIGINS:
-          'https://app.example.com:3000,http://dev.example.com:8080',
+          "https://app.example.com:3000,http://dev.example.com:8080",
       });
 
       expect(error).toBeUndefined();
-      expect(value.DATABASE_URL).toContain('p@ss!word$123');
-      expect(value.API_TOKEN).toContain('!@#$%^&*()');
-      expect(value.JWT_SECRET).toContain('äöü');
-      expect(value.ALLOWED_ORIGINS).toContain('https://app.example.com:3000');
+      expect(value.DATABASE_URL).toContain("p@ss!word$123");
+      expect(value.API_TOKEN).toContain("!@#$%^&*()");
+      expect(value.JWT_SECRET).toContain("äöü");
+      expect(value.ALLOWED_ORIGINS).toContain("https://app.example.com:3000");
     });
 
-    it('should validate against SQL injection patterns in DATABASE_URL', () => {
+    it("should validate against SQL injection patterns in DATABASE_URL", () => {
       const maliciousUrls = [
         "postgres://user'; DROP TABLE users; --@localhost/db",
         'postgres://user" OR 1=1 --@localhost/db',
-        'postgres://user/**/OR/**/1=1@localhost/db',
+        "postgres://user/**/OR/**/1=1@localhost/db",
       ];
 
       maliciousUrls.forEach((url) => {
         const { error } = validationSchema.validate({
           DATABASE_URL: url,
-          API_TOKEN: 'test-secret-16chars',
+          API_TOKEN: "test-secret-16chars",
         });
 
         // Schema should still accept these as valid URLs (security is handled at connection level)
@@ -640,8 +640,8 @@ describe('Validation Schema', () => {
     });
   });
 
-  describe('Performance and load testing scenarios', () => {
-    it('should handle high-load configuration values', () => {
+  describe("Performance and load testing scenarios", () => {
+    it("should handle high-load configuration values", () => {
       const highLoadConfig = {
         ...baseTestData,
         DB_MAX_CONNECTIONS: 500,
@@ -659,7 +659,7 @@ describe('Validation Schema', () => {
       expect(value.MAX_MEMORY_USAGE).toBe(2147483648);
     });
 
-    it('should handle minimal resource configuration', () => {
+    it("should handle minimal resource configuration", () => {
       const minimalConfig = {
         ...baseTestData,
         DB_MAX_CONNECTIONS: 1,
@@ -678,9 +678,9 @@ describe('Validation Schema', () => {
     });
   });
 
-  describe('Security validation edge cases', () => {
-    it('should accept very long but valid JWT secrets', () => {
-      const longSecret = 'a'.repeat(256); // 256 character secret
+  describe("Security validation edge cases", () => {
+    it("should accept very long but valid JWT secrets", () => {
+      const longSecret = "a".repeat(256); // 256 character secret
       const { error, value } = validationSchema.validate({
         ...baseTestData,
         JWT_SECRET: longSecret,
@@ -690,14 +690,14 @@ describe('Validation Schema', () => {
       expect(value.JWT_SECRET).toBe(longSecret);
     });
 
-    it('should accept complex ALLOWED_ORIGINS configurations', () => {
+    it("should accept complex ALLOWED_ORIGINS configurations", () => {
       const complexOrigins = [
-        'http://localhost:3000',
-        'https://app.example.com',
-        'https://admin.example.com:8443',
-        'http://127.0.0.1:3001',
-        'https://subdomain.domain.co.uk',
-      ].join(',');
+        "http://localhost:3000",
+        "https://app.example.com",
+        "https://admin.example.com:8443",
+        "http://127.0.0.1:3001",
+        "https://subdomain.domain.co.uk",
+      ].join(",");
 
       const { error, value } = validationSchema.validate({
         ...baseTestData,
@@ -708,8 +708,8 @@ describe('Validation Schema', () => {
       expect(value.ALLOWED_ORIGINS).toBe(complexOrigins);
     });
 
-    it('should handle edge cases in JWT expiration values', () => {
-      const validExpirations = ['1s', '59m', '23h', '364d', '1y'];
+    it("should handle edge cases in JWT expiration values", () => {
+      const validExpirations = ["1s", "59m", "23h", "364d", "1y"];
 
       validExpirations.forEach((expiration) => {
         const { error, value } = validationSchema.validate({
@@ -723,15 +723,15 @@ describe('Validation Schema', () => {
     });
   });
 
-  describe('Environment-specific validation scenarios', () => {
-    it('should validate typical development environment', () => {
+  describe("Environment-specific validation scenarios", () => {
+    it("should validate typical development environment", () => {
       const devConfig = {
-        NODE_ENV: 'development',
+        NODE_ENV: "development",
         PORT: 3001,
         DATABASE_URL:
-          'postgresql://postgres:password@localhost:5432/asmovie_dev',
-        API_TOKEN: 'dev-api-secret-16chars',
-        LOG_LEVEL: 'debug',
+          "postgresql://postgres:password@localhost:5432/asmovie_dev",
+        API_TOKEN: "dev-api-secret-16chars",
+        LOG_LEVEL: "debug",
         ENABLE_DETAILED_LOGS: true,
         ENABLE_METRICS: false,
         RATE_LIMIT_MAX: 1000,
@@ -741,20 +741,20 @@ describe('Validation Schema', () => {
       expect(error).toBeUndefined();
     });
 
-    it('should validate typical production environment', () => {
+    it("should validate typical production environment", () => {
       const prodConfig = {
-        NODE_ENV: 'production',
+        NODE_ENV: "production",
         PORT: 443,
         DATABASE_URL:
-          'postgresql://prod_user:secure_password@prod-db.internal:5432/asmovie_prod',
-        API_TOKEN: 'production-api-secret-very-secure-key-2025',
+          "postgresql://prod_user:secure_password@prod-db.internal:5432/asmovie_prod",
+        API_TOKEN: "production-api-secret-very-secure-key-2025",
         JWT_SECRET:
-          'production-jwt-secret-extremely-secure-and-random-key-with-special-chars-!@#$%',
-        LOG_LEVEL: 'warn',
+          "production-jwt-secret-extremely-secure-and-random-key-with-special-chars-!@#$%",
+        LOG_LEVEL: "warn",
         ENABLE_DETAILED_LOGS: false,
         ENABLE_METRICS: true,
         RATE_LIMIT_MAX: 10000,
-        ALLOWED_ORIGINS: 'https://app.example.com,https://admin.example.com',
+        ALLOWED_ORIGINS: "https://app.example.com,https://admin.example.com",
         DB_MAX_CONNECTIONS: 100,
         MAX_MEMORY_USAGE: 536870912, // 512MB
       };
@@ -763,14 +763,14 @@ describe('Validation Schema', () => {
       expect(error).toBeUndefined();
     });
 
-    it('should validate typical test environment', () => {
+    it("should validate typical test environment", () => {
       const testConfig = {
-        NODE_ENV: 'test',
+        NODE_ENV: "test",
         PORT: 0, // Let OS assign port
         DATABASE_URL:
-          'postgresql://test_user:test_pass@localhost:5433/asmovie_test',
-        API_TOKEN: 'test-api-secret-16chars',
-        LOG_LEVEL: 'error',
+          "postgresql://test_user:test_pass@localhost:5433/asmovie_test",
+        API_TOKEN: "test-api-secret-16chars",
+        LOG_LEVEL: "error",
         ENABLE_DETAILED_LOGS: false,
         ENABLE_METRICS: false,
         RATE_LIMIT_MAX: 1000000, // High limit for tests

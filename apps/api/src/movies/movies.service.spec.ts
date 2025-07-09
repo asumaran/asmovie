@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MoviesService } from './movies.service';
-import { PrismaService } from '../common/prisma.service';
-import { QueryBuilderService } from '../common/services/query-builder.service';
-import { TransactionService } from '../common/services/transaction.service';
-import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from "@nestjs/testing";
+import { MoviesService } from "./movies.service";
+import { PrismaService } from "../common/prisma.service";
+import { QueryBuilderService } from "../common/services/query-builder.service";
+import { TransactionService } from "../common/services/transaction.service";
+import { ConfigService } from "@nestjs/config";
 
-describe('MoviesService', () => {
+describe("MoviesService", () => {
   let service: MoviesService;
 
   const mockPrismaService = {
@@ -34,13 +34,13 @@ describe('MoviesService', () => {
       ratings: true,
     }),
     buildMovieWhere: jest.fn().mockReturnValue({}),
-    buildOrderBy: jest.fn().mockReturnValue({ createdAt: 'desc' }),
+    buildOrderBy: jest.fn().mockReturnValue({ createdAt: "desc" }),
     buildPaginatedQuery: jest.fn().mockReturnValue({
       skip: 0,
       take: 10,
       include: { actors: { include: { actor: true } }, ratings: true },
       where: {},
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     }),
   };
 
@@ -81,17 +81,17 @@ describe('MoviesService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should create a movie', async () => {
+  describe("create", () => {
+    it("should create a movie", async () => {
       const createMovieDto = {
-        title: 'Test Movie',
-        description: 'Test Description',
+        title: "Test Movie",
+        description: "Test Description",
         releaseYear: 2023,
-        genre: 'Action',
+        genre: "Action",
         duration: 120,
       };
 
@@ -123,12 +123,12 @@ describe('MoviesService', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should return paginated movies', async () => {
+  describe("findAll", () => {
+    it("should return paginated movies", async () => {
       const expectedMovies = [
         {
           id: 1,
-          title: 'Movie 1',
+          title: "Movie 1",
           actors: [],
           ratings: [],
         },
@@ -152,12 +152,12 @@ describe('MoviesService', () => {
       });
     });
 
-    it('should return movies filtered by search term', async () => {
-      const searchTerm = 'inception';
+    it("should return movies filtered by search term", async () => {
+      const searchTerm = "inception";
       const expectedMovies = [
         {
           id: 1,
-          title: 'Inception',
+          title: "Inception",
           actors: [],
           ratings: [],
         },
@@ -181,11 +181,11 @@ describe('MoviesService', () => {
       });
     });
 
-    it('should use default values when called without parameters', async () => {
+    it("should use default values when called without parameters", async () => {
       const expectedMovies = [
         {
           id: 1,
-          title: 'Movie 1',
+          title: "Movie 1",
           actors: [],
           ratings: [],
         },
@@ -207,14 +207,14 @@ describe('MoviesService', () => {
       expect(mockQueryBuilderService.buildOrderBy).toHaveBeenCalledWith(
         undefined,
         undefined,
-        { createdAt: 'desc' },
+        { createdAt: "desc" },
       );
       expect(mockQueryBuilderService.buildPaginatedQuery).toHaveBeenCalledWith({
         page: 1,
         limit: 10, // Should use the default value from ConfigService
         include: { actors: { include: { actor: true } }, ratings: true },
         where: {},
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       });
       expect(result).toEqual({
         data: expectedMovies,
@@ -230,12 +230,12 @@ describe('MoviesService', () => {
     });
   });
 
-  describe('findOne', () => {
-    it('should return a movie by id', async () => {
+  describe("findOne", () => {
+    it("should return a movie by id", async () => {
       const movieId = 1;
       const expectedMovie = {
         id: movieId,
-        title: 'Test Movie',
+        title: "Test Movie",
         actors: [],
         ratings: [],
       };
@@ -258,7 +258,7 @@ describe('MoviesService', () => {
       expect(result).toEqual(expectedMovie);
     });
 
-    it('should throw NotFoundException if movie not found', async () => {
+    it("should throw NotFoundException if movie not found", async () => {
       const movieId = 999;
 
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
@@ -269,25 +269,25 @@ describe('MoviesService', () => {
     });
   });
 
-  describe('addActor', () => {
-    it('should add an actor to a movie', async () => {
+  describe("addActor", () => {
+    it("should add an actor to a movie", async () => {
       const movieId = 1;
       const addActorDto = {
         actorId: 1,
-        role: 'Lead Actor',
+        role: "Lead Actor",
       };
 
-      const mockMovie = { id: movieId, title: 'Test Movie' };
-      const mockActor = { id: 1, name: 'Test Actor' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
+      const mockActor = { id: 1, name: "Test Actor" };
       const mockMovieWithActors = {
         id: movieId,
-        title: 'Test Movie',
+        title: "Test Movie",
         actors: [
           {
             id: 1,
             movieId,
             actorId: 1,
-            role: 'Lead Actor',
+            role: "Lead Actor",
             actor: mockActor,
           },
         ],
@@ -323,14 +323,14 @@ describe('MoviesService', () => {
       expect(result).toEqual(mockMovieWithActors);
     });
 
-    it('should throw NotFoundException if actor not found', async () => {
+    it("should throw NotFoundException if actor not found", async () => {
       const movieId = 1;
       const addActorDto = {
         actorId: 999,
-        role: 'Lead Actor',
+        role: "Lead Actor",
       };
 
-      const mockMovie = { id: movieId, title: 'Test Movie' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
 
       mockPrismaService.movie.findUnique.mockResolvedValue(mockMovie);
       mockPrismaService.actor.findUnique.mockResolvedValue(null);
@@ -341,20 +341,20 @@ describe('MoviesService', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update a movie', async () => {
+  describe("update", () => {
+    it("should update a movie", async () => {
       const movieId = 1;
       const updateMovieDto = {
-        title: 'Updated Movie',
-        description: 'Updated Description',
+        title: "Updated Movie",
+        description: "Updated Description",
       };
 
       const existingMovie = {
         id: movieId,
-        title: 'Original Movie',
-        description: 'Original Description',
+        title: "Original Movie",
+        description: "Original Description",
         releaseYear: 2023,
-        genre: 'Action',
+        genre: "Action",
         duration: 120,
         actors: [],
         ratings: [],
@@ -385,9 +385,9 @@ describe('MoviesService', () => {
       expect(result).toEqual(updatedMovie);
     });
 
-    it('should throw NotFoundException if movie not found', async () => {
+    it("should throw NotFoundException if movie not found", async () => {
       const movieId = 999;
-      const updateMovieDto = { title: 'Updated Movie' };
+      const updateMovieDto = { title: "Updated Movie" };
 
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
 
@@ -397,16 +397,16 @@ describe('MoviesService', () => {
     });
   });
 
-  describe('remove', () => {
-    it('should remove a movie', async () => {
+  describe("remove", () => {
+    it("should remove a movie", async () => {
       const movieId = 1;
       const mockMovie = {
         id: movieId,
-        title: 'Test Movie',
+        title: "Test Movie",
         releaseYear: 2023,
-        genre: 'Action',
+        genre: "Action",
         duration: 120,
-        description: 'Test description',
+        description: "Test description",
         createdAt: new Date(),
         updatedAt: new Date(),
         actors: [],
@@ -426,7 +426,7 @@ describe('MoviesService', () => {
       expect(result).toEqual(mockMovie);
     });
 
-    it('should throw NotFoundException if movie not found', async () => {
+    it("should throw NotFoundException if movie not found", async () => {
       const movieId = 999;
 
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
@@ -437,17 +437,17 @@ describe('MoviesService', () => {
     });
   });
 
-  describe('removeActor', () => {
-    it('should remove an actor from a movie', async () => {
+  describe("removeActor", () => {
+    it("should remove an actor from a movie", async () => {
       const movieId = 1;
       const actorId = 1;
 
-      const mockMovie = { id: movieId, title: 'Test Movie' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
       const mockRelation = {
         id: 1,
         movieId,
         actorId,
-        role: 'Lead Actor',
+        role: "Lead Actor",
       };
 
       mockPrismaService.movie.findUnique.mockResolvedValue(mockMovie);
@@ -467,11 +467,11 @@ describe('MoviesService', () => {
       expect(result).toEqual(mockRelation);
     });
 
-    it('should throw NotFoundException if actor not found in movie', async () => {
+    it("should throw NotFoundException if actor not found in movie", async () => {
       const movieId = 1;
       const actorId = 1;
 
-      const mockMovie = { id: movieId, title: 'Test Movie' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
 
       mockPrismaService.movie.findUnique.mockResolvedValue(mockMovie);
       mockPrismaService.movieActor.findUnique.mockResolvedValue(null);
@@ -482,20 +482,20 @@ describe('MoviesService', () => {
     });
   });
 
-  describe('getActors', () => {
-    it('should return actors for a movie', async () => {
+  describe("getActors", () => {
+    it("should return actors for a movie", async () => {
       const movieId = 1;
-      const mockMovie = { id: movieId, title: 'Test Movie' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
       const expectedActors = [
         {
           id: 1,
           movieId,
           actorId: 1,
-          role: 'Lead Actor',
+          role: "Lead Actor",
           actor: {
             id: 1,
-            name: 'Test Actor',
-            bio: 'Test Bio',
+            name: "Test Actor",
+            bio: "Test Bio",
           },
         },
       ];
@@ -518,13 +518,13 @@ describe('MoviesService', () => {
           },
         },
         orderBy: {
-          role: 'asc',
+          role: "asc",
         },
       });
       expect(result).toEqual(expectedActors);
     });
 
-    it('should throw NotFoundException if movie not found', async () => {
+    it("should throw NotFoundException if movie not found", async () => {
       const movieId = 999;
 
       mockPrismaService.movie.findUnique.mockResolvedValue(null);
@@ -535,21 +535,21 @@ describe('MoviesService', () => {
     });
   });
 
-  describe('addActor - additional cases', () => {
-    it('should throw error if actor is already in the movie', async () => {
+  describe("addActor - additional cases", () => {
+    it("should throw error if actor is already in the movie", async () => {
       const movieId = 1;
       const addActorDto = {
         actorId: 1,
-        role: 'Lead Actor',
+        role: "Lead Actor",
       };
 
-      const mockMovie = { id: movieId, title: 'Test Movie' };
-      const mockActor = { id: 1, name: 'Test Actor' };
+      const mockMovie = { id: movieId, title: "Test Movie" };
+      const mockActor = { id: 1, name: "Test Actor" };
       const existingRelation = {
         id: 1,
         movieId,
         actorId: 1,
-        role: 'Supporting Actor',
+        role: "Supporting Actor",
       };
 
       mockPrismaService.movie.findUnique.mockResolvedValue(mockMovie);
@@ -559,7 +559,7 @@ describe('MoviesService', () => {
       );
 
       await expect(service.addActor(movieId, addActorDto)).rejects.toThrow(
-        'Movie-Actor relationship with actor',
+        "Movie-Actor relationship with actor",
       );
     });
   });
