@@ -1,0 +1,75 @@
+meta {
+  name: Create Movie with Actors
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{api_url}}/movies
+  body: json
+  auth: none
+}
+
+headers {
+  X-API-Token: {{api_token}}
+}
+
+body:json {
+  {
+    "title": "Inception",
+    "description": "A thief who steals corporate secrets through the use of dream-sharing technology.",
+    "plot": "Dom Cobb is a skilled thief, the absolute best in the dangerous art of extraction, stealing valuable secrets from deep within the subconscious during the dream state.",
+    "releaseYear": 2010,
+    "genre": "Sci-Fi",
+    "duration": 148,
+    "budget": 160000000,
+    "boxOffice": 836800000,
+    "awards": "Academy Award for Best Cinematography, Best Sound Editing, Best Sound Mixing, Best Visual Effects",
+    "writers": "Christopher Nolan",
+    "director": "Christopher Nolan",
+    "actors": [
+      {
+        "actorId": 1,
+        "role": "Dom Cobb"
+      },
+      {
+        "actorId": 2,
+        "role": "Mal"
+      },
+      {
+        "actorId": 3,
+        "role": "Arthur"
+      }
+    ]
+  }
+}
+
+docs {
+  # Create Movie with Actors
+  
+  Test case for creating a movie with multiple actors assigned during creation.
+  
+  **🔒 Requires API Token Authentication**
+  
+  ## Test Case
+  This request demonstrates:
+  - Creating a movie with complete metadata
+  - Assigning multiple actors with their roles during creation
+  - Proper validation of actor IDs
+  
+  ## Expected Response
+  - Movie created successfully
+  - Actors array populated with full actor details
+  - Each actor has movieId, actorId, and role
+  - Actor objects include id, name, biography, birthDate
+  
+  ## Error Cases to Test
+  - Invalid actorId (should return 404 for Actor not found)
+  - Missing role (should return validation error)
+  - Duplicate actorId in same request (should be handled gracefully)
+  
+  ## Example
+  ```
+  POST /movies
+  ```
+}

@@ -1,0 +1,51 @@
+meta {
+  name: Update Movie Without Actors
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{api_url}}/movies/1
+  body: json
+  auth: none
+}
+
+headers {
+  X-API-Token: {{api_token}}
+}
+
+body:json {
+  {
+    "title": "Updated Movie Title Only",
+    "description": "Only updating basic fields, not touching actors",
+    "plot": "Updated plot without affecting actors",
+    "budget": 200000000
+  }
+}
+
+docs {
+  # Update Movie Without Touching Actors
+  
+  Test case for updating a movie without affecting existing actors.
+  
+  **🔒 Requires API Token Authentication**
+  
+  ## Test Case
+  This request demonstrates:
+  - Updating basic movie fields only
+  - Not including actors field in the request
+  - Existing actors should remain unchanged
+  
+  ## Expected Behavior
+  - Movie metadata is updated
+  - Existing movie-actor relationships are preserved
+  - Actors array remains the same as before
+  
+  ## Parameters
+  - `id` (path): The movie ID to update
+  
+  ## Example
+  ```
+  PATCH /movies/1
+  ```
+}

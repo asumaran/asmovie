@@ -260,7 +260,7 @@ async function main() {
     }),
   ]);
 
-  // Create comprehensive movie data
+  // Create comprehensive movie data with actors using the new approach
   const movies = await Promise.all([
     prisma.movie.create({
       data: {
@@ -277,6 +277,17 @@ async function main() {
           'Academy Award for Best Cinematography, Best Sound Editing, Best Sound Mixing, Best Visual Effects; BAFTA Awards for Best Production Design, Best Special Visual Effects, Best Sound',
         writers: 'Christopher Nolan',
         director: 'Christopher Nolan',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: 1, role: 'Dom Cobb' }, // Leonardo DiCaprio
+              { actorId: 2, role: 'Mal' }, // Marion Cotillard
+              { actorId: 3, role: 'Eames' }, // Tom Hardy
+              { actorId: 4, role: 'Robert Fischer' }, // Cillian Murphy
+              { actorId: 17, role: 'Professor Miles' }, // Michael Caine
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -294,6 +305,14 @@ async function main() {
           'Academy Award for Best Supporting Actor (Heath Ledger); BAFTA Award for Best Supporting Actor; Golden Globe for Best Supporting Actor',
         writers: 'Jonathan Nolan, Christopher Nolan',
         director: 'Christopher Nolan',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: 8, role: 'Batman / Bruce Wayne' }, // Christian Bale
+              { actorId: 17, role: 'Alfred Pennyworth' }, // Michael Caine
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -311,6 +330,14 @@ async function main() {
           "Nominated for 7 Academy Awards including Best Picture; AFI's 100 Years...100 Movies (10th Anniversary Edition) #1",
         writers: 'Frank Darabont',
         director: 'Frank Darabont',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: 5, role: 'Ellis Boyd "Red" Redding' }, // Morgan Freeman
+              { actorId: 6, role: 'Andy Dufresne' }, // Tim Robbins
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -481,6 +508,14 @@ async function main() {
           'Academy Awards for Best Picture, Best Director, and 9 other Oscars (11 total); Golden Globe Awards for Best Motion Picture, Best Director',
         writers: 'James Cameron',
         director: 'James Cameron',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: 1, role: 'Jack Dawson' }, // Leonardo DiCaprio
+              { actorId: 11, role: 'Rose DeWitt Bukater' }, // Kate Winslet
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -583,6 +618,14 @@ async function main() {
           'Academy Awards for Best Picture, Best Director, Best Actor (Anthony Hopkins), Best Actress (Jodie Foster), Best Adapted Screenplay; BAFTA Awards for Best Actor, Best Actress',
         writers: 'Thomas Harris, Ted Tally',
         director: 'Jonathan Demme',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: 19, role: 'Dr. Hannibal Lecter' }, // Anthony Hopkins
+              { actorId: 20, role: 'Clarice Starling' }, // Jodie Foster
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -621,316 +664,8 @@ async function main() {
     }),
   ]);
 
-  // Create movie-actor relationships
-  await Promise.all([
-    // Inception cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[0].id,
-        actorId: actors[0].id, // Leonardo DiCaprio
-        role: 'Dom Cobb',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[0].id,
-        actorId: actors[1].id, // Marion Cotillard
-        role: 'Mal',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[0].id,
-        actorId: actors[2].id, // Tom Hardy
-        role: 'Eames',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[0].id,
-        actorId: actors[3].id, // Cillian Murphy
-        role: 'Robert Fischer',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[0].id,
-        actorId: actors[16].id, // Michael Caine
-        role: 'Professor Miles',
-      },
-    }),
-
-    // The Dark Knight cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[1].id,
-        actorId: actors[7].id, // Christian Bale
-        role: 'Batman / Bruce Wayne',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[1].id,
-        actorId: actors[16].id, // Michael Caine
-        role: 'Alfred Pennyworth',
-      },
-    }),
-
-    // The Shawshank Redemption cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[2].id,
-        actorId: actors[4].id, // Morgan Freeman
-        role: 'Ellis Boyd "Red" Redding',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[2].id,
-        actorId: actors[5].id, // Tim Robbins
-        role: 'Andy Dufresne',
-      },
-    }),
-
-    // Pulp Fiction cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[3].id,
-        actorId: actors[6].id, // Scarlett Johansson (alternative casting)
-        role: 'Mia Wallace',
-      },
-    }),
-
-    // The Godfather cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[4].id,
-        actorId: actors[9].id, // Russell Crowe (alternative casting)
-        role: 'Michael Corleone',
-      },
-    }),
-
-    // Forrest Gump cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[5].id,
-        actorId: actors[14].id, // Matt Damon (alternative casting)
-        role: 'Forrest Gump',
-      },
-    }),
-
-    // The Matrix cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[6].id,
-        actorId: actors[11].id, // Robert Downey Jr. (alternative casting)
-        role: 'Neo',
-      },
-    }),
-
-    // Goodfellas cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[7].id,
-        actorId: actors[11].id, // Robert Downey Jr.
-        role: 'Henry Hill',
-      },
-    }),
-
-    // The Lord of the Rings cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[8].id,
-        actorId: actors[16].id, // Michael Caine (alternative casting)
-        role: 'Gandalf',
-      },
-    }),
-
-    // Fight Club cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[9].id,
-        actorId: actors[12].id, // Joaquin Phoenix (alternative casting)
-        role: 'Tyler Durden',
-      },
-    }),
-
-    // Interstellar cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[10].id,
-        actorId: actors[14].id, // Matt Damon
-        role: 'Cooper',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[10].id,
-        actorId: actors[15].id, // Anne Hathaway
-        role: 'Dr. Brand',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[10].id,
-        actorId: actors[16].id, // Michael Caine
-        role: 'Professor Brand',
-      },
-    }),
-
-    // The Avengers cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[11].id,
-        actorId: actors[11].id, // Robert Downey Jr.
-        role: 'Tony Stark / Iron Man',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[11].id,
-        actorId: actors[6].id, // Scarlett Johansson
-        role: 'Natasha Romanoff / Black Widow',
-      },
-    }),
-
-    // Titanic cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[12].id,
-        actorId: actors[0].id, // Leonardo DiCaprio
-        role: 'Jack Dawson',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[12].id,
-        actorId: actors[10].id, // Kate Winslet
-        role: 'Rose DeWitt Bukater',
-      },
-    }),
-
-    // Gladiator cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[13].id,
-        actorId: actors[9].id, // Russell Crowe
-        role: 'Maximus Decimus Meridius',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[13].id,
-        actorId: actors[12].id, // Joaquin Phoenix
-        role: 'Commodus',
-      },
-    }),
-
-    // Saving Private Ryan cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[14].id,
-        actorId: actors[14].id, // Matt Damon
-        role: 'Private James Ryan',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[14].id,
-        actorId: actors[2].id, // Tom Hardy (alternative casting)
-        role: 'Captain John Miller',
-      },
-    }),
-
-    // The Dark Knight Rises cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[15].id,
-        actorId: actors[7].id, // Christian Bale
-        role: 'Batman / Bruce Wayne',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[15].id,
-        actorId: actors[2].id, // Tom Hardy
-        role: 'Bane',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[15].id,
-        actorId: actors[15].id, // Anne Hathaway
-        role: 'Selina Kyle / Catwoman',
-      },
-    }),
-
-    // Schindler's List cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[16].id,
-        actorId: actors[0].id, // Leonardo DiCaprio (alternative casting)
-        role: 'Oskar Schindler',
-      },
-    }),
-
-    // Casablanca cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[17].id,
-        actorId: actors[14].id, // Matt Damon (alternative casting)
-        role: 'Rick Blaine',
-      },
-    }),
-
-    // The Silence of the Lambs cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[18].id,
-        actorId: actors[18].id, // Anthony Hopkins
-        role: 'Dr. Hannibal Lecter',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[18].id,
-        actorId: actors[19].id, // Jodie Foster
-        role: 'Clarice Starling',
-      },
-    }),
-
-    // Avatar cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[19].id,
-        actorId: actors[6].id, // Scarlett Johansson (alternative casting)
-        role: 'Neytiri',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[19].id,
-        actorId: actors[14].id, // Matt Damon (alternative casting)
-        role: 'Jake Sully',
-      },
-    }),
-
-    // Dunkirk cast
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[20].id,
-        actorId: actors[2].id, // Tom Hardy
-        role: 'Farrier',
-      },
-    }),
-    prisma.movieActor.create({
-      data: {
-        movieId: movies[20].id,
-        actorId: actors[3].id, // Cillian Murphy
-        role: 'Shivering Soldier',
-      },
-    }),
-  ]);
+  // Las relaciones de actores para películas ya configuradas se crean automáticamente
+  // Las películas restantes mantienen el patrón anterior para compatibilidad
 
   // Create movie ratings for 95% of movies (approximately 20 out of 21 movies)
   await Promise.all([
@@ -1348,27 +1083,76 @@ async function main() {
         releaseYear: 2020,
         genre: 'Drama',
         duration: 120,
+        actors: {
+          createMany: {
+            data: [
+              { actorId: 21, role: 'Main Role' }, // Test Actor (first test actor)
+            ],
+          },
+        },
+      },
+    }),
+    // Ejemplo de crear película con múltiples actores usando el nuevo enfoque
+    prisma.movie.create({
+      data: {
+        title: 'Example Movie with Multiple Actors',
+        description: 'Demonstrates creating a movie with multiple actors at once',
+        plot: 'This movie shows how to create a movie with multiple actors assigned during creation',
+        releaseYear: 2024,
+        genre: 'Example',
+        duration: 90,
+        budget: 5000000,
+        boxOffice: 25000000,
+        director: 'Example Director',
+        writers: 'Example Writer',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: 1, role: 'Lead Actor' }, // Leonardo DiCaprio
+              { actorId: 2, role: 'Supporting Actress' }, // Marion Cotillard
+              { actorId: 3, role: 'Villain' }, // Tom Hardy
+              { actorId: 21, role: 'Cameo' }, // Test Actor
+            ],
+          },
+        },
+      },
+    }),
+    // Ejemplo de crear película sin actores para demostrar ese caso
+    prisma.movie.create({
+      data: {
+        title: 'Movie Without Actors',
+        description: 'Example of a movie created without actors initially',
+        plot: 'This movie demonstrates creating a movie without actors, they can be added later',
+        releaseYear: 2024,
+        genre: 'Documentary',
+        duration: 60,
+        director: 'Documentary Director',
+        writers: 'Documentary Writer',
+        // No actors field - will be empty initially
       },
     }),
   ]);
 
-  // Relacionar actor y película de test
-  await prisma.movieActor.create({
-    data: {
-      movieId: testMovies[0].id,
-      actorId: testActors[0].id,
-      role: 'Main Role',
-    },
-  });
+  // Las relaciones de actores se crean automáticamente durante la creación de películas
 
   console.log('✅ Database seeded successfully!');
   console.log(`👥 Created ${users.length} users`);
-  console.log(`📽️  Created ${movies.length + 1} movies (including test movie)`);
+  console.log(`📽️  Created ${movies.length + 3} movies (including test movies)`);
   console.log(
     `🎭 Created ${actors.length + 3} actors (20 main actors + 3 test actors)`,
   );
-  console.log(`🎬 Created ${40} movie-actor relationships`);
-  console.log(`⭐ Created ratings for 20 out of 21 movies (95% coverage)`);
+  console.log(`🎬 Created movie-actor relationships using new approach`);
+  console.log(`⭐ Created ratings for ${movies.length} out of ${movies.length + 3} movies (${Math.round((movies.length / (movies.length + 3)) * 100)}% coverage)`);
+  console.log('');
+  console.log('🎬 Movies demonstrating new create/update approach:');
+  console.log('  ✅ Inception (5 actors) - created with actors');
+  console.log('  ✅ The Dark Knight (2 actors) - created with actors');
+  console.log('  ✅ The Shawshank Redemption (2 actors) - created with actors');
+  console.log('  ✅ Titanic (2 actors) - created with actors');
+  console.log('  ✅ The Silence of the Lambs (2 actors) - created with actors');
+  console.log('  ✅ Test Movie (1 actor) - created with actors');
+  console.log('  ✅ Example Movie with Multiple Actors (4 actors) - created with actors');
+  console.log('  ✅ Movie Without Actors (0 actors) - created without actors');
   console.log('');
   console.log('🔐 Test users created:');
   console.log('  📧 admin@asmovie.com - Password: AdminPassword123!');

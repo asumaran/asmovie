@@ -26,7 +26,17 @@ body:json {
     "boxOffice": 467200000,
     "awards": "Academy Award for Best Visual Effects, BAFTA Award for Best Achievement in Special Visual Effects",
     "writers": "Lana Wachowski, Lilly Wachowski",
-    "director": "Lana Wachowski, Lilly Wachowski"
+    "director": "Lana Wachowski, Lilly Wachowski",
+    "actors": [
+      {
+        "actorId": 1,
+        "role": "Neo"
+      },
+      {
+        "actorId": 2,
+        "role": "Trinity"
+      }
+    ]
   }
 }
 
@@ -50,7 +60,13 @@ docs {
     "boxOffice": "number (optional, in dollars)",
     "awards": "string (optional)",
     "writers": "string (optional)",
-    "director": "string (optional)"
+    "director": "string (optional)",
+    "actors": [
+      {
+        "actorId": "number (required)",
+        "role": "string (required)"
+      }
+    ]
   }
   ```
   
@@ -63,13 +79,15 @@ docs {
   ## Response
   Returns the created movie object with:
   - Movie details
-  - Empty actors array (initially)
+  - Actors array with assigned actors (if provided)
   - Empty ratings array (initially)
   
   ## Validation
   - Title is required
   - Release year must be between 1900 and current year + 5
   - Duration must be positive number
+  - actorId must reference existing actors
+  - Role is required for each actor
   
   ## Example
   ```

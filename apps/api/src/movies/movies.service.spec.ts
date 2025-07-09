@@ -19,11 +19,14 @@ describe('MoviesService', () => {
     },
     actor: {
       findUnique: jest.fn(),
+      findMany: jest.fn(),
     },
     movieActor: {
       create: jest.fn(),
+      createMany: jest.fn(),
       findUnique: jest.fn(),
       delete: jest.fn(),
+      deleteMany: jest.fn(),
       findMany: jest.fn(),
     },
   };
@@ -86,7 +89,7 @@ describe('MoviesService', () => {
   });
 
   describe('create', () => {
-    it('should create a movie', async () => {
+    it('should create a movie without actors', async () => {
       const createMovieDto = {
         title: 'Test Movie',
         description: 'Test Description',
@@ -120,6 +123,120 @@ describe('MoviesService', () => {
         },
       });
       expect(result).toEqual(expectedMovie);
+    });
+
+    it('should create a movie with actors', async () => {
+      const createMovieDto = {
+        title: 'Test Movie with Actors',
+        description: 'Test Description',
+        releaseYear: 2023,
+        genre: 'Action',
+        duration: 120,
+        actors: [
+          { actorId: 1, role: 'Lead Actor' },
+          { actorId: 2, role: 'Supporting Actor' },
+        ],
+      };
+
+      const { actors, ...movieData } = createMovieDto;
+
+      const createdMovie = {
+        id: 1,
+        ...movieData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        actors: [],
+        ratings: [],
+      };
+
+      const expectedMovieWithActors = {
+        ...createdMovie,
+        actors: [
+          {
+            id: 1,
+            movieId: 1,
+            actorId: 1,
+            role: 'Lead Actor',
+            actor: { id: 1, name: 'Actor 1', biography: 'Bio 1', birthDate: new Date() },
+          },
+          {
+            id: 2,
+            movieId: 1,
+            actorId: 2,
+            role: 'Supporting Actor',
+            actor: { id: 2, name: 'Actor 2', biography: 'Bio 2', birthDate: new Date() },
+          },
+        ],
+      };
+
+      const existingActors = [
+        { id: 1 },
+        { id: 2 },
+      ];
+
+      mockPrismaService.movie.create.mockResolvedValue(createdMovie);
+      mockPrismaService.actor.findMany.mockResolvedValue(existingActors);
+      mockPrismaService.movieActor.createMany.mockResolvedValue({ count: 2 });
+      mockPrismaService.movie.findUnique.mockResolvedValue(expectedMovieWithActors);
+
+      const result = await service.create(createMovieDto);
+
+      expect(mockPrismaService.movie.create).toHaveBeenCalledWith({
+        data: movieData,
+        include: {
+          actors: {
+            include: {
+              actor: true,
+            },
+          },
+          ratings: true,
+        },
+      });
+
+      expect(mockPrismaService.actor.findMany).toHaveBeenCalledWith({
+        where: { id: { in: [1, 2] } },
+        select: { id: true },
+      });
+
+      expect(mockPrismaService.movieActor.createMany).toHaveBeenCalledWith({
+        data: [
+          { movieId: 1, actorId: 1, role: 'Lead Actor' },
+          { movieId: 1, actorId: 2, role: 'Supporting Actor' },
+        ],
+      });
+
+      expect(result).toEqual(expectedMovieWithActors);
+    });
+
+    it('should throw error if actor not found when creating movie with actors', async () => {
+      const createMovieDto = {
+        title: 'Test Movie',
+        description: 'Test Description',
+        releaseYear: 2023,
+        genre: 'Action',
+        duration: 120,
+        actors: [
+          { actorId: 999, role: 'Lead Actor' },
+        ],
+      };
+
+      const { actors, ...movieData } = createMovieDto;
+
+      const createdMovie = {
+        id: 1,
+        ...movieData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        actors: [],
+        ratings: [],
+      };
+
+      mockPrismaService.movie.create.mockResolvedValue(createdMovie);
+      mockPrismaService.actor.findMany.mockResolvedValue([]); // No actors found
+
+      await expect(service.create(createMovieDto)).rejects.toThrow(
+        "Actor(s) with identifier '999' not found"
+      );
     });
   });
 
@@ -344,7 +461,7 @@ describe('MoviesService', () => {
   });
 
   describe('update', () => {
-    it('should update a movie', async () => {
+    it('should update a movie without touching actors', async () => {
       const movieId = 1;
       const updateMovieDto = {
         title: 'Updated Movie',
@@ -385,6 +502,173 @@ describe('MoviesService', () => {
         },
       });
       expect(result).toEqual(updatedMovie);
+    });
+
+    it('should update a movie with new actors', async () => {
+      const movieId = 1;
+      const updateMovieDto = {
+        title: 'Updated Movie',
+        actors: [
+          { actorId: 1, role: 'New Lead Actor' },
+          { actorId: 2, role: 'New Supporting Actor' },
+        ],
+      };
+
+      const { actors, ...movieData } = updateMovieDto;
+
+      const existingMovie = {
+        id: movieId,
+        title: 'Original Movie',
+        description: 'Original Description',
+        releaseYear: 2023,
+        genre: 'Action',
+        duration: 120,
+        actors: [],
+        ratings: [],
+      };
+
+      const updatedMovie = {
+        ...existingMovie,
+        ...movieData,
+        actors: [
+          {
+            id: 1,
+            movieId: 1,
+            actorId: 1,
+            role: 'New Lead Actor',
+            actor: { id: 1, name: 'Actor 1', biography: 'Bio 1', birthDate: new Date() },
+          },
+          {
+            id: 2,
+            movieId: 1,
+            actorId: 2,
+            role: 'New Supporting Actor',
+            actor: { id: 2, name: 'Actor 2', biography: 'Bio 2', birthDate: new Date() },
+          },
+        ],
+      };
+
+      const existingActors = [
+        { id: 1 },
+        { id: 2 },
+      ];
+
+      mockPrismaService.movie.findUnique
+        .mockResolvedValueOnce(existingMovie) // First call in update method
+        .mockResolvedValueOnce(updatedMovie); // Second call to return updated movie
+      mockPrismaService.movie.update.mockResolvedValue(updatedMovie);
+      mockPrismaService.movieActor.deleteMany.mockResolvedValue({ count: 0 });
+      mockPrismaService.actor.findMany.mockResolvedValue(existingActors);
+      mockPrismaService.movieActor.createMany.mockResolvedValue({ count: 2 });
+
+      const result = await service.update(movieId, updateMovieDto);
+
+      expect(mockPrismaService.movie.update).toHaveBeenCalledWith({
+        where: { id: movieId },
+        data: movieData,
+        include: {
+          actors: {
+            include: {
+              actor: true,
+            },
+          },
+          ratings: true,
+        },
+      });
+
+      expect(mockPrismaService.movieActor.deleteMany).toHaveBeenCalledWith({
+        where: { movieId },
+      });
+
+      expect(mockPrismaService.actor.findMany).toHaveBeenCalledWith({
+        where: { id: { in: [1, 2] } },
+        select: { id: true },
+      });
+
+      expect(mockPrismaService.movieActor.createMany).toHaveBeenCalledWith({
+        data: [
+          { movieId: 1, actorId: 1, role: 'New Lead Actor' },
+          { movieId: 1, actorId: 2, role: 'New Supporting Actor' },
+        ],
+      });
+
+      expect(result).toEqual(updatedMovie);
+    });
+
+    it('should update a movie and remove all actors', async () => {
+      const movieId = 1;
+      const updateMovieDto = {
+        title: 'Updated Movie',
+        actors: [],
+      };
+
+      const { actors, ...movieData } = updateMovieDto;
+
+      const existingMovie = {
+        id: movieId,
+        title: 'Original Movie',
+        description: 'Original Description',
+        releaseYear: 2023,
+        genre: 'Action',
+        duration: 120,
+        actors: [
+          { id: 1, actorId: 1, role: 'Old Actor' },
+        ],
+        ratings: [],
+      };
+
+      const updatedMovie = {
+        ...existingMovie,
+        ...movieData,
+        actors: [],
+      };
+
+      mockPrismaService.movie.findUnique
+        .mockResolvedValueOnce(existingMovie) // First call in update method
+        .mockResolvedValueOnce(updatedMovie); // Second call to return updated movie
+      mockPrismaService.movie.update.mockResolvedValue(updatedMovie);
+      mockPrismaService.movieActor.deleteMany.mockResolvedValue({ count: 1 });
+
+      const result = await service.update(movieId, updateMovieDto);
+
+      expect(mockPrismaService.movieActor.deleteMany).toHaveBeenCalledWith({
+        where: { movieId },
+      });
+
+      expect(mockPrismaService.movieActor.createMany).not.toHaveBeenCalled();
+
+      expect(result).toEqual(updatedMovie);
+    });
+
+    it('should throw error if actor not found when updating movie with actors', async () => {
+      const movieId = 1;
+      const updateMovieDto = {
+        title: 'Updated Movie',
+        actors: [
+          { actorId: 999, role: 'Non-existent Actor' },
+        ],
+      };
+
+      const existingMovie = {
+        id: movieId,
+        title: 'Original Movie',
+        actors: [],
+        ratings: [],
+      };
+
+      const updatedMovie = {
+        ...existingMovie,
+        title: 'Updated Movie',
+      };
+
+      mockPrismaService.movie.findUnique.mockResolvedValue(existingMovie);
+      mockPrismaService.movie.update.mockResolvedValue(updatedMovie);
+      mockPrismaService.movieActor.deleteMany.mockResolvedValue({ count: 0 });
+      mockPrismaService.actor.findMany.mockResolvedValue([]); // No actors found
+
+      await expect(service.update(movieId, updateMovieDto)).rejects.toThrow(
+        "Actor(s) with identifier '999' not found"
+      );
     });
 
     it('should throw NotFoundException if movie not found', async () => {

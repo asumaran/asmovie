@@ -1,14 +1,24 @@
-import {
-  IsString,
-  IsOptional,
-  IsInt,
-  Min,
-  Max,
-  IsIn,
-  IsNumber,
-  IsDecimal,
-} from 'class-validator';
 import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsIn,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+
+export class MovieActorDto {
+  @IsInt()
+  @Type(() => Number)
+  actorId: number;
+
+  @IsString()
+  role: string;
+}
 
 export class CreateMovieDto {
   @IsString()
@@ -59,6 +69,12 @@ export class CreateMovieDto {
   @IsOptional()
   @IsString()
   director?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => MovieActorDto)
+  actors?: MovieActorDto[];
 }
 
 export class UpdateMovieDto {
@@ -114,6 +130,12 @@ export class UpdateMovieDto {
   @IsOptional()
   @IsString()
   director?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => MovieActorDto)
+  actors?: MovieActorDto[];
 }
 
 export class AddActorToMovieDto {

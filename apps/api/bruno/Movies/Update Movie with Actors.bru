@@ -1,0 +1,59 @@
+meta {
+  name: Update Movie with Actors
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{api_url}}/movies/1
+  body: json
+  auth: none
+}
+
+headers {
+  X-API-Token: {{api_token}}
+}
+
+body:json {
+  {
+    "title": "Inception (Updated with New Actors)",
+    "description": "Updated description with new cast",
+    "actors": [
+      {
+        "actorId": 1,
+        "role": "Dom Cobb - Updated Role"
+      },
+      {
+        "actorId": 4,
+        "role": "Ariadne"
+      }
+    ]
+  }
+}
+
+docs {
+  # Update Movie with Actors
+  
+  Test case for updating a movie and replacing its actors completely.
+  
+  **🔒 Requires API Token Authentication**
+  
+  ## Test Case
+  This request demonstrates:
+  - Updating basic movie fields
+  - Completely replacing existing actors with new ones
+  - Proper handling of actor role updates
+  
+  ## Expected Behavior
+  - All existing movie-actor relationships are removed
+  - New actors are assigned with their roles
+  - Movie metadata is updated
+  
+  ## Parameters
+  - `id` (path): The movie ID to update
+  
+  ## Example
+  ```
+  PATCH /movies/1
+  ```
+}

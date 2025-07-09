@@ -335,6 +335,10 @@ export interface CreateMovieData {
   budget?: number;
   boxOffice?: number;
   writers?: string;
+  actors?: {
+    actorId: number;
+    role: string;
+  }[];
 }
 
 export async function createMovie(

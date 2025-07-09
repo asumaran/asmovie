@@ -28,8 +28,11 @@ export class MoviesService {
   ) {}
 
   async create(createMovieDto: CreateMovieDto) {
-    return this.prisma.movie.create({
-      data: createMovieDto,
+    const { actors, ...movieData } = createMovieDto;
+    
+    // First, create the movie
+    const movie = await this.prisma.movie.create({
+      data: movieData,
       include: {
         actors: {
           include: {
@@ -39,6 +42,47 @@ export class MoviesService {
         ratings: true,
       },
     });
+
+    // If actors are provided, add them to the movie
+    if (actors && actors.length > 0) {
+      // Validate that all actors exist
+      const actorIds = actors.map(a => a.actorId);
+      const existingActors = await this.prisma.actor.findMany({
+        where: { id: { in: actorIds } },
+        select: { id: true },
+      });
+      
+      const existingActorIds = existingActors.map(a => a.id);
+      const missingActorIds = actorIds.filter(id => !existingActorIds.includes(id));
+      
+      if (missingActorIds.length > 0) {
+        throw new ResourceNotFoundException('Actor(s)', missingActorIds.join(', '));
+      }
+
+      // Create movie-actor relationships
+      await this.prisma.movieActor.createMany({
+        data: actors.map(actor => ({
+          movieId: movie.id,
+          actorId: actor.actorId,
+          role: actor.role,
+        })),
+      });
+
+      // Return the movie with actors
+      return this.prisma.movie.findUnique({
+        where: { id: movie.id },
+        include: {
+          actors: {
+            include: {
+              actor: true,
+            },
+          },
+          ratings: true,
+        },
+      });
+    }
+
+    return movie;
   }
 
   async findAll(
@@ -111,16 +155,61 @@ export class MoviesService {
   async update(id: number, updateMovieDto: UpdateMovieDto) {
     await this.findOne(id); // Check if exists
 
+    const { actors, ...movieData } = updateMovieDto;
+    
     const include = this.queryBuilder.buildMovieInclude({
       includeActors: true,
       includeRatings: true,
     });
 
-    return this.prisma.movie.update({
+    // Update the movie basic data
+    const movie = await this.prisma.movie.update({
       where: { id },
-      data: updateMovieDto,
+      data: movieData,
       include,
     });
+
+    // If actors are provided, update the movie-actor relationships
+    if (actors !== undefined) {
+      // Remove existing relationships
+      await this.prisma.movieActor.deleteMany({
+        where: { movieId: id },
+      });
+
+      // If actors array is not empty, add new relationships
+      if (actors.length > 0) {
+        // Validate that all actors exist
+        const actorIds = actors.map(a => a.actorId);
+        const existingActors = await this.prisma.actor.findMany({
+          where: { id: { in: actorIds } },
+          select: { id: true },
+        });
+        
+        const existingActorIds = existingActors.map(a => a.id);
+        const missingActorIds = actorIds.filter(id => !existingActorIds.includes(id));
+        
+        if (missingActorIds.length > 0) {
+          throw new ResourceNotFoundException('Actor(s)', missingActorIds.join(', '));
+        }
+
+        // Create new movie-actor relationships
+        await this.prisma.movieActor.createMany({
+          data: actors.map(actor => ({
+            movieId: id,
+            actorId: actor.actorId,
+            role: actor.role,
+          })),
+        });
+      }
+
+      // Return the movie with updated actors
+      return this.prisma.movie.findUnique({
+        where: { id },
+        include,
+      });
+    }
+
+    return movie;
   }
 
   async remove(id: number) {
