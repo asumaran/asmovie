@@ -13,8 +13,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'MovieApp',
+  description: 'Created by @asumaran',
   generator: 'v0.dev',
 };
 
