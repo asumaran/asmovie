@@ -400,13 +400,6 @@ function SearchResults() {
   const totalPages = searchResponse?.meta?.totalPages || 1;
   const total = searchResponse?.meta?.total || 0;
 
-  // Separate movies and actors for display stats - memoized to prevent infinite loops
-  const { movies, actors } = useMemo(() => {
-    const movies = allResults.filter((item) => item.type === 'movie');
-    const actors = allResults.filter((item) => item.type === 'actor');
-    return { movies, actors };
-  }, [allResults]);
-
   if (!query.trim()) {
     return (
       <div className="text-center py-16">
@@ -454,16 +447,6 @@ function SearchResults() {
         <p className="text-muted-foreground">
           Found {total} result{total !== 1 ? 's' : ''} for &ldquo;{query}&rdquo;
         </p>
-        <div className="flex items-center justify-center gap-4 mt-2 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Film className="h-4 w-4" />
-            {movies.length} movies
-          </span>
-          <span className="flex items-center gap-1">
-            <User className="h-4 w-4" />
-            {actors.length} actors
-          </span>
-        </div>
       </div>
 
       {/* Controls */}
