@@ -115,6 +115,14 @@ fi
 echo ""
 echo "📋 Your API is being set up automatically and will be ready in ~5 minutes."
 echo ""
+
+# Show API URL prominently if available
+if [ -n "$API_URL" ]; then
+    echo -e "${GREEN}🌐 API URL: ${API_URL}${NC}"
+    echo -e "${BLUE}   Test in 5-10 minutes: curl ${API_URL}/health${NC}"
+    echo ""
+fi
+
 echo "🔗 The CloudFormation outputs above show:"
 echo "   • API URL (test this in 5-10 minutes)"
 echo "   • SSH command to access the server"
@@ -136,4 +144,17 @@ echo "   • Running database migrations"
 echo "   • Seeding the database"
 echo "   • Starting the API with PM2"
 echo ""
+
+# Final summary with API URL
+echo -e "${GREEN}🎉 DEPLOYMENT SUCCESSFUL!${NC}"
+if [ -n "$API_URL" ]; then
+    echo -e "${GREEN}════════════════════════════════════════${NC}"
+    echo -e "${GREEN}🌐 Your API is available at:${NC}"
+    echo -e "${GREEN}   ${API_URL}${NC}"
+    echo -e "${GREEN}════════════════════════════════════════${NC}"
+    echo ""
+    echo -e "${BLUE}Quick test (wait 5-10 minutes):${NC}"
+    echo -e "${BLUE}   curl ${API_URL}/health${NC}"
+    echo ""
+fi
 echo -e "${BLUE}🚀 No further action required! Your API will be live shortly.${NC}"
