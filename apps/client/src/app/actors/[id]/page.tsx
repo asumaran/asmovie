@@ -20,7 +20,6 @@ import { useAuth } from '@/contexts/auth-context';
 import { deleteActor, getActorById } from '@/lib/api';
 import {
   AlertCircle,
-  ArrowLeft,
   Calendar,
   Film,
   Loader2,
@@ -215,14 +214,6 @@ export default function ActorPage() {
 
   return (
     <div className="container mx-auto py-8">
-      {/* Back Button */}
-      <Button variant="ghost" asChild className="mb-6">
-        <Link href="/actors">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Actors
-        </Link>
-      </Button>
-
       {/* Actor Header */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
