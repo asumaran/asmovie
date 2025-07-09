@@ -84,7 +84,7 @@ npx prisma migrate reset --force
 
 ## Using Bruno (API Testing)
 
-- Bruno is used to test API endpoints.
+- [Bruno](https://www.usebruno.com/) is used to test API endpoints.
 - **Protected endpoints** (POST, DELETE, PATCH) require authentication and can be accessed in two ways:
   - **API TOKEN:** Defined in the API `.env` file as `API_TOKEN`.
   - **JWT:** Obtained by logging in (see `/auth/login`).
