@@ -7,19 +7,31 @@ export async function authenticatedFetch(
 ) {
   const token = localStorage.getItem('auth_token');
 
+  if (!token) {
+    throw new Error('No authentication token found. Please log in.');
+  }
+
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+  headers.Authorization = `Bearer ${token}`;
 
-  return fetch(url, {
+  const response = await fetch(url, {
     ...options,
     headers,
   });
+
+  // If we get a 401, the token is invalid
+  if (response.status === 401) {
+    // Clear invalid token
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    throw new Error('Session expired. Please log in again.');
+  }
+
+  return response;
 }
 
 export interface SearchParams {
@@ -295,6 +307,66 @@ export async function getMovieById(id: number): Promise<SearchItem | null> {
     console.error('Error fetching movie:', error);
     return null;
   }
+}
+
+export interface CreateMovieData {
+  title: string;
+  releaseYear: number;
+  genre: string;
+  director: string;
+  description?: string;
+  plot?: string;
+  duration?: number;
+  budget?: number;
+  boxOffice?: number;
+  writers?: string;
+}
+
+export async function createMovie(movieData: CreateMovieData): Promise<SearchItem> {
+  const response = await authenticatedFetch(`${API_BASE_URL}/movies`, {
+    method: 'POST',
+    body: JSON.stringify(movieData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to create movie');
+  }
+
+  const result = await response.json();
+  
+  // Handle NestJS response format
+  if (result.success && result.data) {
+    return result.data;
+  }
+  
+  return result;
+}
+
+export async function deleteMovie(id: number): Promise<void> {
+  const response = await authenticatedFetch(`${API_BASE_URL}/movies/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to delete movie');
+  }
+
+  // No need to return data for DELETE operation
+}
+
+export async function deleteActor(id: number): Promise<void> {
+  const response = await authenticatedFetch(`${API_BASE_URL}/actors/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to delete actor');
+  }
+
+  // No need to return data for DELETE operation
 }
 
 export async function searchMoviesAndActors(

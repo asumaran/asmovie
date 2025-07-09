@@ -1,29 +1,37 @@
 'use client';
 
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { getMovieById } from '@/lib/api';
+import { useAuth } from '@/contexts/auth-context';
+import { getMovieById, deleteMovie } from '@/lib/api';
 import {
-  ArrowLeft,
+  AlertCircle,
   Calendar,
   Clock,
   DollarSign,
+  Loader2,
   Star,
+  Trash2,
   Trophy,
   User,
-  Loader2,
 } from 'lucide-react';
+import Link from 'next/link';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-interface MoviePageProps {
-  params: {
-    id: string;
-  };
-}
 
 function MovieLoadingSkeleton() {
   return (
@@ -84,15 +92,56 @@ function MovieLoadingSkeleton() {
   );
 }
 
-export default function MoviePage({ params }: MoviePageProps) {
-  const [movie, setMovie] = useState(null);
+// Define el tipo Movie según tu modelo real
+interface Movie {
+  id: number;
+  title: string;
+  releaseYear?: number;
+  duration?: number | string;
+  genre?: string;
+  averageRating?: number;
+  description?: string;
+  plot?: string;
+  actors?: { id: number; name: string; role?: string }[];
+  awards?: string;
+  director?: string;
+  writers?: string;
+  budget?: number | string;
+  boxOffice?: number | string;
+}
+
+export default function MoviePage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+  const [movie, setMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { user } = useAuth();
+
+  const handleDelete = async () => {
+    if (!movie) return;
+    
+    setIsDeleting(true);
+    setDeleteError(null);
+    
+    try {
+      await deleteMovie(movie.id);
+      // Redirect to movies page after successful deletion
+      router.push('/movies');
+    } catch (err: any) {
+      setDeleteError(err.message || 'Failed to delete movie');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchMovie() {
       try {
-        const movieId = Number.parseInt(params.id);
+        const movieId = Number.parseInt(id);
         if (isNaN(movieId)) {
           notFound();
           return;
@@ -107,7 +156,7 @@ export default function MoviePage({ params }: MoviePageProps) {
         }
 
         setMovie(movieData);
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message || 'Failed to load movie');
       } finally {
         setIsLoading(false);
@@ -115,7 +164,7 @@ export default function MoviePage({ params }: MoviePageProps) {
     }
 
     fetchMovie();
-  }, [params.id]);
+  }, [id]);
 
   if (isLoading) {
     return <MovieLoadingSkeleton />;
@@ -138,7 +187,7 @@ export default function MoviePage({ params }: MoviePageProps) {
   }
 
   // Format budget and box office
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: number | string | undefined) => {
     if (!amount) return null;
     if (typeof amount === 'string') return amount;
     return new Intl.NumberFormat('en-US', {
@@ -151,18 +200,11 @@ export default function MoviePage({ params }: MoviePageProps) {
 
   return (
     <div className="container mx-auto py-8">
-      {/* Back Button */}
-      <Button variant="ghost" asChild className="mb-6">
-        <Link href="/search">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Search
-        </Link>
-      </Button>
 
       {/* Movie Header */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-          <div>
+          <div className="flex-1">
             <h1 className="text-4xl font-bold mb-2">{movie.title}</h1>
             <div className="flex items-center gap-4 text-muted-foreground">
               <div className="flex items-center gap-1">
@@ -172,23 +214,74 @@ export default function MoviePage({ params }: MoviePageProps) {
               {movie.duration && (
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  <span>{movie.duration} min</span>
+                  <span>{typeof movie.duration === 'number' ? `${movie.duration} min` : movie.duration}</span>
                 </div>
               )}
               {movie.genre && <Badge variant="outline">{movie.genre}</Badge>}
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-            <span className="text-2xl font-bold">
-              {movie.averageRating?.toFixed(1) || 'N/A'}
-            </span>
-            <span className="text-muted-foreground">/10</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+              <span className="text-2xl font-bold">{movie.averageRating?.toFixed(1) || 'N/A'}</span>
+              <span className="text-muted-foreground">/10</span>
+            </div>
+            {user && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm" disabled={isDeleting}>
+                    {isDeleting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete Movie
+                      </>
+                    )}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      "{movie.title}" from the database.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  {deleteError && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{deleteError}</AlertDescription>
+                    </Alert>
+                  )}
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isDeleting}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {isDeleting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Deleting...
+                        </>
+                      ) : (
+                        'Delete Movie'
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         </div>
-        <p className="text-lg text-muted-foreground">
-          {movie.description || movie.plot}
-        </p>
+        <p className="text-lg text-muted-foreground">{movie.description}</p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
