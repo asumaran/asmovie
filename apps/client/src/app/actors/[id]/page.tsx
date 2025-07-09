@@ -117,16 +117,16 @@ export default function ActorPage() {
 
   const handleDelete = async () => {
     if (!actor) return;
-    
+
     // Check if user is authenticated
     if (!user) {
       setDeleteError('You must be logged in to delete an actor');
       return;
     }
-    
+
     setIsDeleting(true);
     setDeleteError(null);
-    
+
     try {
       await deleteActor(actor.id);
       // Redirect to actors page after successful deletion
@@ -346,10 +346,10 @@ export default function ActorPage() {
                     >
                       <div>
                         <Link
-                          href={`/movies/${movie.id}`}
+                          href={`/movies/${movie.movie.id}`}
                           className="font-semibold hover:text-primary transition-colors"
                         >
-                          {movie.title}
+                          {movie.movie.title}
                         </Link>
                         {movie.role && (
                           <p className="text-sm text-muted-foreground">
@@ -433,7 +433,7 @@ export default function ActorPage() {
                 <div className="flex flex-wrap gap-2">
                   {actor.movies.slice(0, 5).map((movie, index) => (
                     <Badge key={index} variant="secondary">
-                      {movie.title}
+                      {movie.movie.title}
                     </Badge>
                   ))}
                   {actor.movies.length > 5 && (

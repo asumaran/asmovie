@@ -108,9 +108,15 @@ export default function AddMoviePage() {
         director: formData.director,
         description: formData.description || undefined,
         plot: formData.plot || undefined,
-        duration: formData.duration ? Number.parseInt(formData.duration.replace(/\D/g, '')) : undefined,
-        budget: formData.budget ? Number.parseInt(formData.budget.replace(/\D/g, '')) : undefined,
-        boxOffice: formData.boxOffice ? Number.parseInt(formData.boxOffice.replace(/\D/g, '')) : undefined,
+        duration: formData.duration
+          ? Number.parseInt(formData.duration.replace(/\D/g, ''))
+          : undefined,
+        budget: formData.budget
+          ? Number.parseInt(formData.budget.replace(/\D/g, ''))
+          : undefined,
+        boxOffice: formData.boxOffice
+          ? Number.parseInt(formData.boxOffice.replace(/\D/g, ''))
+          : undefined,
         writers: formData.writers || undefined,
       };
 

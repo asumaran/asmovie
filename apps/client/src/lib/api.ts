@@ -322,7 +322,9 @@ export interface CreateMovieData {
   writers?: string;
 }
 
-export async function createMovie(movieData: CreateMovieData): Promise<SearchItem> {
+export async function createMovie(
+  movieData: CreateMovieData,
+): Promise<SearchItem> {
   const response = await authenticatedFetch(`${API_BASE_URL}/movies`, {
     method: 'POST',
     body: JSON.stringify(movieData),
@@ -334,12 +336,12 @@ export async function createMovie(movieData: CreateMovieData): Promise<SearchIte
   }
 
   const result = await response.json();
-  
+
   // Handle NestJS response format
   if (result.success && result.data) {
     return result.data;
   }
-  
+
   return result;
 }
 

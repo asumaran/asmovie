@@ -123,10 +123,10 @@ export default function MoviePage() {
 
   const handleDelete = async () => {
     if (!movie) return;
-    
+
     setIsDeleting(true);
     setDeleteError(null);
-    
+
     try {
       await deleteMovie(movie.id);
       // Redirect to movies page after successful deletion
@@ -200,7 +200,6 @@ export default function MoviePage() {
 
   return (
     <div className="container mx-auto py-8">
-
       {/* Movie Header */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
@@ -214,7 +213,11 @@ export default function MoviePage() {
               {movie.duration && (
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  <span>{typeof movie.duration === 'number' ? `${movie.duration} min` : movie.duration}</span>
+                  <span>
+                    {typeof movie.duration === 'number'
+                      ? `${movie.duration} min`
+                      : movie.duration}
+                  </span>
                 </div>
               )}
               {movie.genre && <Badge variant="outline">{movie.genre}</Badge>}
@@ -223,7 +226,9 @@ export default function MoviePage() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-              <span className="text-2xl font-bold">{movie.averageRating?.toFixed(1) || 'N/A'}</span>
+              <span className="text-2xl font-bold">
+                {movie.averageRating?.toFixed(1) || 'N/A'}
+              </span>
               <span className="text-muted-foreground">/10</span>
             </div>
             {user && (
