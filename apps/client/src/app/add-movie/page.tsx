@@ -22,11 +22,23 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { createMovie, type CreateMovieData } from '@/lib/api';
-import { AlertCircle, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
+import {
+  createMovie,
+  getAllActors,
+  type CreateMovieData,
+  type SearchItem,
+} from '@/lib/api';
+import {
+  AlertCircle,
+  ArrowLeft,
+  CheckCircle,
+  Loader2,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const genres = [
   'Action',
@@ -56,12 +68,55 @@ export default function AddMoviePage() {
     writers: '',
     budget: '',
     boxOffice: '',
-    cast: '',
   });
+  const [actors, setActors] = useState<SearchItem[]>([]);
+  const [selectedActors, setSelectedActors] = useState<
+    Array<{ actorId: string; role: string }>
+  >([]);
+  const [loadingActors, setLoadingActors] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+
+  // Load actors on component mount
+  useEffect(() => {
+    const fetchActors = async () => {
+      try {
+        setLoadingActors(true);
+        const actorsData = await getAllActors();
+        setActors(actorsData);
+      } catch (error) {
+        console.error('Error fetching actors:', error);
+      } finally {
+        setLoadingActors(false);
+      }
+    };
+
+    fetchActors();
+  }, []);
+
+  const addActor = () => {
+    setSelectedActors([...selectedActors, { actorId: '', role: '' }]);
+  };
+
+  const removeActor = (index: number) => {
+    setSelectedActors(selectedActors.filter((_, i) => i !== index));
+  };
+
+  const updateActor = (
+    index: number,
+    field: 'actorId' | 'role',
+    value: string | number,
+  ) => {
+    const updated = [...selectedActors];
+    if (field === 'actorId') {
+      updated[index].actorId = value as string;
+    } else {
+      updated[index].role = value as string;
+    }
+    setSelectedActors(updated);
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -95,6 +150,20 @@ export default function AddMoviePage() {
       return;
     }
 
+    // Validate selected actors
+    if (selectedActors.length > 0) {
+      const invalidActors = selectedActors.some(
+        (actor) => !actor.actorId || !actor.role.trim(),
+      );
+      if (invalidActors) {
+        setError(
+          'Please select an actor and provide a role for all added actors, or remove incomplete entries',
+        );
+        setIsLoading(false);
+        return;
+      }
+    }
+
     // Note: Rating validation removed since averageRating is not sent to API
     // The rating field can remain in the UI for future use or reference
 
@@ -117,6 +186,13 @@ export default function AddMoviePage() {
           ? Number.parseInt(formData.boxOffice.replace(/\D/g, ''))
           : undefined,
         writers: formData.writers || undefined,
+        actors:
+          selectedActors.length > 0
+            ? selectedActors.map((a) => ({
+                actorId: Number(a.actorId),
+                role: a.role,
+              }))
+            : undefined,
       };
 
       // Call the API to create the movie
@@ -139,8 +215,8 @@ export default function AddMoviePage() {
           writers: '',
           budget: '',
           boxOffice: '',
-          cast: '',
         });
+        setSelectedActors([]);
         setSuccess(false);
         // Optionally redirect to the movie detail page
         // router.push(`/movies/${newMovie.id}`);
@@ -328,17 +404,77 @@ export default function AddMoviePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="cast">Main Cast</Label>
-                  <Input
-                    id="cast"
-                    value={formData.cast}
-                    onChange={(e) => handleInputChange('cast', e.target.value)}
-                    placeholder="Actor 1, Actor 2, Actor 3"
-                    disabled={isLoading}
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Separate multiple actors with commas
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <Label>Main Cast</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addActor}
+                      disabled={isLoading || loadingActors}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Actor
+                    </Button>
+                  </div>
+
+                  {selectedActors.length === 0 && (
+                    <p className="text-sm text-muted-foreground">
+                      No actors selected. Click "Add Actor" to add actors to
+                      this movie.
+                    </p>
+                  )}
+
+                  {selectedActors.map((selectedActor, index) => (
+                    <div key={index} className="flex gap-2 items-end">
+                      <div className="flex-1">
+                        <Label htmlFor={`actor-${index}`}>Actor</Label>
+                        <Select
+                          value={selectedActor.actorId}
+                          onValueChange={(value) =>
+                            updateActor(index, 'actorId', value)
+                          }
+                          disabled={isLoading || loadingActors}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select an actor" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {actors.map((actor) => (
+                              <SelectItem
+                                key={actor.id}
+                                value={actor.id.toString()}
+                              >
+                                {actor.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex-1">
+                        <Label htmlFor={`role-${index}`}>Role</Label>
+                        <Input
+                          id={`role-${index}`}
+                          value={selectedActor.role}
+                          onChange={(e) =>
+                            updateActor(index, 'role', e.target.value)
+                          }
+                          placeholder="Character name or role"
+                          disabled={isLoading}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeActor(index)}
+                        disabled={isLoading}
+                        className="mb-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="space-y-2">

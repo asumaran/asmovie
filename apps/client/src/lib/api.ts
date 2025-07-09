@@ -258,6 +258,56 @@ export async function getPaginatedActors(
   }
 }
 
+export async function getAllActors(): Promise<SearchItem[]> {
+  try {
+    const allActors: SearchItem[] = [];
+    let page = 1;
+    let hasMore = true;
+    const limit = 100; // Maximum allowed limit
+
+    while (hasMore) {
+      const response = await fetch(
+        `${API_BASE_URL}/actors?limit=${limit}&sortBy=name&sortOrder=asc&page=${page}`
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch actors: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Invalid response format - expected JSON');
+      }
+
+      const result = await response.json();
+
+      let data, meta;
+      if (result.success && result.data) {
+        data = result.data;
+        meta = result.meta;
+      } else if (result.data && result.meta) {
+        data = result.data;
+        meta = result.meta;
+      } else {
+        // Fallback for simple array response
+        data = Array.isArray(result) ? result : [];
+        meta = { hasNext: false };
+      }
+
+      allActors.push(...data);
+      hasMore = meta.hasNext;
+      page++;
+    }
+
+    return allActors;
+  } catch (error) {
+    console.error('Error fetching all actors:', error);
+    throw error;
+  }
+}
+
 export async function getActorById(id: number): Promise<SearchItem | null> {
   try {
     const response = await fetch(`${API_BASE_URL}/actors/${id}`);
