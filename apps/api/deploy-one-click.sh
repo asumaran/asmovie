@@ -89,7 +89,14 @@ if [ -z "$API_URL" ]; then
     # Fallback to HTTP if HTTPS not found
     API_URL=$(echo "$DEPLOY_OUTPUT" | grep -E "(APIURL|ASMovieEC2Stack\.APIURL)" | grep -o 'http://[^[:space:]]*' | head -1)
 fi
-EC2_HOST=$(echo "$API_URL" | sed 's|https\?://||')
+
+# Extract EC2 IP for SSH (use the Elastic IP for consistent connection)
+EC2_HOST=$(echo "$DEPLOY_OUTPUT" | grep -E "(WebServerElasticIP|ASMovieEC2Stack\.WebServerElasticIP)" | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
+
+# Fallback to DNS name if Elastic IP not found
+if [ -z "$EC2_HOST" ]; then
+    EC2_HOST=$(echo "$DEPLOY_OUTPUT" | grep -E "(WebServerDNS|ASMovieEC2Stack\.WebServerDNS)" | grep -o 'ec2-[^[:space:]]*' | head -1)
+fi
 
 echo ""
 echo -e "${GREEN}🎉 Deployment Complete!${NC}"

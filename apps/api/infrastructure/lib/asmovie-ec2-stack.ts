@@ -355,7 +355,7 @@ export class ASMovieEC2Stack extends cdk.Stack {
       '# Check current commit',
       'echo "🔍 Deploying commit: $(git log --oneline -1)"',
       'echo "📍 Branch: $(git branch --show-current)"',
-      'cd app/apps/api',
+      'cd apps/api',
 
       // Install dependencies
       'echo "📦 Installing dependencies..."',
@@ -465,14 +465,36 @@ export class ASMovieEC2Stack extends cdk.Stack {
       keyName: 'asmovie-keypair', // You will need to create this key pair
     });
 
+    // Create an Elastic IP for the web server to maintain consistent IP
+    const elasticIP = new ec2.CfnEIP(this, 'WebServerEIP', {
+      domain: 'vpc',
+      tags: [
+        {
+          key: 'Name',
+          value: 'ASMovie-WebServer-EIP',
+        },
+      ],
+    });
+
+    // Associate the Elastic IP with the EC2 instance
+    new ec2.CfnEIPAssociation(this, 'WebServerEIPAssociation', {
+      eip: elasticIP.ref,
+      instanceId: webServer.instanceId,
+    });
+
     // Add tags to force recreation when code changes
     cdk.Tags.of(webServer).add('DeploymentCommit', currentCommit);
     cdk.Tags.of(webServer).add('DeploymentTime', new Date().toISOString());
 
     // Useful outputs
     new cdk.CfnOutput(this, 'WebServerPublicIP', {
-      value: webServer.instancePublicIp,
-      description: 'Public IP of the web server',
+      value: elasticIP.ref,
+      description: 'Elastic IP of the web server (static)',
+    });
+
+    new cdk.CfnOutput(this, 'WebServerElasticIP', {
+      value: elasticIP.ref,
+      description: 'Elastic IP Address (use this for DNS)',
     });
 
     new cdk.CfnOutput(this, 'WebServerDNS', {
@@ -491,7 +513,7 @@ export class ASMovieEC2Stack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, 'SSHCommand', {
-      value: `ssh -i ~/.ssh/asmovie-keypair.pem ec2-user@${webServer.instancePublicDnsName}`,
+      value: `ssh -i ~/.ssh/asmovie-keypair.pem ec2-user@${elasticIP.ref}`,
       description: 'SSH command to connect to the server',
     });
 
