@@ -54,6 +54,198 @@ export interface SearchResponse {
   };
 }
 
+export async function getPaginatedMovies(page: number = 1, limit: number = 10, sortBy: string = 'createdAt'): Promise<{
+  items: SearchItem[];
+  totalPages: number;
+  totalItems: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  itemsPerPage: number;
+}> {
+  try {
+    const searchParams = new URLSearchParams();
+    searchParams.append('page', page.toString());
+    searchParams.append('limit', limit.toString());
+    searchParams.append('sortBy', sortBy);
+    searchParams.append('sortOrder', 'desc');
+
+    const response = await fetch(`${API_BASE_URL}/movies?${searchParams.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch movies: ${response.status} ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid response format - expected JSON');
+    }
+    
+    const result = await response.json();
+    
+    // Handle NestJS response format
+    let data, meta;
+    if (result.success && result.data) {
+      data = result.data;
+      meta = result.meta;
+    } else if (result.data && result.meta) {
+      data = result.data;
+      meta = result.meta;
+    } else {
+      // Fallback for simple array response
+      data = Array.isArray(result) ? result : [];
+      meta = {
+        page,
+        limit,
+        total: data.length,
+        totalPages: 1,
+        hasNext: false,
+        hasPrev: false
+      };
+    }
+    
+    return {
+      items: data,
+      totalPages: meta.totalPages,
+      totalItems: meta.total,
+      currentPage: meta.page,
+      hasNextPage: meta.hasNext,
+      hasPreviousPage: meta.hasPrev,
+      itemsPerPage: meta.limit
+    };
+  } catch (error) {
+    console.error('Error fetching movies:', error);
+    throw error;
+  }
+}
+
+export async function getPaginatedActors(page: number = 1, limit: number = 10, sortBy: string = 'createdAt'): Promise<{
+  items: SearchItem[];
+  totalPages: number;
+  totalItems: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  itemsPerPage: number;
+}> {
+  try {
+    const searchParams = new URLSearchParams();
+    searchParams.append('page', page.toString());
+    searchParams.append('limit', limit.toString());
+    searchParams.append('sortBy', sortBy);
+    searchParams.append('sortOrder', 'desc');
+
+    const response = await fetch(`${API_BASE_URL}/actors?${searchParams.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch actors: ${response.status} ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid response format - expected JSON');
+    }
+    
+    const result = await response.json();
+    
+    // Handle NestJS response format
+    let data, meta;
+    if (result.success && result.data) {
+      data = result.data;
+      meta = result.meta;
+    } else if (result.data && result.meta) {
+      data = result.data;
+      meta = result.meta;
+    } else {
+      // Fallback for simple array response
+      data = Array.isArray(result) ? result : [];
+      meta = {
+        page,
+        limit,
+        total: data.length,
+        totalPages: 1,
+        hasNext: false,
+        hasPrev: false
+      };
+    }
+    
+    return {
+      items: data,
+      totalPages: meta.totalPages,
+      totalItems: meta.total,
+      currentPage: meta.page,
+      hasNextPage: meta.hasNext,
+      hasPreviousPage: meta.hasPrev,
+      itemsPerPage: meta.limit
+    };
+  } catch (error) {
+    console.error('Error fetching actors:', error);
+    throw error;
+  }
+}
+
+export async function getActorById(id: number): Promise<SearchItem | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/actors/${id}`);
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`Failed to fetch actor: ${response.status} ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid response format - expected JSON');
+    }
+    
+    const result = await response.json();
+    
+    // Handle NestJS response format
+    if (result.success && result.data) {
+      return result.data;
+    }
+    
+    // If it's already in the expected format
+    return result;
+  } catch (error) {
+    console.error('Error fetching actor:', error);
+    return null;
+  }
+}
+
+export async function getMovieById(id: number): Promise<SearchItem | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/movies/${id}`);
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`Failed to fetch movie: ${response.status} ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid response format - expected JSON');
+    }
+    
+    const result = await response.json();
+    
+    // Handle NestJS response format
+    if (result.success && result.data) {
+      return result.data;
+    }
+    
+    // If it's already in the expected format
+    return result;
+  } catch (error) {
+    console.error('Error fetching movie:', error);
+    return null;
+  }
+}
+
 export async function searchMoviesAndActors(params: SearchParams): Promise<SearchResponse> {
   // Validate required parameters
   if (!params.q || !params.q.trim()) {

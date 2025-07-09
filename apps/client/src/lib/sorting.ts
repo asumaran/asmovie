@@ -2,22 +2,21 @@ import type { SortOption } from '@/components/sort-selector';
 
 // Movie sorting options
 export const MOVIE_SORT_OPTIONS: SortOption[] = [
-  { value: 'rating-desc', label: 'Highest Rated' },
-  { value: 'rating-asc', label: 'Lowest Rated' },
-  { value: 'year-desc', label: 'Newest First' },
-  { value: 'year-asc', label: 'Oldest First' },
-  { value: 'title-asc', label: 'A to Z' },
-  { value: 'title-desc', label: 'Z to A' },
-  { value: 'popularity-desc', label: 'Most Popular' },
+  { value: 'createdAt', label: 'Recently Added' },
+  { value: 'releaseYear', label: 'Newest First' },
+  { value: 'title', label: 'A to Z' },
+  { value: 'director', label: 'Director' },
+  { value: 'genre', label: 'Genre' },
+  { value: 'budget', label: 'Budget' },
+  { value: 'boxOffice', label: 'Box Office' },
 ];
 
 // Actor sorting options
 export const ACTOR_SORT_OPTIONS: SortOption[] = [
-  { value: 'name-asc', label: 'A to Z' },
-  { value: 'name-desc', label: 'Z to A' },
-  { value: 'age-desc', label: 'Oldest First' },
-  { value: 'age-asc', label: 'Youngest First' },
-  { value: 'popularity-desc', label: 'Most Popular' },
+  { value: 'createdAt', label: 'Recently Added' },
+  { value: 'name', label: 'A to Z' },
+  { value: 'nationality', label: 'Nationality' },
+  { value: 'birthDate', label: 'Birth Date' },
 ];
 
 // Search sorting options
