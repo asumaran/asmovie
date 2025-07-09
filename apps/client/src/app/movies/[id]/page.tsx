@@ -42,15 +42,42 @@ import Link from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-interface MoviePageProps {
-  params: {
-    id: string;
-  };
+interface Movie {
+  id: number;
+  title: string;
+  description?: string;
+  plot?: string;
+  releaseYear?: number;
+  duration?: number | string;
+  genre?: string;
+  director?: string;
+  writers?: string;
+  budget?: number | string;
+  boxOffice?: number | string;
+  awards?: string;
+  ratings?: Array<{
+    id?: number;
+    rating: number;
+    comment: string;
+    reviewer: string;
+    createdAt?: string;
+  }>;
+  actors?: Array<{
+    id?: number;
+    name?: string;
+    role?: string;
+    actor?: { id: number; name: string };
+  }>;
 }
 
-export default function MoviePage({ params }: MoviePageProps) {
-  const movieId = Number.parseInt(params.id);
-  const [movie, setMovie] = useState<any>(null);
+interface MoviePageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+function MoviePageClient({ movieId }: { movieId: number }) {
+  const [movie, setMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
@@ -203,7 +230,7 @@ export default function MoviePage({ params }: MoviePageProps) {
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
                       This action cannot be undone. This will permanently delete
-                      "{movie.title}" from the database.
+                      &ldquo;{movie.title}&rdquo; from the database.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   {deleteError && (
@@ -493,4 +520,32 @@ export default function MoviePage({ params }: MoviePageProps) {
       </div>
     </div>
   );
+}
+
+export default function MoviePage({ params }: MoviePageProps) {
+  return <MoviePageWrapper params={params} />;
+}
+
+function MoviePageWrapper({ params }: MoviePageProps) {
+  const [movieId, setMovieId] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function resolveParams() {
+      const { id } = await params;
+      setMovieId(Number.parseInt(id));
+    }
+    resolveParams();
+  }, [params]);
+
+  if (movieId === null) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  return <MoviePageClient movieId={movieId} />;
 }

@@ -17,7 +17,7 @@ import { getSortValue, SEARCH_SORT_OPTIONS } from '@/lib/sorting';
 import { Film, Loader2, Search, User } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 
 function SearchLoadingSkeleton({ query, itemsPerPage }) {
   return (
@@ -27,7 +27,7 @@ function SearchLoadingSkeleton({ query, itemsPerPage }) {
         <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary mb-4" />
         <h2 className="text-2xl font-semibold mb-2">Searching...</h2>
         <p className="text-muted-foreground">
-          Finding movies and actors for "{query}"
+          Finding movies and actors for &ldquo;{query}&rdquo;
         </p>
       </div>
 
@@ -187,7 +187,7 @@ function SearchResults() {
         <Search className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
         <h2 className="text-2xl font-semibold mb-2">Search Error</h2>
         <p className="text-muted-foreground">
-          Failed to search for "{query}". Please try again.
+          Failed to search for &ldquo;{query}&rdquo;. Please try again.
         </p>
       </div>
     );
@@ -199,7 +199,7 @@ function SearchResults() {
         <Search className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
         <h2 className="text-2xl font-semibold mb-2">No results found</h2>
         <p className="text-muted-foreground">
-          No movies or actors found for "{query}". Try a different search term.
+          No movies or actors found for &ldquo;{query}&rdquo;. Try a different search term.
         </p>
       </div>
     );
@@ -211,7 +211,7 @@ function SearchResults() {
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-2">Search Results</h1>
         <p className="text-muted-foreground">
-          Found {total} result{total !== 1 ? 's' : ''} for "{query}"
+          Found {total} result{total !== 1 ? 's' : ''} for &ldquo;{query}&rdquo;
         </p>
         <div className="flex items-center justify-center gap-4 mt-2 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
@@ -253,7 +253,7 @@ function SearchResults() {
                 : 'md:grid-cols-4 lg:grid-cols-5'
         }`}
       >
-        {allResults.map((result, index) => {
+        {allResults.map((result) => {
           if (result.type === 'movie') {
             const movie = result;
             return (
@@ -402,7 +402,9 @@ function SearchResults() {
 export default function SearchPage() {
   return (
     <div className="container mx-auto py-8">
-      <SearchResults />
+      <Suspense fallback={<SearchLoadingSkeleton query="" itemsPerPage={10} />}>
+        <SearchResults />
+      </Suspense>
     </div>
   );
 }

@@ -277,9 +277,6 @@ function MoviesLoadingSkeleton({ itemsPerPage }: { itemsPerPage: number }) {
 }
 
 export default function MoviesPage() {
-  const searchParams = useSearchParams();
-  const itemsPerPage = getItemsPerPage(searchParams);
-
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -290,7 +287,7 @@ export default function MoviesPage() {
       </div>
 
       <Suspense
-        fallback={<MoviesLoadingSkeleton itemsPerPage={itemsPerPage} />}
+        fallback={<MoviesLoadingSkeleton itemsPerPage={10} />}
       >
         <MoviesContent />
       </Suspense>

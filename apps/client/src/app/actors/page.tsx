@@ -296,9 +296,6 @@ function ActorsLoadingSkeleton({ itemsPerPage }: { itemsPerPage: number }) {
 }
 
 export default function ActorsPage() {
-  const searchParams = useSearchParams();
-  const itemsPerPage = getItemsPerPage(searchParams);
-
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -309,7 +306,7 @@ export default function ActorsPage() {
       </div>
 
       <Suspense
-        fallback={<ActorsLoadingSkeleton itemsPerPage={itemsPerPage} />}
+        fallback={<ActorsLoadingSkeleton itemsPerPage={10} />}
       >
         <ActorsContent />
       </Suspense>
