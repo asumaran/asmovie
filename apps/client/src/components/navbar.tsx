@@ -41,6 +41,22 @@ export function Navbar() {
             >
               Actors
             </Link>
+            {user && (
+              <>
+                <Link
+                  href="/add-movie"
+                  className="transition-colors hover:text-foreground/80 text-foreground/60"
+                >
+                  Add Movie
+                </Link>
+                <Link
+                  href="/add-actor"
+                  className="transition-colors hover:text-foreground/80 text-foreground/60"
+                >
+                  Add Actor
+                </Link>
+              </>
+            )}
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">

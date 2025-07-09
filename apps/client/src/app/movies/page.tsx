@@ -42,6 +42,8 @@ interface Movie {
   description?: string;
   ratings?: MovieRating[];
   actors: MovieActor[];
+  budget?: number;
+  boxOffice?: number;
 }
 
 interface PaginatedMoviesResult {
@@ -71,6 +73,7 @@ function mapSearchItemToMovie(item: SearchItem): Movie {
 }
 
 function MovieCard({ movie }: { movie: Movie }) {
+  console.log('movie', movie);
   return (
     <Link key={movie.id} href={`/movies/${movie.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
@@ -93,8 +96,6 @@ function MovieCard({ movie }: { movie: Movie }) {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <Badge variant="outline">{movie.genre}</Badge>
-            <p className="text-sm text-muted-foreground">{movie.description}</p>
             <div>
               <h4 className="font-semibold text-sm mb-2">Cast:</h4>
               <div className="flex flex-wrap gap-1">

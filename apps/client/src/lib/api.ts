@@ -65,8 +65,8 @@ export interface SearchItem {
   nationality?: string;
   genre?: string;
   duration?: number;
-  budget?: number;
-  boxOffice?: number;
+  budget?: string;
+  boxOffice?: string;
   awards?: string;
   writers?: string;
   director?: string;

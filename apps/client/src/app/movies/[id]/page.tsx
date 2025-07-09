@@ -52,8 +52,8 @@ interface Movie {
   genre?: string;
   director?: string;
   writers?: string;
-  budget?: number | string;
-  boxOffice?: number | string;
+  budget?: string;
+  boxOffice?: string;
   awards?: string;
   ratings?: Array<{
     id?: number;
@@ -91,6 +91,7 @@ function MoviePageClient({ movieId }: { movieId: number }) {
         if (!movieData) {
           notFound();
         }
+        console.log('movieData', movieData);
         setMovie(movieData);
       } catch (error) {
         console.error('Error fetching movie:', error);
@@ -142,15 +143,14 @@ function MoviePageClient({ movieId }: { movieId: number }) {
   };
 
   // Format currency for budget and box office
-  const formatCurrency = (amount: number | string | undefined) => {
+  const formatCurrency = (amount: string | undefined) => {
     if (!amount) return null;
-    if (typeof amount === 'string') return amount;
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(Number(amount));
   };
 
   if (isLoading) {
@@ -166,7 +166,7 @@ function MoviePageClient({ movieId }: { movieId: number }) {
   if (!movie) {
     notFound();
   }
-
+  console.log('move', movie);
   return (
     <div className="container mx-auto py-8">
       {/* Back Button */}
