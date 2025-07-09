@@ -265,7 +265,8 @@ async function main() {
         birthDate: new Date('1954-02-18'),
         placeOfBirth: 'Englewood, New Jersey, USA',
         nationality: 'American',
-        description: 'Iconic actor known for Saturday Night Fever and Pulp Fiction',
+        description:
+          'Iconic actor known for Saturday Night Fever and Pulp Fiction',
         biography:
           'American actor and singer known for his roles in Saturday Night Fever, Grease, and Pulp Fiction. He has been nominated for two Academy Awards and has won a Golden Globe Award.',
       },
@@ -276,7 +277,8 @@ async function main() {
         birthDate: new Date('1948-12-21'),
         placeOfBirth: 'Washington, D.C., USA',
         nationality: 'American',
-        description: 'Prolific actor known for intense performances and distinctive voice',
+        description:
+          'Prolific actor known for intense performances and distinctive voice',
         biography:
           'American actor and producer known for his roles in Pulp Fiction, Snakes on a Plane, and the Marvel Cinematic Universe. He is one of the highest-grossing actors of all time.',
       },
@@ -320,7 +322,8 @@ async function main() {
         birthDate: new Date('1956-07-09'),
         placeOfBirth: 'Concord, California, USA',
         nationality: 'American',
-        description: 'Beloved actor known for everyman roles and dramatic range',
+        description:
+          'Beloved actor known for everyman roles and dramatic range',
         biography:
           'American actor and filmmaker known for his roles in Forrest Gump, Philadelphia, Cast Away, and Toy Story. He has won two Academy Awards and is one of the most popular actors in Hollywood.',
       },
@@ -342,9 +345,10 @@ async function main() {
         birthDate: new Date('1961-07-30'),
         placeOfBirth: 'Augusta, Georgia, USA',
         nationality: 'American',
-        description: 'Accomplished actor known for powerful dramatic performances',
+        description:
+          'Accomplished actor known for powerful dramatic performances',
         biography:
-          'American actor known for his roles in The Matrix trilogy, Boyz n the Hood, and What\'s Love Got to Do with It. He has won a Tony Award and has been nominated for an Academy Award.',
+          "American actor known for his roles in The Matrix trilogy, Boyz n the Hood, and What's Love Got to Do with It. He has won a Tony Award and has been nominated for an Academy Award.",
       },
     }),
     prisma.actor.create({
@@ -399,7 +403,7 @@ async function main() {
         nationality: 'American',
         description: 'Leading man known for diverse roles and producing',
         biography:
-          'American actor and film producer known for his roles in Fight Club, Ocean\'s trilogy, and Once Upon a Time in Hollywood. He has won an Academy Award and is one of the most recognizable actors in Hollywood.',
+          "American actor and film producer known for his roles in Fight Club, Ocean's trilogy, and Once Upon a Time in Hollywood. He has won an Academy Award and is one of the most recognizable actors in Hollywood.",
       },
     }),
     prisma.actor.create({
@@ -452,7 +456,7 @@ async function main() {
         birthDate: new Date('1899-12-25'),
         placeOfBirth: 'New York City, New York, USA',
         nationality: 'American',
-        description: 'Legendary actor of Hollywood\'s Golden Age',
+        description: "Legendary actor of Hollywood's Golden Age",
         biography:
           'American actor known for his roles in Casablanca, The Maltese Falcon, and The African Queen. He is considered one of the greatest actors in Hollywood history.',
       },
@@ -463,7 +467,7 @@ async function main() {
         birthDate: new Date('1915-08-29'),
         placeOfBirth: 'Stockholm, Sweden',
         nationality: 'Swedish',
-        description: 'Legendary actress of Hollywood\'s Golden Age',
+        description: "Legendary actress of Hollywood's Golden Age",
         biography:
           'Swedish actress known for her roles in Casablanca, Notorious, and Gaslight. She won three Academy Awards and is considered one of the greatest actresses in film history.',
       },
@@ -476,7 +480,7 @@ async function main() {
         nationality: 'British',
         description: 'Actor known for dramatic and action roles',
         biography:
-          'Northern Irish actor known for his roles in Schindler\'s List, Taken, and The Grey. He has been nominated for an Academy Award and is known for his distinctive voice and commanding presence.',
+          "Northern Irish actor known for his roles in Schindler's List, Taken, and The Grey. He has been nominated for an Academy Award and is known for his distinctive voice and commanding presence.",
       },
     }),
     prisma.actor.create({
@@ -487,7 +491,7 @@ async function main() {
         nationality: 'British',
         description: 'Accomplished actor known for transformative performances',
         biography:
-          'British actor known for his roles in Gandhi, Schindler\'s List, and Sexy Beast. He has won an Academy Award and is known for his ability to completely transform into his characters.',
+          "British actor known for his roles in Gandhi, Schindler's List, and Sexy Beast. He has won an Academy Award and is known for his ability to completely transform into his characters.",
       },
     }),
     prisma.actor.create({
@@ -916,7 +920,10 @@ async function main() {
           createMany: {
             data: [
               { actorId: actors[11].id, role: 'Tony Stark / Iron Man' }, // Robert Downey Jr.
-              { actorId: actors[33].id, role: 'Steve Rogers / Captain America' }, // Chris Evans
+              {
+                actorId: actors[33].id,
+                role: 'Steve Rogers / Captain America',
+              }, // Chris Evans
               { actorId: actors[34].id, role: 'Thor' }, // Chris Hemsworth
               { actorId: actors[35].id, role: 'Bruce Banner / Hulk' }, // Mark Ruffalo
               { actorId: actors[36].id, role: 'Clint Barton / Hawkeye' }, // Jeremy Renner

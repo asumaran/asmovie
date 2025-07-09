@@ -298,9 +298,7 @@ export default function ActorsPage() {
         </p>
       </div>
 
-      <Suspense
-        fallback={<ActorsLoadingSkeleton itemsPerPage={10} />}
-      >
+      <Suspense fallback={<ActorsLoadingSkeleton itemsPerPage={10} />}>
         <ActorsContent />
       </Suspense>
     </div>
