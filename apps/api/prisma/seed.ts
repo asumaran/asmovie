@@ -258,6 +258,359 @@ async function main() {
           'American actress, director, and producer. She has received two Academy Awards, three British Academy Film Awards, two Golden Globe Awards, and the Cecil B. DeMille Award. She is known for The Silence of the Lambs and Taxi Driver.',
       },
     }),
+    // Adding missing actors for movies without actors assigned
+    prisma.actor.create({
+      data: {
+        name: 'John Travolta',
+        birthDate: new Date('1954-02-18'),
+        placeOfBirth: 'Englewood, New Jersey, USA',
+        nationality: 'American',
+        description: 'Iconic actor known for Saturday Night Fever and Pulp Fiction',
+        biography:
+          'American actor and singer known for his roles in Saturday Night Fever, Grease, and Pulp Fiction. He has been nominated for two Academy Awards and has won a Golden Globe Award.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Samuel L. Jackson',
+        birthDate: new Date('1948-12-21'),
+        placeOfBirth: 'Washington, D.C., USA',
+        nationality: 'American',
+        description: 'Prolific actor known for intense performances and distinctive voice',
+        biography:
+          'American actor and producer known for his roles in Pulp Fiction, Snakes on a Plane, and the Marvel Cinematic Universe. He is one of the highest-grossing actors of all time.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Uma Thurman',
+        birthDate: new Date('1970-04-29'),
+        placeOfBirth: 'Boston, Massachusetts, USA',
+        nationality: 'American',
+        description: 'Actress known for dramatic and action roles',
+        biography:
+          'American actress known for her roles in Pulp Fiction, Kill Bill, and Batman & Robin. She has been nominated for an Academy Award and has won a Golden Globe Award.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Marlon Brando',
+        birthDate: new Date('1924-04-03'),
+        placeOfBirth: 'Omaha, Nebraska, USA',
+        nationality: 'American',
+        description: 'Legendary method actor and cultural icon',
+        biography:
+          'American actor and film director widely regarded as one of the greatest actors in cinematic history. Known for The Godfather, A Streetcar Named Desire, and On the Waterfront.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Al Pacino',
+        birthDate: new Date('1940-04-25'),
+        placeOfBirth: 'New York City, New York, USA',
+        nationality: 'American',
+        description: 'Iconic actor known for intense dramatic performances',
+        biography:
+          'American actor and filmmaker known for his roles in The Godfather trilogy, Scarface, and Scent of a Woman. He has won an Academy Award, two Tony Awards, and two Primetime Emmy Awards.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Tom Hanks',
+        birthDate: new Date('1956-07-09'),
+        placeOfBirth: 'Concord, California, USA',
+        nationality: 'American',
+        description: 'Beloved actor known for everyman roles and dramatic range',
+        biography:
+          'American actor and filmmaker known for his roles in Forrest Gump, Philadelphia, Cast Away, and Toy Story. He has won two Academy Awards and is one of the most popular actors in Hollywood.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Keanu Reeves',
+        birthDate: new Date('1964-09-02'),
+        placeOfBirth: 'Beirut, Lebanon',
+        nationality: 'Canadian',
+        description: 'Versatile actor known for action and dramatic roles',
+        biography:
+          'Canadian actor known for his roles in The Matrix trilogy, John Wick series, and Speed. He is known for his philanthropic efforts and down-to-earth personality.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Laurence Fishburne',
+        birthDate: new Date('1961-07-30'),
+        placeOfBirth: 'Augusta, Georgia, USA',
+        nationality: 'American',
+        description: 'Accomplished actor known for powerful dramatic performances',
+        biography:
+          'American actor known for his roles in The Matrix trilogy, Boyz n the Hood, and What\'s Love Got to Do with It. He has won a Tony Award and has been nominated for an Academy Award.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Carrie-Anne Moss',
+        birthDate: new Date('1967-08-21'),
+        placeOfBirth: 'Burnaby, British Columbia, Canada',
+        nationality: 'Canadian',
+        description: 'Actress known for action and dramatic roles',
+        biography:
+          'Canadian actress known for her role as Trinity in The Matrix trilogy. She has also appeared in Memento, Red Planet, and Jessica Jones.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Joe Pesci',
+        birthDate: new Date('1943-02-09'),
+        placeOfBirth: 'Newark, New Jersey, USA',
+        nationality: 'American',
+        description: 'Actor known for intense supporting roles in crime films',
+        biography:
+          'American actor known for his roles in Goodfellas, Casino, and My Cousin Vinny. He has won an Academy Award for Best Supporting Actor and is known for his volatile screen persona.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Ray Liotta',
+        birthDate: new Date('1954-12-18'),
+        placeOfBirth: 'Newark, New Jersey, USA',
+        nationality: 'American',
+        description: 'Actor known for intense dramatic roles',
+        biography:
+          'American actor known for his roles in Goodfellas, Field of Dreams, and Something Wild. He was known for his intense screen presence and ability to portray complex characters.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Edward Norton',
+        birthDate: new Date('1969-08-18'),
+        placeOfBirth: 'Boston, Massachusetts, USA',
+        nationality: 'American',
+        description: 'Actor known for intense and complex performances',
+        biography:
+          'American actor and filmmaker known for his roles in Fight Club, American History X, and Birdman. He has been nominated for three Academy Awards and is known for his method acting approach.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Brad Pitt',
+        birthDate: new Date('1963-12-18'),
+        placeOfBirth: 'Shawnee, Oklahoma, USA',
+        nationality: 'American',
+        description: 'Leading man known for diverse roles and producing',
+        biography:
+          'American actor and film producer known for his roles in Fight Club, Ocean\'s trilogy, and Once Upon a Time in Hollywood. He has won an Academy Award and is one of the most recognizable actors in Hollywood.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Chris Evans',
+        birthDate: new Date('1981-06-13'),
+        placeOfBirth: 'Boston, Massachusetts, USA',
+        nationality: 'American',
+        description: 'Actor known for superhero and dramatic roles',
+        biography:
+          'American actor known for his role as Captain America in the Marvel Cinematic Universe. He has also appeared in Fantastic Four, Snowpiercer, and Knives Out.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Chris Hemsworth',
+        birthDate: new Date('1983-08-11'),
+        placeOfBirth: 'Melbourne, Australia',
+        nationality: 'Australian',
+        description: 'Actor known for action and superhero roles',
+        biography:
+          'Australian actor known for his role as Thor in the Marvel Cinematic Universe. He has also appeared in Rush, In the Heart of the Sea, and Extraction.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Mark Ruffalo',
+        birthDate: new Date('1967-11-22'),
+        placeOfBirth: 'Kenosha, Wisconsin, USA',
+        nationality: 'American',
+        description: 'Actor known for dramatic and superhero roles',
+        biography:
+          'American actor known for his role as Bruce Banner/Hulk in the Marvel Cinematic Universe. He has also appeared in Spotlight, The Kids Are All Right, and Zodiac.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Jeremy Renner',
+        birthDate: new Date('1971-01-07'),
+        placeOfBirth: 'Modesto, California, USA',
+        nationality: 'American',
+        description: 'Actor known for intense action and dramatic roles',
+        biography:
+          'American actor known for his role as Hawkeye in the Marvel Cinematic Universe. He has also appeared in The Hurt Locker, The Town, and Wind River.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Humphrey Bogart',
+        birthDate: new Date('1899-12-25'),
+        placeOfBirth: 'New York City, New York, USA',
+        nationality: 'American',
+        description: 'Legendary actor of Hollywood\'s Golden Age',
+        biography:
+          'American actor known for his roles in Casablanca, The Maltese Falcon, and The African Queen. He is considered one of the greatest actors in Hollywood history.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Ingrid Bergman',
+        birthDate: new Date('1915-08-29'),
+        placeOfBirth: 'Stockholm, Sweden',
+        nationality: 'Swedish',
+        description: 'Legendary actress of Hollywood\'s Golden Age',
+        biography:
+          'Swedish actress known for her roles in Casablanca, Notorious, and Gaslight. She won three Academy Awards and is considered one of the greatest actresses in film history.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Liam Neeson',
+        birthDate: new Date('1952-06-07'),
+        placeOfBirth: 'Ballymena, Northern Ireland',
+        nationality: 'British',
+        description: 'Actor known for dramatic and action roles',
+        biography:
+          'Northern Irish actor known for his roles in Schindler\'s List, Taken, and The Grey. He has been nominated for an Academy Award and is known for his distinctive voice and commanding presence.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Ben Kingsley',
+        birthDate: new Date('1943-12-31'),
+        placeOfBirth: 'Scarborough, Yorkshire, England',
+        nationality: 'British',
+        description: 'Accomplished actor known for transformative performances',
+        biography:
+          'British actor known for his roles in Gandhi, Schindler\'s List, and Sexy Beast. He has won an Academy Award and is known for his ability to completely transform into his characters.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Gary Oldman',
+        birthDate: new Date('1958-03-21'),
+        placeOfBirth: 'New Cross, London, England',
+        nationality: 'British',
+        description: 'Chameleon-like actor known for transformative roles',
+        biography:
+          'English actor known for his roles in Léon: The Professional, The Dark Knight trilogy, and Darkest Hour. He has won an Academy Award and is known for his ability to disappear into his roles.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Tom Cruise',
+        birthDate: new Date('1962-07-03'),
+        placeOfBirth: 'Syracuse, New York, USA',
+        nationality: 'American',
+        description: 'Action star known for performing his own stunts',
+        biography:
+          'American actor known for his roles in Top Gun, Mission: Impossible series, and Jerry Maguire. He is known for performing his own stunts and is one of the highest-grossing actors of all time.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Val Kilmer',
+        birthDate: new Date('1959-12-31'),
+        placeOfBirth: 'Los Angeles, California, USA',
+        nationality: 'American',
+        description: 'Actor known for intense dramatic and action roles',
+        biography:
+          'American actor known for his roles in Top Gun, The Doors, and Batman Forever. He is known for his method acting approach and intense preparation for roles.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Sigourney Weaver',
+        birthDate: new Date('1949-10-08'),
+        placeOfBirth: 'New York City, New York, USA',
+        nationality: 'American',
+        description: 'Actress known for strong action and dramatic roles',
+        biography:
+          'American actress known for her roles in the Alien franchise, Ghostbusters, and Avatar. She has been nominated for three Academy Awards and is known for her strong, independent characters.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Sam Worthington',
+        birthDate: new Date('1976-08-02'),
+        placeOfBirth: 'Godalming, Surrey, England',
+        nationality: 'Australian',
+        description: 'Actor known for action and science fiction roles',
+        biography:
+          'Australian actor known for his roles in Avatar, Terminator Salvation, and Clash of the Titans. He rose to international fame with his starring role in Avatar.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Zoe Saldana',
+        birthDate: new Date('1978-06-19'),
+        placeOfBirth: 'Passaic, New Jersey, USA',
+        nationality: 'American',
+        description: 'Actress known for action and science fiction roles',
+        biography:
+          'American actress known for her roles in Avatar, Star Trek, and Guardians of the Galaxy. She has appeared in some of the highest-grossing films of all time.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Matthew McConaughey',
+        birthDate: new Date('1969-11-04'),
+        placeOfBirth: 'Uvalde, Texas, USA',
+        nationality: 'American',
+        description: 'Actor known for dramatic and romantic roles',
+        biography:
+          'American actor known for his roles in Dallas Buyers Club, Interstellar, and True Detective. He has won an Academy Award and is known for his distinctive voice and philosophical approach to acting.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Elijah Wood',
+        birthDate: new Date('1981-01-28'),
+        placeOfBirth: 'Cedar Rapids, Iowa, USA',
+        nationality: 'American',
+        description: 'Actor known for fantasy and dramatic roles',
+        biography:
+          'American actor known for his role as Frodo Baggins in The Lord of the Rings trilogy. He has also appeared in Sin City, Eternal Sunshine of the Spotless Mind, and Green Street.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Viggo Mortensen',
+        birthDate: new Date('1958-10-20'),
+        placeOfBirth: 'New York City, New York, USA',
+        nationality: 'American',
+        description: 'Versatile actor known for intense dramatic roles',
+        biography:
+          'American actor known for his role as Aragorn in The Lord of the Rings trilogy. He has also appeared in Eastern Promises, A History of Violence, and Green Book.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Sean Bean',
+        birthDate: new Date('1959-04-17'),
+        placeOfBirth: 'Handsworth, Sheffield, England',
+        nationality: 'British',
+        description: 'Actor known for heroic and villainous roles',
+        biography:
+          'English actor known for his roles in The Lord of the Rings trilogy, Game of Thrones, and GoldenEye. He is known for often playing characters who meet dramatic ends.',
+      },
+    }),
+    prisma.actor.create({
+      data: {
+        name: 'Ian McKellen',
+        birthDate: new Date('1939-05-25'),
+        placeOfBirth: 'Burnley, Lancashire, England',
+        nationality: 'British',
+        description: 'Legendary stage and film actor',
+        biography:
+          'English actor known for his roles as Gandalf in The Lord of the Rings and The Hobbit trilogies, and as Magneto in the X-Men films. He is a classically trained actor with extensive stage experience.',
+      },
+    }),
   ]);
 
   // Create comprehensive movie data with actors using the new approach
@@ -280,11 +633,11 @@ async function main() {
         actors: {
           createMany: {
             data: [
-              { actorId: 1, role: 'Dom Cobb' }, // Leonardo DiCaprio
-              { actorId: 2, role: 'Mal' }, // Marion Cotillard
-              { actorId: 3, role: 'Eames' }, // Tom Hardy
-              { actorId: 4, role: 'Robert Fischer' }, // Cillian Murphy
-              { actorId: 17, role: 'Professor Miles' }, // Michael Caine
+              { actorId: actors[0].id, role: 'Dom Cobb' }, // Leonardo DiCaprio
+              { actorId: actors[1].id, role: 'Mal' }, // Marion Cotillard
+              { actorId: actors[2].id, role: 'Eames' }, // Tom Hardy
+              { actorId: actors[3].id, role: 'Robert Fischer' }, // Cillian Murphy
+              { actorId: actors[16].id, role: 'Professor Miles' }, // Michael Caine
             ],
           },
         },
@@ -308,8 +661,8 @@ async function main() {
         actors: {
           createMany: {
             data: [
-              { actorId: 8, role: 'Batman / Bruce Wayne' }, // Christian Bale
-              { actorId: 17, role: 'Alfred Pennyworth' }, // Michael Caine
+              { actorId: actors[7].id, role: 'Batman / Bruce Wayne' }, // Christian Bale
+              { actorId: actors[16].id, role: 'Alfred Pennyworth' }, // Michael Caine
             ],
           },
         },
@@ -333,8 +686,8 @@ async function main() {
         actors: {
           createMany: {
             data: [
-              { actorId: 5, role: 'Ellis Boyd "Red" Redding' }, // Morgan Freeman
-              { actorId: 6, role: 'Andy Dufresne' }, // Tim Robbins
+              { actorId: actors[4].id, role: 'Ellis Boyd "Red" Redding' }, // Morgan Freeman
+              { actorId: actors[5].id, role: 'Andy Dufresne' }, // Tim Robbins
             ],
           },
         },
@@ -355,6 +708,15 @@ async function main() {
           "Academy Award for Best Original Screenplay; Palme d'Or at Cannes Film Festival; Golden Globe for Best Screenplay",
         writers: 'Quentin Tarantino, Roger Avary',
         director: 'Quentin Tarantino',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[20].id, role: 'Vincent Vega' }, // John Travolta
+              { actorId: actors[21].id, role: 'Jules Winnfield' }, // Samuel L. Jackson
+              { actorId: actors[22].id, role: 'Mia Wallace' }, // Uma Thurman
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -372,6 +734,14 @@ async function main() {
           "Academy Awards for Best Picture, Best Actor (Marlon Brando), Best Adapted Screenplay; AFI's Greatest American Films #2",
         writers: 'Mario Puzo, Francis Ford Coppola',
         director: 'Francis Ford Coppola',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[23].id, role: 'Don Vito Corleone' }, // Marlon Brando
+              { actorId: actors[24].id, role: 'Michael Corleone' }, // Al Pacino
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -389,6 +759,13 @@ async function main() {
           'Academy Awards for Best Picture, Best Actor (Tom Hanks), Best Director, Best Adapted Screenplay, Best Visual Effects, Best Film Editing',
         writers: 'Eric Roth',
         director: 'Robert Zemeckis',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[25].id, role: 'Forrest Gump' }, // Tom Hanks
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -406,6 +783,15 @@ async function main() {
           'Academy Awards for Best Visual Effects, Best Film Editing, Best Sound, Best Sound Effects Editing; BAFTA Awards for Best Achievement in Special Visual Effects, Best Sound',
         writers: 'Lana Wachowski, Lilly Wachowski',
         director: 'Lana Wachowski, Lilly Wachowski',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[26].id, role: 'Neo' }, // Keanu Reeves
+              { actorId: actors[27].id, role: 'Morpheus' }, // Laurence Fishburne
+              { actorId: actors[28].id, role: 'Trinity' }, // Carrie-Anne Moss
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -423,6 +809,14 @@ async function main() {
           'Academy Award for Best Supporting Actor (Joe Pesci); BAFTA Awards for Best Adapted Screenplay, Best Editing, Best Costume Design',
         writers: 'Nicholas Pileggi, Martin Scorsese',
         director: 'Martin Scorsese',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[30].id, role: 'Henry Hill' }, // Ray Liotta
+              { actorId: actors[29].id, role: 'Tommy DeVito' }, // Joe Pesci
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -440,6 +834,16 @@ async function main() {
           'Academy Awards for Best Picture, Best Director, Best Adapted Screenplay, and 8 other Oscars (11 total); BAFTA Awards for Best Film, Best Adapted Screenplay',
         writers: 'Fran Walsh, Philippa Boyens, Peter Jackson',
         director: 'Peter Jackson',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[48].id, role: 'Frodo Baggins' }, // Elijah Wood
+              { actorId: actors[49].id, role: 'Aragorn' }, // Viggo Mortensen
+              { actorId: actors[50].id, role: 'Boromir' }, // Sean Bean
+              { actorId: actors[51].id, role: 'Gandalf' }, // Ian McKellen
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -457,6 +861,14 @@ async function main() {
           'MTV Movie Awards for Best Fight, Breakthrough Male Performance; Saturn Awards for Best Action/Adventure/Thriller Film',
         writers: 'Chuck Palahniuk, Jim Uhls',
         director: 'David Fincher',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[31].id, role: 'The Narrator' }, // Edward Norton
+              { actorId: actors[32].id, role: 'Tyler Durden' }, // Brad Pitt
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -474,6 +886,15 @@ async function main() {
           "Academy Award for Best Visual Effects; BAFTA Awards for Best Special Visual Effects; Critics' Choice Awards for Best Sci-Fi/Horror Movie",
         writers: 'Jonathan Nolan, Christopher Nolan',
         director: 'Christopher Nolan',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[47].id, role: 'Cooper' }, // Matthew McConaughey
+              { actorId: actors[15].id, role: 'Brand' }, // Anne Hathaway
+              { actorId: actors[16].id, role: 'Professor Brand' }, // Michael Caine
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -491,6 +912,18 @@ async function main() {
           "People's Choice Awards for Favorite Movie, Favorite Action Movie; Teen Choice Awards for Choice Movie: Action Adventure",
         writers: 'Joss Whedon, Zak Penn',
         director: 'Joss Whedon',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[11].id, role: 'Tony Stark / Iron Man' }, // Robert Downey Jr.
+              { actorId: actors[33].id, role: 'Steve Rogers / Captain America' }, // Chris Evans
+              { actorId: actors[34].id, role: 'Thor' }, // Chris Hemsworth
+              { actorId: actors[35].id, role: 'Bruce Banner / Hulk' }, // Mark Ruffalo
+              { actorId: actors[36].id, role: 'Clint Barton / Hawkeye' }, // Jeremy Renner
+              { actorId: actors[6].id, role: 'Natasha Romanoff / Black Widow' }, // Scarlett Johansson
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -511,8 +944,8 @@ async function main() {
         actors: {
           createMany: {
             data: [
-              { actorId: 1, role: 'Jack Dawson' }, // Leonardo DiCaprio
-              { actorId: 11, role: 'Rose DeWitt Bukater' }, // Kate Winslet
+              { actorId: actors[0].id, role: 'Jack Dawson' }, // Leonardo DiCaprio
+              { actorId: actors[10].id, role: 'Rose DeWitt Bukater' }, // Kate Winslet
             ],
           },
         },
@@ -533,6 +966,14 @@ async function main() {
           'Academy Awards for Best Picture, Best Actor (Russell Crowe), Best Costume Design, Best Sound, Best Visual Effects; BAFTA Awards for Best Film, Best Cinematography',
         writers: 'David Franzoni, John Logan, William Nicholson',
         director: 'Ridley Scott',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[9].id, role: 'Maximus Decimus Meridius' }, // Russell Crowe
+              { actorId: actors[12].id, role: 'Commodus' }, // Joaquin Phoenix
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -550,6 +991,14 @@ async function main() {
           'Academy Awards for Best Director (Steven Spielberg), Best Cinematography, Best Film Editing, Best Sound, Best Sound Effects Editing; Golden Globe for Best Motion Picture',
         writers: 'Robert Rodat',
         director: 'Steven Spielberg',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[25].id, role: 'Captain John Miller' }, // Tom Hanks
+              { actorId: actors[14].id, role: 'Private James Ryan' }, // Matt Damon
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -567,6 +1016,15 @@ async function main() {
           "People's Choice Awards for Favorite Movie, Favorite Action Movie; Teen Choice Awards for Choice Movie: Action Adventure",
         writers: 'Jonathan Nolan, Christopher Nolan',
         director: 'Christopher Nolan',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[7].id, role: 'Batman / Bruce Wayne' }, // Christian Bale
+              { actorId: actors[2].id, role: 'Bane' }, // Tom Hardy
+              { actorId: actors[16].id, role: 'Alfred Pennyworth' }, // Michael Caine
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -584,6 +1042,14 @@ async function main() {
           'Academy Awards for Best Picture, Best Director (Steven Spielberg), Best Adapted Screenplay, and 4 other Oscars (7 total); BAFTA Awards for Best Film, Best Editing',
         writers: 'Thomas Keneally, Steven Zaillian',
         director: 'Steven Spielberg',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[39].id, role: 'Oskar Schindler' }, // Liam Neeson
+              { actorId: actors[40].id, role: 'Amon Goeth' }, // Ben Kingsley
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -601,6 +1067,14 @@ async function main() {
           "Academy Awards for Best Picture, Best Director (Michael Curtiz), Best Adapted Screenplay; AFI's 100 Years...100 Movies #3",
         writers: 'Julius J. Epstein, Philip G. Epstein, Howard Koch',
         director: 'Michael Curtiz',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[37].id, role: 'Rick Blaine' }, // Humphrey Bogart
+              { actorId: actors[38].id, role: 'Ilsa Lund' }, // Ingrid Bergman
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -621,8 +1095,8 @@ async function main() {
         actors: {
           createMany: {
             data: [
-              { actorId: 19, role: 'Dr. Hannibal Lecter' }, // Anthony Hopkins
-              { actorId: 20, role: 'Clarice Starling' }, // Jodie Foster
+              { actorId: actors[18].id, role: 'Dr. Hannibal Lecter' }, // Anthony Hopkins
+              { actorId: actors[19].id, role: 'Clarice Starling' }, // Jodie Foster
             ],
           },
         },
@@ -643,6 +1117,15 @@ async function main() {
           'Academy Awards for Best Cinematography, Best Production Design, Best Visual Effects; Golden Globe Awards for Best Motion Picture, Best Director',
         writers: 'James Cameron',
         director: 'James Cameron',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[44].id, role: 'Jake Sully' }, // Sam Worthington
+              { actorId: actors[45].id, role: 'Neytiri' }, // Zoe Saldana
+              { actorId: actors[43].id, role: 'Dr. Grace Augustine' }, // Sigourney Weaver
+            ],
+          },
+        },
       },
     }),
     prisma.movie.create({
@@ -660,6 +1143,14 @@ async function main() {
           'Academy Awards for Best Film Editing, Best Sound Editing, Best Sound Mixing; BAFTA Awards for Best Sound',
         writers: 'Christopher Nolan',
         director: 'Christopher Nolan',
+        actors: {
+          createMany: {
+            data: [
+              { actorId: actors[2].id, role: 'Farrier' }, // Tom Hardy
+              { actorId: actors[3].id, role: 'Shivering Soldier' }, // Cillian Murphy
+            ],
+          },
+        },
       },
     }),
   ]);
@@ -1086,7 +1577,7 @@ async function main() {
         actors: {
           createMany: {
             data: [
-              { actorId: 21, role: 'Main Role' }, // Test Actor (first test actor)
+              { actorId: testActors[0].id, role: 'Main Role' }, // Test Actor (first test actor)
             ],
           },
         },
@@ -1109,10 +1600,10 @@ async function main() {
         actors: {
           createMany: {
             data: [
-              { actorId: 1, role: 'Lead Actor' }, // Leonardo DiCaprio
-              { actorId: 2, role: 'Supporting Actress' }, // Marion Cotillard
-              { actorId: 3, role: 'Villain' }, // Tom Hardy
-              { actorId: 21, role: 'Cameo' }, // Test Actor
+              { actorId: actors[0].id, role: 'Lead Actor' }, // Leonardo DiCaprio
+              { actorId: actors[1].id, role: 'Supporting Actress' }, // Marion Cotillard
+              { actorId: actors[2].id, role: 'Villain' }, // Tom Hardy
+              { actorId: testActors[0].id, role: 'Cameo' }, // Test Actor
             ],
           },
         },
