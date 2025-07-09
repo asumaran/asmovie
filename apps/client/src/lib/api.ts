@@ -391,6 +391,15 @@ export interface CreateMovieData {
   }[];
 }
 
+export interface CreateActorData {
+  name: string;
+  birthDate?: string;
+  placeOfBirth?: string;
+  nationality?: string;
+  description?: string;
+  biography?: string;
+}
+
 export async function createMovie(
   movieData: CreateMovieData,
 ): Promise<SearchItem> {
@@ -402,6 +411,29 @@ export async function createMovie(
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to create movie');
+  }
+
+  const result = await response.json();
+
+  // Handle NestJS response format
+  if (result.success && result.data) {
+    return result.data;
+  }
+
+  return result;
+}
+
+export async function createActor(
+  actorData: CreateActorData,
+): Promise<SearchItem> {
+  const response = await authenticatedFetch(`${API_BASE_URL}/actors`, {
+    method: 'POST',
+    body: JSON.stringify(actorData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to create actor');
   }
 
   const result = await response.json();

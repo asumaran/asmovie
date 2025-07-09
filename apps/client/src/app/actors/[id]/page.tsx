@@ -100,6 +100,7 @@ interface Actor {
   age?: number;
   bio?: string;
   biography?: string;
+  description?: string;
   movies?: Array<{ id: number; title: string; role?: string }>;
 }
 
@@ -299,7 +300,7 @@ export default function ActorPage() {
             )}
           </div>
         </div>
-        <p className="text-lg text-muted-foreground">{actor.bio}</p>
+        <p className="text-lg text-muted-foreground">{actor.description}</p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
