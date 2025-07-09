@@ -77,6 +77,12 @@ export interface SearchItem {
     id: number;
     name: string;
     role: string;
+    actor: {
+      id: number;
+      name: string;
+      biography: string;
+      birthDate: string;
+    };
   }[];
   movies?: {
     id: number;

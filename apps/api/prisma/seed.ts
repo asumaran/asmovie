@@ -932,7 +932,7 @@ async function main() {
     }),
   ]);
 
-  // Create movie ratings
+  // Create movie ratings for 95% of movies (approximately 20 out of 21 movies)
   await Promise.all([
     // Inception ratings
     prisma.movieRating.create({
@@ -952,13 +952,21 @@ async function main() {
       },
     }),
 
-    // The Dark Knight Rises ratings
+    // The Dark Knight ratings
     prisma.movieRating.create({
       data: {
         movieId: movies[1].id,
-        rating: 8.4,
-        comment: 'Epic conclusion to the trilogy',
+        rating: 9.0,
+        comment: "Heath Ledger's performance is legendary",
         reviewer: 'Batman Fan',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[1].id,
+        rating: 8.9,
+        comment: 'Best superhero movie ever made',
+        reviewer: 'Comic Book Enthusiast',
       },
     }),
 
@@ -980,15 +988,331 @@ async function main() {
       },
     }),
 
-    // Dunkirk ratings
+    // Pulp Fiction ratings
     prisma.movieRating.create({
       data: {
         movieId: movies[3].id,
+        rating: 8.9,
+        comment: 'Tarantino at his finest',
+        reviewer: 'Film Critic B',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[3].id,
+        rating: 8.7,
+        comment: 'Iconic dialogue and non-linear storytelling',
+        reviewer: 'Indie Film Fan',
+      },
+    }),
+
+    // The Godfather ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[4].id,
+        rating: 9.2,
+        comment: 'The definitive crime saga',
+        reviewer: 'Classic Cinema Expert',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[4].id,
+        rating: 9.4,
+        comment: "Marlon Brando's iconic performance",
+        reviewer: 'Acting Coach',
+      },
+    }),
+
+    // Forrest Gump ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[5].id,
+        rating: 8.8,
+        comment: 'Heartwarming and inspiring',
+        reviewer: 'Family Film Reviewer',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[5].id,
+        rating: 8.5,
+        comment: 'Tom Hanks delivers a career-defining performance',
+        reviewer: 'Drama Enthusiast',
+      },
+    }),
+
+    // The Matrix ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[6].id,
+        rating: 8.7,
+        comment: 'Revolutionary visual effects and philosophical depth',
+        reviewer: 'Sci-Fi Critic',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[6].id,
+        rating: 8.9,
+        comment: 'Changed cinema forever',
+        reviewer: 'Tech Film Analyst',
+      },
+    }),
+
+    // Goodfellas ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[7].id,
+        rating: 8.7,
+        comment: "Scorsese's masterpiece about organized crime",
+        reviewer: 'Crime Film Expert',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[7].id,
+        rating: 8.8,
+        comment: 'Ray Liotta and Joe Pesci are phenomenal',
+        reviewer: 'Character Study Fan',
+      },
+    }),
+
+    // The Lord of the Rings: The Return of the King ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[8].id,
+        rating: 9.0,
+        comment: 'Epic conclusion to the greatest trilogy',
+        reviewer: 'Fantasy Film Lover',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[8].id,
+        rating: 8.9,
+        comment: "Peter Jackson's vision brought to life perfectly",
+        reviewer: 'Epic Film Critic',
+      },
+    }),
+
+    // Fight Club ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[9].id,
+        rating: 8.8,
+        comment: 'Mind-bending psychological thriller',
+        reviewer: 'Psychological Film Analyst',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[9].id,
+        rating: 8.6,
+        comment: 'Dark commentary on consumer culture',
+        reviewer: 'Social Commentary Critic',
+      },
+    }),
+
+    // Interstellar ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[10].id,
+        rating: 8.6,
+        comment: 'Visually stunning space odyssey',
+        reviewer: 'Space Film Enthusiast',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[10].id,
+        rating: 8.7,
+        comment: "Nolan's most emotional and ambitious film",
+        reviewer: 'Nolan Film Expert',
+      },
+    }),
+
+    // The Avengers ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[11].id,
+        rating: 8.0,
+        comment: 'Perfect superhero team-up movie',
+        reviewer: 'Marvel Fan',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[11].id,
+        rating: 7.9,
+        comment: 'Great action sequences and character dynamics',
+        reviewer: 'Action Film Critic',
+      },
+    }),
+
+    // Titanic ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[12].id,
+        rating: 7.8,
+        comment: 'Epic romance with spectacular visuals',
+        reviewer: 'Romance Film Critic',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[12].id,
+        rating: 8.0,
+        comment: "James Cameron's technical masterpiece",
+        reviewer: 'Technical Film Analyst',
+      },
+    }),
+
+    // Gladiator ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[13].id,
+        rating: 8.5,
+        comment: 'Russell Crowe delivers a powerful performance',
+        reviewer: 'Historical Drama Fan',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[13].id,
+        rating: 8.4,
+        comment: 'Epic tale of revenge and redemption',
+        reviewer: 'Action Drama Critic',
+      },
+    }),
+
+    // Saving Private Ryan ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[14].id,
+        rating: 8.6,
+        comment: 'Intense and realistic war film',
+        reviewer: 'War Film Specialist',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[14].id,
+        rating: 8.7,
+        comment: "Spielberg's masterful direction",
+        reviewer: 'Director Study Expert',
+      },
+    }),
+
+    // The Dark Knight Rises ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[15].id,
+        rating: 8.4,
+        comment: 'Epic conclusion to the trilogy',
+        reviewer: 'Batman Fan',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[15].id,
+        rating: 8.2,
+        comment: "Tom Hardy's Bane is terrifying",
+        reviewer: 'Villain Analysis Expert',
+      },
+    }),
+
+    // Schindler\'s List ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[16].id,
+        rating: 9.0,
+        comment: 'Powerful and important historical drama',
+        reviewer: 'Historical Film Critic',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[16].id,
+        rating: 9.1,
+        comment: "Spielberg's most important work",
+        reviewer: 'Holocaust Film Scholar',
+      },
+    }),
+
+    // Casablanca ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[17].id,
+        rating: 8.5,
+        comment: 'Timeless classic with iconic dialogue',
+        reviewer: 'Golden Age Film Expert',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[17].id,
+        rating: 8.7,
+        comment: 'Perfect wartime romance',
+        reviewer: 'Classic Romance Critic',
+      },
+    }),
+
+    // The Silence of the Lambs ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[18].id,
+        rating: 8.6,
+        comment: "Hopkins' Hannibal Lecter is unforgettable",
+        reviewer: 'Thriller Film Critic',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[18].id,
+        rating: 8.8,
+        comment: 'Psychological horror at its finest',
+        reviewer: 'Horror Film Specialist',
+      },
+    }),
+
+    // Avatar ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[19].id,
+        rating: 7.8,
+        comment: 'Groundbreaking visual effects',
+        reviewer: 'VFX Film Critic',
+      },
+    }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[19].id,
+        rating: 7.6,
+        comment: 'Stunning world-building and cinematography',
+        reviewer: 'Visual Storytelling Expert',
+      },
+    }),
+
+    // Dunkirk ratings
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[20].id,
         rating: 8.6,
         comment: 'Intense and immersive war film',
         reviewer: 'War Film Enthusiast',
       },
     }),
+    prisma.movieRating.create({
+      data: {
+        movieId: movies[20].id,
+        rating: 8.4,
+        comment: "Nolan's unique approach to war storytelling",
+        reviewer: 'War Cinema Historian',
+      },
+    }),
+
+    // Note: Leaving one movie (Test Movie) without ratings to achieve ~95% coverage
   ]);
 
   // Agregar actores y películas para integración
@@ -1044,7 +1368,7 @@ async function main() {
     `🎭 Created ${actors.length + 3} actors (20 main actors + 3 test actors)`,
   );
   console.log(`🎬 Created ${40} movie-actor relationships`);
-  console.log(`⭐ Created multiple ratings`);
+  console.log(`⭐ Created ratings for 20 out of 21 movies (95% coverage)`);
   console.log('');
   console.log('🔐 Test users created:');
   console.log('  📧 admin@asmovie.com - Password: AdminPassword123!');

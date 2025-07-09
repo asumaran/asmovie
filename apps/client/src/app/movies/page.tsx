@@ -11,16 +11,40 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { getPaginatedMovies } from '@/lib/api';
+import { getPaginatedMovies, SearchItem } from '@/lib/api';
 import { getCurrentPage, getItemsPerPage } from '@/lib/pagination';
 import { getSortValue, MOVIE_SORT_OPTIONS } from '@/lib/sorting';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
+interface MovieRating {
+  id: number;
+  rating: number;
+  comment: string;
+  reviewer: string;
+  createdAt: string;
+}
+
+interface MovieActor {
+  id: number;
+  name: string;
+}
+
+interface Movie {
+  id: number;
+  title: string;
+  releaseYear?: number;
+  director?: string;
+  genre?: string;
+  description?: string;
+  ratings?: MovieRating[];
+  actors: MovieActor[];
+}
+
 interface PaginatedMoviesResult {
-  items: any[];
+  items: Movie[];
   totalPages: number;
   totalItems: number;
   currentPage: number;
@@ -29,9 +53,59 @@ interface PaginatedMoviesResult {
   itemsPerPage: number;
 }
 
+function getAverageRating(ratings?: MovieRating[]): string {
+  if (!ratings || ratings.length === 0) return 'N/A';
+  const avg = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+  return avg.toFixed(1);
+}
+
+function MovieCard({ movie }: { movie: Movie }) {
+  return (
+    <Link key={movie.id} href={`/movies/${movie.id}`}>
+      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="text-xl">{movie.title}</CardTitle>
+              <CardDescription>
+                {movie.releaseYear} • {movie.director}
+              </CardDescription>
+            </div>
+            <Badge variant="secondary">{getAverageRating(movie.ratings)}</Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <Badge variant="outline">{movie.genre}</Badge>
+            <p className="text-sm text-muted-foreground">{movie.description}</p>
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Cast:</h4>
+              <div className="flex flex-wrap gap-1">
+                {movie.actors.slice(0, 3).map((actor, index) => (
+                  <Badge
+                    key={actor.id ?? index}
+                    variant="outline"
+                    className="text-xs"
+                  >
+                    {actor.name}
+                  </Badge>
+                ))}
+                {movie.actors.length > 3 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{movie.actors.length - 3} more
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
 function MoviesContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const [moviesData, setMoviesData] = useState<PaginatedMoviesResult | null>(
     null,
   );
@@ -41,6 +115,22 @@ function MoviesContent() {
   const currentPage = getCurrentPage(searchParams);
   const itemsPerPage = getItemsPerPage(searchParams);
   const sortBy = getSortValue(searchParams, MOVIE_SORT_OPTIONS[0].value);
+
+  function mapSearchItemToMovie(item: SearchItem): Movie {
+    return {
+      id: item.id,
+      title: item.title || 'Untitled',
+      releaseYear: item.releaseYear,
+      director: item.director,
+      genre: item.genre,
+      description: item.description,
+      ratings: (item as { ratings?: MovieRating[] }).ratings ?? [],
+      actors: (item.actors ?? []).map((a) => ({
+        id: a.id,
+        name: a.actor.name,
+      })),
+    };
+  }
 
   useEffect(() => {
     async function fetchMovies() {
@@ -53,7 +143,10 @@ function MoviesContent() {
           itemsPerPage,
           sortBy,
         );
-        setMoviesData(result);
+        setMoviesData({
+          ...result,
+          items: result.items.map(mapSearchItemToMovie),
+        });
       } catch (err) {
         setError('Failed to load movies. Please try again.');
         console.error('Error fetching movies:', err);
@@ -112,50 +205,7 @@ function MoviesContent() {
       {/* Movies Grid - 5 columns */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {paginatedMovies.map((movie) => (
-          <Link key={movie.id} href={`/movies/${movie.id}`}>
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-xl">{movie.title}</CardTitle>
-                    <CardDescription>
-                      {movie.releaseYear} • {movie.director}
-                    </CardDescription>
-                  </div>
-                  <Badge variant="secondary">
-                    {movie.averageRating?.toFixed(1) || 'N/A'}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <Badge variant="outline">{movie.genre}</Badge>
-                  <p className="text-sm text-muted-foreground">
-                    {movie.description}
-                  </p>
-                  <div>
-                    <h4 className="font-semibold text-sm mb-2">Cast:</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {movie.actors.slice(0, 3).map((actor, index) => (
-                        <Badge
-                          key={index}
-                          variant="outline"
-                          className="text-xs"
-                        >
-                          {actor.actor.name}
-                        </Badge>
-                      ))}
-                      {movie.actors.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{movie.actors.length - 3} more
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
+          <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
 
@@ -184,24 +234,13 @@ function MoviesLoadingSkeleton({ itemsPerPage }: { itemsPerPage: number }) {
       {/* Controls skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="h-4 bg-muted rounded w-48 animate-pulse"></div>
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex justify-end">
           <div className="h-8 bg-muted rounded w-40 animate-pulse"></div>
-          <div className="h-8 bg-muted rounded w-32 animate-pulse"></div>
         </div>
       </div>
 
-      {/* Grid skeleton */}
-      <div
-        className={`grid gap-6 ${
-          itemsPerPage === 5
-            ? 'md:grid-cols-2 lg:grid-cols-3'
-            : itemsPerPage === 10
-              ? 'md:grid-cols-3 lg:grid-cols-4'
-              : itemsPerPage === 15
-                ? 'md:grid-cols-3 lg:grid-cols-5'
-                : 'md:grid-cols-4 lg:grid-cols-5'
-        }`}
-      >
+      {/* Grid skeleton - 5 columns */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: itemsPerPage }).map((_, i) => (
           <Card key={i} className="h-64 animate-pulse">
             <CardHeader>
