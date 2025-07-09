@@ -3,7 +3,6 @@
 import type React from 'react';
 
 import { ProtectedRoute } from '@/components/protected-route';
-import { createMovie, type CreateMovieData } from '@/lib/api';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { createMovie, type CreateMovieData } from '@/lib/api';
 import { AlertCircle, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -49,7 +49,6 @@ export default function AddMoviePage() {
     title: '',
     year: '',
     genre: '',
-    rating: '',
     duration: '',
     description: '',
     plot: '',
@@ -133,7 +132,6 @@ export default function AddMoviePage() {
           title: '',
           year: '',
           genre: '',
-          rating: '',
           duration: '',
           description: '',
           plot: '',
@@ -149,7 +147,16 @@ export default function AddMoviePage() {
       }, 3000);
     } catch (err) {
       console.error('Error creating movie:', err);
-      setError(err.message || 'Failed to add movie. Please try again.');
+      let errorMessage = 'Failed to add movie. Please try again.';
+      if (
+        err &&
+        typeof err === 'object' &&
+        'message' in err &&
+        typeof (err as { message?: unknown }).message === 'string'
+      ) {
+        errorMessage = (err as { message: string }).message;
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -243,23 +250,6 @@ export default function AddMoviePage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="rating">Rating (0-10)</Label>
-                  <Input
-                    id="rating"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="10"
-                    value={formData.rating}
-                    onChange={(e) =>
-                      handleInputChange('rating', e.target.value)
-                    }
-                    placeholder="8.5"
-                    disabled={isLoading}
-                  />
                 </div>
 
                 <div className="space-y-2">
