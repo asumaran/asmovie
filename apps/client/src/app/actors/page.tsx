@@ -34,8 +34,14 @@ import type { SearchItem } from '@/lib/api';
 
 interface ActorMovie {
   id: number;
-  title: string;
   role?: string;
+  movie?: {
+    id: number;
+    title: string;
+    releaseYear: number;
+    genre: string;
+    duration: number;
+  };
 }
 
 interface Actor {
@@ -50,6 +56,7 @@ interface Actor {
 
 function ActorCard({ actor }: { actor: Actor }) {
   const age = calculateAge(actor.birthDate);
+  console.log('actor.movies', actor.movies);
   return (
     <Link key={actor.id} href={`/actors/${actor.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
@@ -72,7 +79,7 @@ function ActorCard({ actor }: { actor: Actor }) {
                 <div className="flex flex-wrap gap-1">
                   {actor.movies.slice(0, 3).map((movie) => (
                     <Badge key={movie.id} variant="outline" className="text-xs">
-                      {movie.title}
+                      {movie.movie?.title}
                     </Badge>
                   ))}
                   {actor.movies.length > 3 && (
@@ -115,6 +122,7 @@ function mapSearchItemToActor(item: SearchItem): Actor {
       id: m.id,
       title: m.title,
       role: m.role,
+      movie: m.movie,
     })),
   };
 }

@@ -88,6 +88,13 @@ export interface SearchItem {
     id: number;
     title: string;
     role: string;
+    movie: {
+      id: number;
+      title: string;
+      releaseYear: number;
+      genre: string;
+      duration: number;
+    };
   }[];
 }
 
