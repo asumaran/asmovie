@@ -16,8 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { createActor, type CreateActorData } from '@/lib/api';
-import { AlertCircle, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -140,12 +139,6 @@ export default function AddActorPage() {
       <div className="container mx-auto py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
-          <Button variant="ghost" asChild className="mb-4">
-            <Link href="/actors">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Actors
-            </Link>
-          </Button>
           <h1 className="text-4xl font-bold mb-2">Add New Actor</h1>
           <p className="text-muted-foreground">
             Fill in the details to add a new actor to the database

@@ -28,15 +28,7 @@ import {
   type CreateMovieData,
   type SearchItem,
 } from '@/lib/api';
-import {
-  AlertCircle,
-  ArrowLeft,
-  CheckCircle,
-  Loader2,
-  Plus,
-  Trash2,
-} from 'lucide-react';
-import Link from 'next/link';
+import { AlertCircle, CheckCircle, Loader2, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -243,12 +235,6 @@ export default function AddMoviePage() {
       <div className="container mx-auto py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
-          <Button variant="ghost" asChild className="mb-4">
-            <Link href="/movies">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Movies
-            </Link>
-          </Button>
           <h1 className="text-4xl font-bold mb-2">Add New Movie</h1>
           <p className="text-muted-foreground">
             Fill in the details to add a new movie to the database
