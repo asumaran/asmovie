@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 /**
  * Updates or creates Bruno environment with production API URL
  * @param {string} apiUrl - The production API URL from AWS deployment
  */
 function updateBrunoEnvironment(apiUrl) {
-  const brunoDir = path.join(__dirname, "bruno");
-  const environmentsDir = path.join(brunoDir, "environments");
-  const productionEnvPath = path.join(environmentsDir, "Production.bru");
+  const brunoDir = path.join(__dirname, 'bruno');
+  const environmentsDir = path.join(brunoDir, 'environments');
+  const productionEnvPath = path.join(environmentsDir, 'Production.bru');
 
   // Ensure environments directory exists
   if (!fs.existsSync(environmentsDir)) {
@@ -18,7 +18,7 @@ function updateBrunoEnvironment(apiUrl) {
   }
 
   // Clean URL (remove trailing slash if present)
-  const cleanApiUrl = apiUrl.replace(/\/$/, "");
+  const cleanApiUrl = apiUrl.replace(/\/$/, '');
 
   // Create or update Production environment
   const productionEnvContent = `vars {
@@ -30,7 +30,7 @@ function updateBrunoEnvironment(apiUrl) {
 `;
 
   try {
-    fs.writeFileSync(productionEnvPath, productionEnvContent, "utf8");
+    fs.writeFileSync(productionEnvPath, productionEnvContent, 'utf8');
     console.log(
       `✅ Bruno Production environment updated with API URL: ${cleanApiUrl}`,
     );
@@ -49,8 +49,8 @@ function updateBrunoEnvironment(apiUrl) {
 const apiUrl = process.argv[2];
 
 if (!apiUrl) {
-  console.error("❌ API URL is required");
-  console.error("Usage: node update-bruno-environment.js <API_URL>");
+  console.error('❌ API URL is required');
+  console.error('Usage: node update-bruno-environment.js <API_URL>');
   process.exit(1);
 }
 

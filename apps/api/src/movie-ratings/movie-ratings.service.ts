@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService } from "../common/prisma.service";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../common/prisma.service';
 import {
   CreateMovieRatingDto,
   UpdateMovieRatingDto,
-} from "./dto/movie-rating.dto";
+} from './dto/movie-rating.dto';
 
 @Injectable()
 export class MovieRatingsService {
@@ -38,7 +38,7 @@ export class MovieRatingsService {
         movie: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
   }
@@ -91,7 +91,7 @@ export class MovieRatingsService {
     return this.prisma.movieRating.findMany({
       where: { movieId },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
   }

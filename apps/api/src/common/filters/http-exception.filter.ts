@@ -5,13 +5,13 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-} from "@nestjs/common";
-import { Request, Response } from "express";
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 import {
   BusinessException,
   BusinessExceptionDetails,
-} from "../exceptions/business.exception";
-import { ApiResponse } from "../dto/api-response.dto";
+} from '../exceptions/business.exception';
+import { ApiResponse } from '../dto/api-response.dto';
 
 interface HttpExceptionResponse {
   message?: string | string[];
@@ -50,14 +50,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
-      if (typeof exceptionResponse === "string") {
+      if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
       } else if (
-        typeof exceptionResponse === "object" &&
+        typeof exceptionResponse === 'object' &&
         exceptionResponse !== null
       ) {
         const response = exceptionResponse as HttpExceptionResponse;
-        message = (response.message as string) ?? "Bad Request";
+        message = (response.message as string) ?? 'Bad Request';
         errors =
           response.message && Array.isArray(response.message)
             ? response.message
@@ -65,12 +65,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
               ? [response.message]
               : undefined;
       } else {
-        message = "Bad Request";
+        message = 'Bad Request';
       }
     } else {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
-      message = "Internal server error";
-      this.logger.error("Unhandled exception:", exception);
+      message = 'Internal server error';
+      this.logger.error('Unhandled exception:', exception);
     }
 
     const errorResponse = ApiResponse.error(message, errors, request.url);

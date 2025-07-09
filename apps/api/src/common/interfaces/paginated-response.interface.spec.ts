@@ -2,11 +2,11 @@ import {
   PaginationHelper,
   PaginatedResponse,
   PaginationMeta,
-} from "./paginated-response.interface";
+} from './paginated-response.interface';
 
-describe("PaginationHelper", () => {
-  describe("createMeta", () => {
-    it("should create pagination meta for first page", () => {
+describe('PaginationHelper', () => {
+  describe('createMeta', () => {
+    it('should create pagination meta for first page', () => {
       const meta = PaginationHelper.createMeta(1, 10, 25);
 
       expect(meta).toEqual({
@@ -19,7 +19,7 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should create pagination meta for middle page", () => {
+    it('should create pagination meta for middle page', () => {
       const meta = PaginationHelper.createMeta(2, 10, 25);
 
       expect(meta).toEqual({
@@ -32,7 +32,7 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should create pagination meta for last page", () => {
+    it('should create pagination meta for last page', () => {
       const meta = PaginationHelper.createMeta(3, 10, 25);
 
       expect(meta).toEqual({
@@ -45,7 +45,7 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should handle exact page division", () => {
+    it('should handle exact page division', () => {
       const meta = PaginationHelper.createMeta(2, 10, 20);
 
       expect(meta).toEqual({
@@ -58,7 +58,7 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should handle empty results", () => {
+    it('should handle empty results', () => {
       const meta = PaginationHelper.createMeta(1, 10, 0);
 
       expect(meta).toEqual({
@@ -71,7 +71,7 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should handle single page with fewer items than limit", () => {
+    it('should handle single page with fewer items than limit', () => {
       const meta = PaginationHelper.createMeta(1, 10, 5);
 
       expect(meta).toEqual({
@@ -84,7 +84,7 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should handle large page numbers correctly", () => {
+    it('should handle large page numbers correctly', () => {
       const meta = PaginationHelper.createMeta(10, 5, 50);
 
       expect(meta).toEqual({
@@ -97,7 +97,7 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should handle edge case with 1 total item", () => {
+    it('should handle edge case with 1 total item', () => {
       const meta = PaginationHelper.createMeta(1, 10, 1);
 
       expect(meta).toEqual({
@@ -111,11 +111,11 @@ describe("PaginationHelper", () => {
     });
   });
 
-  describe("createResponse", () => {
-    it("should create paginated response with data and meta", () => {
+  describe('createResponse', () => {
+    it('should create paginated response with data and meta', () => {
       const data = [
-        { id: 1, title: "Movie 1" },
-        { id: 2, title: "Movie 2" },
+        { id: 1, title: 'Movie 1' },
+        { id: 2, title: 'Movie 2' },
       ];
       const meta: PaginationMeta = {
         page: 1,
@@ -134,7 +134,7 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should create response with empty data array", () => {
+    it('should create response with empty data array', () => {
       const data: any[] = [];
       const meta: PaginationMeta = {
         page: 1,
@@ -153,12 +153,12 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should preserve data structure", () => {
+    it('should preserve data structure', () => {
       const data = [
         {
           id: 1,
-          title: "Complex Movie",
-          actors: [{ id: 1, name: "Actor 1" }],
+          title: 'Complex Movie',
+          actors: [{ id: 1, name: 'Actor 1' }],
           ratings: [{ id: 1, rating: 8.5 }],
         },
       ];
@@ -179,12 +179,12 @@ describe("PaginationHelper", () => {
     });
   });
 
-  describe("Combined usage", () => {
-    it("should work together to create complete pagination", () => {
+  describe('Combined usage', () => {
+    it('should work together to create complete pagination', () => {
       const mockData = [
-        { id: 1, name: "Item 1" },
-        { id: 2, name: "Item 2" },
-        { id: 3, name: "Item 3" },
+        { id: 1, name: 'Item 1' },
+        { id: 2, name: 'Item 2' },
+        { id: 3, name: 'Item 3' },
       ];
       const page = 2;
       const limit = 5;
@@ -206,10 +206,10 @@ describe("PaginationHelper", () => {
       });
     });
 
-    it("should handle real-world scenario with movies", () => {
+    it('should handle real-world scenario with movies', () => {
       const movies = [
-        { id: 1, title: "Movie 1", genre: "Action" },
-        { id: 2, title: "Movie 2", genre: "Drama" },
+        { id: 1, title: 'Movie 1', genre: 'Action' },
+        { id: 2, title: 'Movie 2', genre: 'Drama' },
       ];
       const page = 1;
       const limit = 2;
@@ -224,21 +224,21 @@ describe("PaginationHelper", () => {
     });
   });
 
-  describe("Edge cases and validation", () => {
-    it("should handle zero limit gracefully", () => {
+  describe('Edge cases and validation', () => {
+    it('should handle zero limit gracefully', () => {
       // This would be prevented by validation, but testing the math
       expect(() => PaginationHelper.createMeta(1, 0, 10)).not.toThrow();
       const meta = PaginationHelper.createMeta(1, 0, 10);
       expect(meta.totalPages).toBe(Infinity);
     });
 
-    it("should handle negative total", () => {
+    it('should handle negative total', () => {
       const meta = PaginationHelper.createMeta(1, 10, -1);
       expect(meta.total).toBe(-1);
       expect(meta.totalPages).toBe(-0); // Math.ceil(-1 / 10) = -0 in JavaScript
     });
 
-    it("should handle page beyond total pages", () => {
+    it('should handle page beyond total pages', () => {
       const meta = PaginationHelper.createMeta(5, 10, 20); // Page 5 of 2 pages
       expect(meta.page).toBe(5);
       expect(meta.totalPages).toBe(2);
@@ -246,15 +246,15 @@ describe("PaginationHelper", () => {
       expect(meta.hasPrev).toBe(true);
     });
 
-    it("should maintain consistency with different data types", () => {
+    it('should maintain consistency with different data types', () => {
       interface TestItem {
         id: number;
         value: string;
       }
 
       const typedData: TestItem[] = [
-        { id: 1, value: "test1" },
-        { id: 2, value: "test2" },
+        { id: 1, value: 'test1' },
+        { id: 2, value: 'test2' },
       ];
 
       const meta = PaginationHelper.createMeta(1, 10, 2);
@@ -262,7 +262,7 @@ describe("PaginationHelper", () => {
         PaginationHelper.createResponse(typedData, meta);
 
       expect(response.data[0].id).toBe(1);
-      expect(response.data[0].value).toBe("test1");
+      expect(response.data[0].value).toBe('test1');
       expect(response.meta.total).toBe(2);
     });
   });

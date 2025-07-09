@@ -5,14 +5,14 @@ import {
   UsePipes,
   ValidationPipe,
   UseInterceptors,
-} from "@nestjs/common";
-import { SearchService } from "./search.service";
-import { ResponseInterceptor } from "../common/interceptors/response.interceptor";
-import { PerformanceInterceptor } from "../common/interceptors/performance.interceptor";
-import { SearchQueryDto } from "./dto/search-query.dto";
-import { SearchResponseDto } from "./dto/search-response.dto";
+} from '@nestjs/common';
+import { SearchService } from './search.service';
+import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
+import { PerformanceInterceptor } from '../common/interceptors/performance.interceptor';
+import { SearchQueryDto } from './dto/search-query.dto';
+import { SearchResponseDto } from './dto/search-response.dto';
 
-@Controller("search")
+@Controller('search')
 @UseInterceptors(ResponseInterceptor, PerformanceInterceptor)
 @UsePipes(new ValidationPipe({ transform: true, forbidNonWhitelisted: false }))
 export class SearchController {

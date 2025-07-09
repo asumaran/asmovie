@@ -1,13 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { PrismaService } from "../common/prisma.service";
-import { QueryBuilderService } from "../common/services/query-builder.service";
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../common/prisma.service';
+import { QueryBuilderService } from '../common/services/query-builder.service';
 import {
   PaginatedResponse,
   PaginationHelper,
-} from "../common/interfaces/paginated-response.interface";
-import { SearchQueryDto } from "./dto/search-query.dto";
-import { SearchItemDto } from "./dto/search-response.dto";
+} from '../common/interfaces/paginated-response.interface';
+import { SearchQueryDto } from './dto/search-query.dto';
+import { SearchItemDto } from './dto/search-response.dto';
 
 @Injectable()
 export class SearchService {
@@ -45,13 +45,13 @@ export class SearchService {
   ): Promise<{ data: SearchItemDto[]; total: number }> {
     const where = {
       OR: [
-        { title: { contains: query, mode: "insensitive" as const } },
-        { description: { contains: query, mode: "insensitive" as const } },
-        { plot: { contains: query, mode: "insensitive" as const } },
-        { genre: { contains: query, mode: "insensitive" as const } },
-        { director: { contains: query, mode: "insensitive" as const } },
-        { writers: { contains: query, mode: "insensitive" as const } },
-        { awards: { contains: query, mode: "insensitive" as const } },
+        { title: { contains: query, mode: 'insensitive' as const } },
+        { description: { contains: query, mode: 'insensitive' as const } },
+        { plot: { contains: query, mode: 'insensitive' as const } },
+        { genre: { contains: query, mode: 'insensitive' as const } },
+        { director: { contains: query, mode: 'insensitive' as const } },
+        { writers: { contains: query, mode: 'insensitive' as const } },
+        { awards: { contains: query, mode: 'insensitive' as const } },
       ],
     };
 
@@ -79,7 +79,7 @@ export class SearchService {
 
     const data = movies.map((movie) => ({
       id: movie.id,
-      type: "movie" as const,
+      type: 'movie' as const,
       title: movie.title,
       description: movie.description || undefined,
       plot: movie.plot || undefined,
@@ -121,11 +121,11 @@ export class SearchService {
   ): Promise<{ data: SearchItemDto[]; total: number }> {
     const where = {
       OR: [
-        { name: { contains: query, mode: "insensitive" as const } },
-        { biography: { contains: query, mode: "insensitive" as const } },
-        { description: { contains: query, mode: "insensitive" as const } },
-        { nationality: { contains: query, mode: "insensitive" as const } },
-        { placeOfBirth: { contains: query, mode: "insensitive" as const } },
+        { name: { contains: query, mode: 'insensitive' as const } },
+        { biography: { contains: query, mode: 'insensitive' as const } },
+        { description: { contains: query, mode: 'insensitive' as const } },
+        { nationality: { contains: query, mode: 'insensitive' as const } },
+        { placeOfBirth: { contains: query, mode: 'insensitive' as const } },
       ],
     };
 
@@ -152,7 +152,7 @@ export class SearchService {
 
     const data = actors.map((actor) => ({
       id: actor.id,
-      type: "actor" as const,
+      type: 'actor' as const,
       name: actor.name,
       description: actor.description || undefined,
       biography: actor.biography || undefined,
@@ -174,42 +174,42 @@ export class SearchService {
   }
 
   private buildMovieOrderBy(sortBy?: string, sortOrder?: string) {
-    const order = sortOrder === "desc" ? "desc" : "asc";
+    const order = sortOrder === 'desc' ? 'desc' : 'asc';
 
     switch (sortBy) {
-      case "title":
-        return { title: order as "asc" | "desc" };
-      case "releaseYear":
-        return { releaseYear: order as "asc" | "desc" };
-      case "rating":
-        return { ratings: { _count: order as "asc" | "desc" } };
-      case "director":
-        return { director: order as "asc" | "desc" };
-      case "budget":
-        return { budget: order as "asc" | "desc" };
-      case "boxOffice":
-        return { boxOffice: order as "asc" | "desc" };
-      case "createdAt":
-        return { createdAt: order as "asc" | "desc" };
+      case 'title':
+        return { title: order as 'asc' | 'desc' };
+      case 'releaseYear':
+        return { releaseYear: order as 'asc' | 'desc' };
+      case 'rating':
+        return { ratings: { _count: order as 'asc' | 'desc' } };
+      case 'director':
+        return { director: order as 'asc' | 'desc' };
+      case 'budget':
+        return { budget: order as 'asc' | 'desc' };
+      case 'boxOffice':
+        return { boxOffice: order as 'asc' | 'desc' };
+      case 'createdAt':
+        return { createdAt: order as 'asc' | 'desc' };
       default:
-        return { createdAt: "desc" as const };
+        return { createdAt: 'desc' as const };
     }
   }
 
   private buildActorOrderBy(sortBy?: string, sortOrder?: string) {
-    const order = sortOrder === "desc" ? "desc" : "asc";
+    const order = sortOrder === 'desc' ? 'desc' : 'asc';
 
     switch (sortBy) {
-      case "name":
-        return { name: order as "asc" | "desc" };
-      case "nationality":
-        return { nationality: order as "asc" | "desc" };
-      case "birthDate":
-        return { birthDate: order as "asc" | "desc" };
-      case "createdAt":
-        return { createdAt: order as "asc" | "desc" };
+      case 'name':
+        return { name: order as 'asc' | 'desc' };
+      case 'nationality':
+        return { nationality: order as 'asc' | 'desc' };
+      case 'birthDate':
+        return { birthDate: order as 'asc' | 'desc' };
+      case 'createdAt':
+        return { createdAt: order as 'asc' | 'desc' };
       default:
-        return { createdAt: "desc" as const };
+        return { createdAt: 'desc' as const };
     }
   }
 
@@ -220,46 +220,46 @@ export class SearchService {
   ): SearchItemDto[] {
     if (!sortBy) return results;
 
-    const order = sortOrder === "desc" ? -1 : 1;
+    const order = sortOrder === 'desc' ? -1 : 1;
 
     return results.sort((a, b) => {
       let aValue: any;
       let bValue: any;
 
       switch (sortBy) {
-        case "title":
+        case 'title':
           aValue = a.title || a.name;
           bValue = b.title || b.name;
           break;
-        case "name":
+        case 'name':
           aValue = a.name || a.title;
           bValue = b.name || b.title;
           break;
-        case "rating":
+        case 'rating':
           aValue = a.averageRating || 0;
           bValue = b.averageRating || 0;
           break;
-        case "releaseYear":
+        case 'releaseYear':
           aValue = a.releaseYear || 0;
           bValue = b.releaseYear || 0;
           break;
-        case "director":
-          aValue = a.director || "";
-          bValue = b.director || "";
+        case 'director':
+          aValue = a.director || '';
+          bValue = b.director || '';
           break;
-        case "budget":
+        case 'budget':
           aValue = a.budget || 0;
           bValue = b.budget || 0;
           break;
-        case "boxOffice":
+        case 'boxOffice':
           aValue = a.boxOffice || 0;
           bValue = b.boxOffice || 0;
           break;
-        case "nationality":
-          aValue = a.nationality || "";
-          bValue = b.nationality || "";
+        case 'nationality':
+          aValue = a.nationality || '';
+          bValue = b.nationality || '';
           break;
-        case "createdAt":
+        case 'createdAt':
           aValue = a.createdAt;
           bValue = b.createdAt;
           break;

@@ -1,17 +1,17 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { INestApplication } from "@nestjs/common";
-import * as request from "supertest";
-import { AppModule } from "../app.module";
-import { PrismaService } from "../common/prisma.service";
-import * as dotenv from "dotenv";
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from '../app.module';
+import { PrismaService } from '../common/prisma.service';
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 
 const API_TOKEN =
   process.env.API_TOKEN ??
-  "your-super-secure-api-secret-key-here-at-least-32-characters-long";
+  'your-super-secure-api-secret-key-here-at-least-32-characters-long';
 
-describe("Movie Ratings Integration Tests", () => {
+describe('Movie Ratings Integration Tests', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
 
@@ -37,98 +37,98 @@ describe("Movie Ratings Integration Tests", () => {
     await prismaService.actor.deleteMany();
   });
 
-  describe("POST /movie-ratings", () => {
+  describe('POST /movie-ratings', () => {
     let movie: any;
 
     beforeEach(async () => {
       movie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
     });
 
-    it("should create a new movie rating with valid token", async () => {
+    it('should create a new movie rating with valid token', async () => {
       const createRatingDto = {
         movieId: movie.id,
         rating: 8.5,
-        comment: "Great movie!",
-        reviewer: "Test Reviewer",
+        comment: 'Great movie!',
+        reviewer: 'Test Reviewer',
       };
 
       const response = await request(app.getHttpServer())
-        .post("/movie-ratings")
-        .set("X-API-Token", API_TOKEN)
+        .post('/movie-ratings')
+        .set('X-API-Token', API_TOKEN)
         .send(createRatingDto)
         .expect(201);
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(response.body.rating).toBe(8.5);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.comment).toBe("Great movie!");
+      expect(response.body.comment).toBe('Great movie!');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(response.body.movieId).toBe(movie.id);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(response.body.id).toBeDefined();
     });
 
-    it("should return 401 when no token is provided", async () => {
+    it('should return 401 when no token is provided', async () => {
       const createRatingDto = {
         movieId: movie.id,
         rating: 8.5,
-        comment: "Great movie!",
-        reviewer: "Test Reviewer",
+        comment: 'Great movie!',
+        reviewer: 'Test Reviewer',
       };
 
       await request(app.getHttpServer())
-        .post("/movie-ratings")
+        .post('/movie-ratings')
         .send(createRatingDto)
         .expect(401);
     });
 
-    it("should return 401 when invalid token is provided", async () => {
+    it('should return 401 when invalid token is provided', async () => {
       const createRatingDto = {
         movieId: movie.id,
         rating: 8.5,
-        comment: "Great movie!",
-        reviewer: "Test Reviewer",
+        comment: 'Great movie!',
+        reviewer: 'Test Reviewer',
       };
 
       await request(app.getHttpServer())
-        .post("/movie-ratings")
-        .set("X-API-Token", "invalid-token")
+        .post('/movie-ratings')
+        .set('X-API-Token', 'invalid-token')
         .send(createRatingDto)
         .expect(401);
     });
 
-    it("should return 400 for invalid rating data", async () => {
+    it('should return 400 for invalid rating data', async () => {
       const invalidRatingDto = {
         movieId: movie.id,
         rating: 11, // rating should be between 1-10
-        comment: "Great movie!",
-        reviewer: "Test Reviewer",
+        comment: 'Great movie!',
+        reviewer: 'Test Reviewer',
       };
 
       await request(app.getHttpServer())
-        .post("/movie-ratings")
-        .set("X-API-Token", API_TOKEN)
+        .post('/movie-ratings')
+        .set('X-API-Token', API_TOKEN)
         .send(invalidRatingDto)
         .expect(400);
     });
   });
 
-  describe("GET /movie-ratings", () => {
+  describe('GET /movie-ratings', () => {
     beforeEach(async () => {
       const movie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
@@ -137,15 +137,15 @@ describe("Movie Ratings Integration Tests", () => {
         data: {
           movieId: movie.id,
           rating: 8.5,
-          comment: "Great movie!",
-          reviewer: "Test Reviewer",
+          comment: 'Great movie!',
+          reviewer: 'Test Reviewer',
         },
       });
     });
 
-    it("should get all movie ratings without token (read operation)", async () => {
+    it('should get all movie ratings without token (read operation)', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movie-ratings")
+        .get('/movie-ratings')
         .expect(200);
 
       expect(Array.isArray(response.body)).toBe(true);
@@ -154,23 +154,23 @@ describe("Movie Ratings Integration Tests", () => {
       expect(response.body[0].rating).toBe(8.5);
     });
 
-    it("should filter ratings by movie ID", async () => {
+    it('should filter ratings by movie ID', async () => {
       const movie1 = await prismaService.movie.create({
         data: {
-          title: "Movie 1",
-          description: "Description 1",
+          title: 'Movie 1',
+          description: 'Description 1',
           releaseYear: 2022,
-          genre: "Drama",
+          genre: 'Drama',
           duration: 110,
         },
       });
 
       const movie2 = await prismaService.movie.create({
         data: {
-          title: "Movie 2",
-          description: "Description 2",
+          title: 'Movie 2',
+          description: 'Description 2',
           releaseYear: 2021,
-          genre: "Comedy",
+          genre: 'Comedy',
           duration: 95,
         },
       });
@@ -180,14 +180,14 @@ describe("Movie Ratings Integration Tests", () => {
           {
             movieId: movie1.id,
             rating: 8.5,
-            comment: "Good movie!",
-            reviewer: "Reviewer 1",
+            comment: 'Good movie!',
+            reviewer: 'Reviewer 1',
           },
           {
             movieId: movie2.id,
             rating: 7.0,
-            comment: "Okay movie",
-            reviewer: "Reviewer 2",
+            comment: 'Okay movie',
+            reviewer: 'Reviewer 2',
           },
         ],
       });
@@ -202,42 +202,42 @@ describe("Movie Ratings Integration Tests", () => {
       expect(response.body[0].rating).toBe(8.5);
     });
 
-    it("should return 400 for invalid movieId parameter", async () => {
+    it('should return 400 for invalid movieId parameter', async () => {
       await request(app.getHttpServer())
-        .get("/movie-ratings?movieId=invalid")
+        .get('/movie-ratings?movieId=invalid')
         .expect(400);
     });
   });
 
-  describe("GET /movie-ratings/movie/:movieId/average", () => {
+  describe('GET /movie-ratings/movie/:movieId/average', () => {
     let movie: any;
 
     beforeEach(async () => {
       movie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
     });
 
-    it("should get average rating for a movie without token (read operation)", async () => {
+    it('should get average rating for a movie without token (read operation)', async () => {
       await prismaService.movieRating.createMany({
         data: [
           {
             movieId: movie.id,
             rating: 8.0,
-            comment: "Good movie!",
-            reviewer: "Reviewer 1",
+            comment: 'Good movie!',
+            reviewer: 'Reviewer 1',
           },
           {
             movieId: movie.id,
             rating: 9.0,
-            comment: "Great movie!",
-            reviewer: "Reviewer 2",
+            comment: 'Great movie!',
+            reviewer: 'Reviewer 2',
           },
         ],
       });
@@ -252,13 +252,13 @@ describe("Movie Ratings Integration Tests", () => {
       expect(response.body.totalRatings).toBe(2);
     });
 
-    it("should return appropriate response for movie with no ratings", async () => {
+    it('should return appropriate response for movie with no ratings', async () => {
       const movieWithoutRatings = await prismaService.movie.create({
         data: {
-          title: "No Ratings Movie",
-          description: "A movie with no ratings",
+          title: 'No Ratings Movie',
+          description: 'A movie with no ratings',
           releaseYear: 2023,
-          genre: "Drama",
+          genre: 'Drama',
           duration: 100,
         },
       });
@@ -273,21 +273,21 @@ describe("Movie Ratings Integration Tests", () => {
       expect(response.body.totalRatings).toBe(0);
     });
 
-    it("should return 404 for non-existent movie", async () => {
+    it('should return 404 for non-existent movie', async () => {
       await request(app.getHttpServer())
-        .get("/movie-ratings/movie/999999/average")
+        .get('/movie-ratings/movie/999999/average')
         .expect(404);
     });
   });
 
-  describe("GET /movie-ratings/movie/:movieId", () => {
-    it("should get all ratings for a specific movie without token (read operation)", async () => {
+  describe('GET /movie-ratings/movie/:movieId', () => {
+    it('should get all ratings for a specific movie without token (read operation)', async () => {
       const movie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
@@ -297,14 +297,14 @@ describe("Movie Ratings Integration Tests", () => {
           {
             movieId: movie.id,
             rating: 8.0,
-            comment: "Good movie!",
-            reviewer: "Reviewer 1",
+            comment: 'Good movie!',
+            reviewer: 'Reviewer 1',
           },
           {
             movieId: movie.id,
             rating: 9.0,
-            comment: "Great movie!",
-            reviewer: "Reviewer 2",
+            comment: 'Great movie!',
+            reviewer: 'Reviewer 2',
           },
         ],
       });
@@ -317,21 +317,21 @@ describe("Movie Ratings Integration Tests", () => {
       expect(response.body).toHaveLength(2);
     });
 
-    it("should return 404 for non-existent movie", async () => {
+    it('should return 404 for non-existent movie', async () => {
       await request(app.getHttpServer())
-        .get("/movie-ratings/movie/999999")
+        .get('/movie-ratings/movie/999999')
         .expect(404);
     });
   });
 
-  describe("GET /movie-ratings/:id", () => {
-    it("should get a specific movie rating without token (read operation)", async () => {
+  describe('GET /movie-ratings/:id', () => {
+    it('should get a specific movie rating without token (read operation)', async () => {
       const movie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
@@ -340,8 +340,8 @@ describe("Movie Ratings Integration Tests", () => {
         data: {
           movieId: movie.id,
           rating: 8.5,
-          comment: "Great movie!",
-          reviewer: "Test Reviewer",
+          comment: 'Great movie!',
+          reviewer: 'Test Reviewer',
         },
       });
 
@@ -355,29 +355,29 @@ describe("Movie Ratings Integration Tests", () => {
       expect(response.body.rating).toBe(8.5);
     });
 
-    it("should return 404 for non-existent rating", async () => {
+    it('should return 404 for non-existent rating', async () => {
       await request(app.getHttpServer())
-        .get("/movie-ratings/999999")
+        .get('/movie-ratings/999999')
         .expect(404);
     });
 
-    it("should return 400 for invalid rating ID", async () => {
+    it('should return 400 for invalid rating ID', async () => {
       await request(app.getHttpServer())
-        .get("/movie-ratings/invalid-id")
+        .get('/movie-ratings/invalid-id')
         .expect(400);
     });
   });
 
-  describe("PATCH /movie-ratings/:id", () => {
+  describe('PATCH /movie-ratings/:id', () => {
     let rating: any;
 
     beforeEach(async () => {
       const movie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
@@ -386,31 +386,31 @@ describe("Movie Ratings Integration Tests", () => {
         data: {
           movieId: movie.id,
           rating: 8.5,
-          comment: "Great movie!",
-          reviewer: "Test Reviewer",
+          comment: 'Great movie!',
+          reviewer: 'Test Reviewer',
         },
       });
     });
 
-    it("should update a movie rating with valid token", async () => {
+    it('should update a movie rating with valid token', async () => {
       const updateData = {
         rating: 9.0,
-        comment: "Excellent movie!",
+        comment: 'Excellent movie!',
       };
 
       const response = await request(app.getHttpServer())
         .patch(`/movie-ratings/${rating.id}`)
-        .set("X-API-Token", API_TOKEN)
+        .set('X-API-Token', API_TOKEN)
         .send(updateData)
         .expect(200);
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(response.body.rating).toBe(9.0);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(response.body.comment).toBe("Excellent movie!");
+      expect(response.body.comment).toBe('Excellent movie!');
     });
 
-    it("should return 401 when no token is provided", async () => {
+    it('should return 401 when no token is provided', async () => {
       const updateData = {
         rating: 9.0,
       };
@@ -421,53 +421,53 @@ describe("Movie Ratings Integration Tests", () => {
         .expect(401);
     });
 
-    it("should return 401 when invalid token is provided", async () => {
+    it('should return 401 when invalid token is provided', async () => {
       const updateData = {
         rating: 9.0,
       };
 
       await request(app.getHttpServer())
         .patch(`/movie-ratings/${rating.id}`)
-        .set("X-API-Token", "invalid-token")
+        .set('X-API-Token', 'invalid-token')
         .send(updateData)
         .expect(401);
     });
 
-    it("should return 404 for non-existent rating", async () => {
+    it('should return 404 for non-existent rating', async () => {
       const updateData = {
         rating: 9.0,
       };
 
       await request(app.getHttpServer())
-        .patch("/movie-ratings/999999")
-        .set("X-API-Token", API_TOKEN)
+        .patch('/movie-ratings/999999')
+        .set('X-API-Token', API_TOKEN)
         .send(updateData)
         .expect(404);
     });
 
-    it("should return 400 for invalid update data", async () => {
+    it('should return 400 for invalid update data', async () => {
       const invalidUpdateData = {
         rating: 11, // rating should be between 1-10
       };
 
       await request(app.getHttpServer())
         .patch(`/movie-ratings/${rating.id}`)
-        .set("X-API-Token", API_TOKEN)
+        .set('X-API-Token', API_TOKEN)
         .send(invalidUpdateData)
         .expect(400);
     });
   });
 
-  describe("DELETE /movie-ratings/:id", () => {
+  describe('DELETE /movie-ratings/:id', () => {
     let rating: any;
 
     beforeEach(async () => {
       const movie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
@@ -476,16 +476,16 @@ describe("Movie Ratings Integration Tests", () => {
         data: {
           movieId: movie.id,
           rating: 8.5,
-          comment: "Great movie!",
-          reviewer: "Test Reviewer",
+          comment: 'Great movie!',
+          reviewer: 'Test Reviewer',
         },
       });
     });
 
-    it("should delete a movie rating with valid token", async () => {
+    it('should delete a movie rating with valid token', async () => {
       await request(app.getHttpServer())
         .delete(`/movie-ratings/${rating.id}`)
-        .set("X-API-Token", API_TOKEN)
+        .set('X-API-Token', API_TOKEN)
         .expect(200);
 
       // Verify rating is deleted
@@ -495,23 +495,23 @@ describe("Movie Ratings Integration Tests", () => {
       expect(deletedRating).toBeNull();
     });
 
-    it("should return 401 when no token is provided", async () => {
+    it('should return 401 when no token is provided', async () => {
       await request(app.getHttpServer())
         .delete(`/movie-ratings/${rating.id}`)
         .expect(401);
     });
 
-    it("should return 401 when invalid token is provided", async () => {
+    it('should return 401 when invalid token is provided', async () => {
       await request(app.getHttpServer())
         .delete(`/movie-ratings/${rating.id}`)
-        .set("X-API-Token", "invalid-token")
+        .set('X-API-Token', 'invalid-token')
         .expect(401);
     });
 
-    it("should return 404 for non-existent rating", async () => {
+    it('should return 404 for non-existent rating', async () => {
       await request(app.getHttpServer())
-        .delete("/movie-ratings/999999")
-        .set("X-API-Token", API_TOKEN)
+        .delete('/movie-ratings/999999')
+        .set('X-API-Token', API_TOKEN)
         .expect(404);
     });
   });

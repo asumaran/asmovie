@@ -5,8 +5,8 @@ import {
   IsNumber,
   Min,
   Max,
-} from "class-validator";
-import { Type } from "class-transformer";
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateMovieRatingDto {
   @IsInt()

@@ -1,30 +1,30 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const filePath = path.join(__dirname, "src/config/validation.schema.spec.ts");
-let content = fs.readFileSync(filePath, "utf8");
+const filePath = path.join(__dirname, 'src/config/validation.schema.spec.ts');
+let content = fs.readFileSync(filePath, 'utf8');
 
 // List of patterns to replace with baseTestData usage
 const patterns = [
   // Simple cases with just DATABASE_URL
   {
     from: /const { error } = validationSchema\.validate\(\{\s*DATABASE_URL: ['"`][^'"`]*['"`],?\s*\}\);/g,
-    to: "const { error } = validationSchema.validate(baseTestData);",
+    to: 'const { error } = validationSchema.validate(baseTestData);',
   },
   {
     from: /const { value } = validationSchema\.validate\(\{\s*DATABASE_URL: ['"`][^'"`]*['"`],?\s*\}\);/g,
-    to: "const { value } = validationSchema.validate(baseTestData);",
+    to: 'const { value } = validationSchema.validate(baseTestData);',
   },
   // Cases with DATABASE_URL and one other property
   {
     from: /validationSchema\.validate\(\{\s*([A-Z_]+):\s*([^,}]+),\s*DATABASE_URL: ['"`][^'"`]*['"`],?\s*\}\)/g,
-    to: "validationSchema.validate({\n        ...baseTestData,\n        $1: $2,\n      })",
+    to: 'validationSchema.validate({\n        ...baseTestData,\n        $1: $2,\n      })',
   },
   {
     from: /validationSchema\.validate\(\{\s*DATABASE_URL: ['"`][^'"`]*['"`],\s*([A-Z_]+):\s*([^,}]+),?\s*\}\)/g,
-    to: "validationSchema.validate({\n        ...baseTestData,\n        $1: $2,\n      })",
+    to: 'validationSchema.validate({\n        ...baseTestData,\n        $1: $2,\n      })',
   },
   // Cases with multiple properties
   {
@@ -32,19 +32,19 @@ const patterns = [
     to: (match, p1) => {
       // Parse the properties
       const props = p1
-        .split(",")
+        .split(',')
         .map((prop) => prop.trim())
         .filter(
           (prop) =>
             prop &&
-            !prop.includes("DATABASE_URL") &&
-            !prop.includes("API_TOKEN"),
+            !prop.includes('DATABASE_URL') &&
+            !prop.includes('API_TOKEN'),
         );
 
       if (props.length === 0) {
-        return "validationSchema.validate(baseTestData)";
+        return 'validationSchema.validate(baseTestData)';
       } else {
-        return `validationSchema.validate({\n        ...baseTestData,\n        ${props.join(",\n        ")},\n      })`;
+        return `validationSchema.validate({\n        ...baseTestData,\n        ${props.join(',\n        ')},\n      })`;
       }
     },
   },
@@ -59,13 +59,13 @@ patterns.forEach((pattern) => {
 const manualReplacements = [
   // Empty validate calls
   {
-    from: "validationSchema.validate({})",
-    to: "validationSchema.validate(baseTestData)",
+    from: 'validationSchema.validate({})',
+    to: 'validationSchema.validate(baseTestData)',
   },
   // Cases where we need specific fixes
   {
-    from: "validationSchema.validate({ NODE_ENV: value })",
-    to: "validationSchema.validate({ ...baseTestData, NODE_ENV: value })",
+    from: 'validationSchema.validate({ NODE_ENV: value })',
+    to: 'validationSchema.validate({ ...baseTestData, NODE_ENV: value })',
   },
   {
     from: "validationSchema.validate({ PORT: 'abc' })",
@@ -75,10 +75,10 @@ const manualReplacements = [
 
 manualReplacements.forEach((replacement) => {
   content = content.replace(
-    new RegExp(replacement.from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+    new RegExp(replacement.from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
     replacement.to,
   );
 });
 
-fs.writeFileSync(filePath, content, "utf8");
-console.log("Validation tests fixed!");
+fs.writeFileSync(filePath, content, 'utf8');
+console.log('Validation tests fixed!');

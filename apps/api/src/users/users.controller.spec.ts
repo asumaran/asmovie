@@ -1,15 +1,15 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
-import { UsersController } from "./users.controller";
-import { UsersService } from "./users.service";
-import { PrismaService } from "../common/prisma.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { ChangePasswordDto } from "../auth/dto/change-password.dto";
-import { UserResponseDto } from "./dto/user-response.dto";
+import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { PrismaService } from '../common/prisma.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from '../auth/dto/change-password.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
-describe("UsersController", () => {
+describe('UsersController', () => {
   let controller: UsersController;
   let usersService: UsersService;
 
@@ -23,7 +23,7 @@ describe("UsersController", () => {
   };
 
   const mockConfigService = {
-    get: jest.fn().mockReturnValue("test-api-secret"),
+    get: jest.fn().mockReturnValue('test-api-secret'),
   };
 
   const mockJwtService = {
@@ -38,9 +38,9 @@ describe("UsersController", () => {
 
   const mockUser: UserResponseDto = {
     id: 1,
-    email: "test@example.com",
-    firstName: "Test",
-    lastName: "User",
+    email: 'test@example.com',
+    firstName: 'Test',
+    lastName: 'User',
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -75,15 +75,15 @@ describe("UsersController", () => {
     jest.clearAllMocks();
   });
 
-  describe("create", () => {
+  describe('create', () => {
     const createUserDto: CreateUserDto = {
-      email: "test@example.com",
-      password: "Password123!",
-      firstName: "Test",
-      lastName: "User",
+      email: 'test@example.com',
+      password: 'Password123!',
+      firstName: 'Test',
+      lastName: 'User',
     };
 
-    it("should create a new user", async () => {
+    it('should create a new user', async () => {
       mockUsersService.create.mockResolvedValue(mockUser);
 
       const result = await controller.create(createUserDto);
@@ -93,8 +93,8 @@ describe("UsersController", () => {
     });
   });
 
-  describe("findAll", () => {
-    it("should return array of users", async () => {
+  describe('findAll', () => {
+    it('should return array of users', async () => {
       const users = [mockUser];
       mockUsersService.findAll.mockResolvedValue(users);
 
@@ -105,8 +105,8 @@ describe("UsersController", () => {
     });
   });
 
-  describe("findOne", () => {
-    it("should return a user by id", async () => {
+  describe('findOne', () => {
+    it('should return a user by id', async () => {
       mockUsersService.findOne.mockResolvedValue(mockUser);
 
       const result = await controller.findOne(1);
@@ -116,13 +116,13 @@ describe("UsersController", () => {
     });
   });
 
-  describe("update", () => {
+  describe('update', () => {
     const updateUserDto: UpdateUserDto = {
-      firstName: "Updated",
-      lastName: "Name",
+      firstName: 'Updated',
+      lastName: 'Name',
     };
 
-    it("should update a user", async () => {
+    it('should update a user', async () => {
       const updatedUser = { ...mockUser, ...updateUserDto };
       mockUsersService.update.mockResolvedValue(updatedUser);
 
@@ -133,8 +133,8 @@ describe("UsersController", () => {
     });
   });
 
-  describe("remove", () => {
-    it("should remove a user", async () => {
+  describe('remove', () => {
+    it('should remove a user', async () => {
       mockUsersService.remove.mockResolvedValue(undefined);
 
       await controller.remove(1);
@@ -143,13 +143,13 @@ describe("UsersController", () => {
     });
   });
 
-  describe("changePassword", () => {
+  describe('changePassword', () => {
     const changePasswordDto: ChangePasswordDto = {
-      currentPassword: "currentPassword",
-      newPassword: "newPassword123!",
+      currentPassword: 'currentPassword',
+      newPassword: 'newPassword123!',
     };
 
-    it("should change password for the authenticated user", async () => {
+    it('should change password for the authenticated user', async () => {
       const req = { user: { id: 1 } };
       mockUsersService.changePassword.mockResolvedValue(mockUser);
 
@@ -157,8 +157,8 @@ describe("UsersController", () => {
 
       expect(usersService.changePassword).toHaveBeenCalledWith(
         1,
-        "currentPassword",
-        "newPassword123!",
+        'currentPassword',
+        'newPassword123!',
       );
       expect(result).toEqual(mockUser);
     });
@@ -168,7 +168,7 @@ describe("UsersController", () => {
 
       await expect(
         controller.changePassword(1, changePasswordDto, req),
-      ).rejects.toThrow("You can only change your own password");
+      ).rejects.toThrow('You can only change your own password');
     });
   });
 });

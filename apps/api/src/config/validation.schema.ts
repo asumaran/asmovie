@@ -1,10 +1,10 @@
-import * as Joi from "joi";
+import * as Joi from 'joi';
 
 export const validationSchema = Joi.object({
   // Server
   NODE_ENV: Joi.string()
-    .valid("development", "production", "test")
-    .default("development"),
+    .valid('development', 'production', 'test')
+    .default('development'),
   PORT: Joi.number().default(3001),
 
   // Database
@@ -17,7 +17,7 @@ export const validationSchema = Joi.object({
   RATE_LIMIT_WINDOW: Joi.number().default(900000), // 15 minutes
   RATE_LIMIT_MAX: Joi.number().default(100),
   JWT_SECRET: Joi.string().min(32).optional(),
-  JWT_EXPIRES_IN: Joi.string().default("1h"),
+  JWT_EXPIRES_IN: Joi.string().default('1h'),
   API_TOKEN: Joi.string().min(16).required(),
 
   // Performance
@@ -30,8 +30,8 @@ export const validationSchema = Joi.object({
 
   // Logging
   LOG_LEVEL: Joi.string()
-    .valid("error", "warn", "info", "debug")
-    .default("info"),
+    .valid('error', 'warn', 'info', 'debug')
+    .default('info'),
   ENABLE_DETAILED_LOGS: Joi.boolean().default(false),
 
   // Feature Flags

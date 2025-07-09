@@ -1,16 +1,16 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { PrismaService } from "../common/prisma.service";
-import { QueryBuilderService } from "../common/services/query-builder.service";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../common/prisma.service';
+import { QueryBuilderService } from '../common/services/query-builder.service';
 import {
   PaginatedResponse,
   PaginationHelper,
-} from "../common/interfaces/paginated-response.interface";
+} from '../common/interfaces/paginated-response.interface';
 import {
   CreateActorDto,
   UpdateActorDto,
   ActorFilterDto,
-} from "./dto/actor.dto";
+} from './dto/actor.dto';
 
 @Injectable()
 export class ActorsService {
@@ -47,7 +47,7 @@ export class ActorsService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<PaginatedResponse<any>> {
     const defaultLimit = this.configService.get<number>(
-      "pagination.defaultLimit",
+      'pagination.defaultLimit',
       10,
     );
     const effectiveLimit = limit ?? defaultLimit;
@@ -64,7 +64,9 @@ export class ActorsService {
     const orderBy = this.queryBuilder.buildOrderBy(
       filters.sortBy,
       filters.sortOrder,
-      { createdAt: "desc" as const },
+      {
+        createdAt: 'desc' as const,
+      },
     );
 
     const queryOptions = this.queryBuilder.buildPaginatedQuery({

@@ -2,23 +2,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import { Test, TestingModule } from "@nestjs/testing";
-import { INestApplication, ValidationPipe } from "@nestjs/common";
-import * as request from "supertest";
-import { AppModule } from "../app.module";
-import { PrismaService } from "../common/prisma.service";
-import { ResponseInterceptor } from "../common/interceptors/response.interceptor";
-import { PerformanceInterceptor } from "../common/interceptors/performance.interceptor";
-import { HttpExceptionFilter } from "../common/filters/http-exception.filter";
-import * as dotenv from "dotenv";
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from '../app.module';
+import { PrismaService } from '../common/prisma.service';
+import { ResponseInterceptor } from '../common/interceptors/response.interceptor';
+import { PerformanceInterceptor } from '../common/interceptors/performance.interceptor';
+import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
+import * as dotenv from 'dotenv';
 dotenv.config();
 
 // API token for testing protected endpoints
 const API_TOKEN =
   process.env.API_TOKEN ??
-  "your-super-secure-api-secret-key-here-at-least-32-characters-long";
+  'your-super-secure-api-secret-key-here-at-least-32-characters-long';
 
-describe("Movies Integration Tests", () => {
+describe('Movies Integration Tests', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
 
@@ -58,19 +58,19 @@ describe("Movies Integration Tests", () => {
     await app.close();
   });
 
-  describe("POST /movies", () => {
-    it("should create a new movie", async () => {
+  describe('POST /movies', () => {
+    it('should create a new movie', async () => {
       const movieData = {
-        title: "Test Movie",
-        description: "A test movie description",
+        title: 'Test Movie',
+        description: 'A test movie description',
         releaseYear: 2023,
-        genre: "Action",
+        genre: 'Action',
         duration: 120,
       };
 
       const response = await request(app.getHttpServer())
-        .post("/movies")
-        .set("X-API-Token", API_TOKEN)
+        .post('/movies')
+        .set('X-API-Token', API_TOKEN)
         .send(movieData)
         .expect(201);
 
@@ -78,27 +78,27 @@ describe("Movies Integration Tests", () => {
         success: true,
         data: expect.objectContaining({
           id: expect.any(Number),
-          title: "Test Movie",
-          description: "A test movie description",
+          title: 'Test Movie',
+          description: 'A test movie description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
         }),
-        message: "Success",
+        message: 'Success',
         timestamp: expect.any(String),
       });
     });
 
-    it("should validate required fields", async () => {
+    it('should validate required fields', async () => {
       const invalidMovie = {
-        description: "Missing title",
+        description: 'Missing title',
       };
 
       const response = await request(app.getHttpServer())
-        .post("/movies")
-        .set("X-API-Token", API_TOKEN)
+        .post('/movies')
+        .set('X-API-Token', API_TOKEN)
         .send(invalidMovie)
         .expect(400);
 
@@ -109,16 +109,16 @@ describe("Movies Integration Tests", () => {
       });
     });
 
-    it("should validate field types and constraints", async () => {
+    it('should validate field types and constraints', async () => {
       const invalidMovie = {
-        title: "", // Empty string
-        releaseYear: "not-a-number",
+        title: '', // Empty string
+        releaseYear: 'not-a-number',
         duration: -10, // Negative duration
       };
 
       const response = await request(app.getHttpServer())
-        .post("/movies")
-        .set("X-API-Token", API_TOKEN)
+        .post('/movies')
+        .set('X-API-Token', API_TOKEN)
         .send(invalidMovie)
         .expect(400);
 
@@ -127,43 +127,43 @@ describe("Movies Integration Tests", () => {
     });
   });
 
-  describe("GET /movies", () => {
+  describe('GET /movies', () => {
     beforeEach(async () => {
       // Create test data
       const movies = [
         {
-          title: "Action Movie 1",
-          description: "First action movie",
+          title: 'Action Movie 1',
+          description: 'First action movie',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
         {
-          title: "Drama Movie 1",
-          description: "First drama movie",
+          title: 'Drama Movie 1',
+          description: 'First drama movie',
           releaseYear: 2022,
-          genre: "Drama",
+          genre: 'Drama',
           duration: 135,
         },
         {
-          title: "Action Movie 2",
-          description: "Second action movie",
+          title: 'Action Movie 2',
+          description: 'Second action movie',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 110,
         },
         {
-          title: "Comedy Movie 1",
-          description: "Funny movie",
+          title: 'Comedy Movie 1',
+          description: 'Funny movie',
           releaseYear: 2021,
-          genre: "Comedy",
+          genre: 'Comedy',
           duration: 95,
         },
         {
-          title: "Sci-Fi Adventure",
-          description: "Space exploration movie",
+          title: 'Sci-Fi Adventure',
+          description: 'Space exploration movie',
           releaseYear: 2023,
-          genre: "Sci-Fi",
+          genre: 'Sci-Fi',
           duration: 140,
         },
       ];
@@ -173,9 +173,9 @@ describe("Movies Integration Tests", () => {
       }
     });
 
-    it("should return paginated movies with default pagination", async () => {
+    it('should return paginated movies with default pagination', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies")
+        .get('/movies')
         .expect(200);
 
       expect(response.body).toMatchObject({
@@ -189,15 +189,15 @@ describe("Movies Integration Tests", () => {
           hasNext: false,
           hasPrev: false,
         },
-        message: "Success",
+        message: 'Success',
       });
 
       expect(response.body.data).toHaveLength(5);
     });
 
-    it("should support custom pagination parameters", async () => {
+    it('should support custom pagination parameters', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?page=2&limit=2")
+        .get('/movies?page=2&limit=2')
         .expect(200);
 
       expect(response.body.meta).toMatchObject({
@@ -212,20 +212,20 @@ describe("Movies Integration Tests", () => {
       expect(response.body.data).toHaveLength(2);
     });
 
-    it("should filter movies by genre", async () => {
+    it('should filter movies by genre', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?genre=Action")
+        .get('/movies?genre=Action')
         .expect(200);
 
       expect(response.body.data).toHaveLength(2);
       expect(
-        response.body.data.every((movie) => movie.genre === "Action"),
+        response.body.data.every((movie) => movie.genre === 'Action'),
       ).toBe(true);
     });
 
-    it("should filter movies by release year", async () => {
+    it('should filter movies by release year', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?releaseYear=2023")
+        .get('/movies?releaseYear=2023')
         .expect(200);
 
       expect(response.body.data).toHaveLength(3);
@@ -234,57 +234,57 @@ describe("Movies Integration Tests", () => {
       ).toBe(true);
     });
 
-    it("should search movies by title", async () => {
+    it('should search movies by title', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?search=Drama")
+        .get('/movies?search=Drama')
         .expect(200);
 
       expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].title).toContain("Drama");
+      expect(response.body.data[0].title).toContain('Drama');
     });
 
-    it("should search movies by description", async () => {
+    it('should search movies by description', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?search=space")
+        .get('/movies?search=space')
         .expect(200);
 
       expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].description).toContain("Space");
+      expect(response.body.data[0].description).toContain('Space');
     });
 
-    it("should combine multiple filters", async () => {
+    it('should combine multiple filters', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?genre=Action&releaseYear=2023&page=1&limit=5")
+        .get('/movies?genre=Action&releaseYear=2023&page=1&limit=5')
         .expect(200);
 
       expect(response.body.data).toHaveLength(2);
       expect(
         response.body.data.every(
-          (movie) => movie.genre === "Action" && movie.releaseYear === 2023,
+          (movie) => movie.genre === 'Action' && movie.releaseYear === 2023,
         ),
       ).toBe(true);
     });
 
-    it("should return empty results for non-matching filters", async () => {
+    it('should return empty results for non-matching filters', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?genre=Horror")
+        .get('/movies?genre=Horror')
         .expect(200);
 
       expect(response.body.data).toHaveLength(0);
       expect(response.body.meta.total).toBe(0);
     });
 
-    it("should validate pagination parameters", async () => {
+    it('should validate pagination parameters', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?page=0&limit=0")
+        .get('/movies?page=0&limit=0')
         .expect(400);
 
       expect(response.body.success).toBe(false);
     });
 
-    it("should handle large page numbers gracefully", async () => {
+    it('should handle large page numbers gracefully', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies?page=100&limit=10")
+        .get('/movies?page=100&limit=10')
         .expect(200);
 
       expect(response.body.data).toHaveLength(0);
@@ -299,22 +299,22 @@ describe("Movies Integration Tests", () => {
     });
   });
 
-  describe("GET /movies/:id", () => {
+  describe('GET /movies/:id', () => {
     let createdMovie: any;
 
     beforeEach(async () => {
       createdMovie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
     });
 
-    it("should return a specific movie by ID", async () => {
+    it('should return a specific movie by ID', async () => {
       const response = await request(app.getHttpServer())
         .get(`/movies/${createdMovie.id}`)
         .expect(200);
@@ -323,19 +323,19 @@ describe("Movies Integration Tests", () => {
         success: true,
         data: {
           id: createdMovie.id,
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
-        message: "Success",
+        message: 'Success',
       });
     });
 
-    it("should return 404 for non-existent movie", async () => {
+    it('should return 404 for non-existent movie', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies/999999")
+        .get('/movies/999999')
         .expect(404);
 
       expect(response.body).toMatchObject({
@@ -344,71 +344,71 @@ describe("Movies Integration Tests", () => {
       });
     });
 
-    it("should validate ID parameter", async () => {
+    it('should validate ID parameter', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies/invalid-id")
+        .get('/movies/invalid-id')
         .expect(400);
 
       expect(response.body.success).toBe(false);
     });
   });
 
-  describe("PATCH /movies/:id", () => {
+  describe('PATCH /movies/:id', () => {
     let createdMovie: any;
 
     beforeEach(async () => {
       createdMovie = await prismaService.movie.create({
         data: {
-          title: "Original Title",
-          description: "Original description",
+          title: 'Original Title',
+          description: 'Original description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
     });
 
-    it("should update a movie", async () => {
+    it('should update a movie', async () => {
       const updateData = {
-        title: "Updated Title",
-        description: "Updated description",
+        title: 'Updated Title',
+        description: 'Updated description',
       };
 
       const response = await request(app.getHttpServer())
         .patch(`/movies/${createdMovie.id}`)
-        .set("X-API-Token", API_TOKEN)
+        .set('X-API-Token', API_TOKEN)
         .send(updateData)
         .expect(200);
 
       expect(response.body.data).toMatchObject({
         id: createdMovie.id,
-        title: "Updated Title",
-        description: "Updated description",
+        title: 'Updated Title',
+        description: 'Updated description',
         releaseYear: 2023, // Should remain unchanged
-        genre: "Action", // Should remain unchanged
+        genre: 'Action', // Should remain unchanged
         duration: 120, // Should remain unchanged
       });
     });
 
-    it("should return 404 when updating non-existent movie", async () => {
+    it('should return 404 when updating non-existent movie', async () => {
       const response = await request(app.getHttpServer())
-        .patch("/movies/999999")
-        .set("X-API-Token", API_TOKEN)
-        .send({ title: "New Title" })
+        .patch('/movies/999999')
+        .set('X-API-Token', API_TOKEN)
+        .send({ title: 'New Title' })
         .expect(404);
 
       expect(response.body.success).toBe(false);
     });
 
-    it("should validate update data", async () => {
+    it('should validate update data', async () => {
       const invalidUpdate = {
-        releaseYear: "not-a-number",
+        releaseYear: 'not-a-number',
         duration: -50,
       };
 
       const response = await request(app.getHttpServer())
         .patch(`/movies/${createdMovie.id}`)
-        .set("X-API-Token", API_TOKEN)
+        .set('X-API-Token', API_TOKEN)
         .send(invalidUpdate)
         .expect(400);
 
@@ -416,25 +416,25 @@ describe("Movies Integration Tests", () => {
     });
   });
 
-  describe("DELETE /movies/:id", () => {
+  describe('DELETE /movies/:id', () => {
     let createdMovie: any;
 
     beforeEach(async () => {
       createdMovie = await prismaService.movie.create({
         data: {
-          title: "Movie to Delete",
-          description: "This movie will be deleted",
+          title: 'Movie to Delete',
+          description: 'This movie will be deleted',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
     });
 
-    it("should delete a movie", async () => {
+    it('should delete a movie', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/movies/${createdMovie.id}`)
-        .set("X-API-Token", API_TOKEN)
+        .set('X-API-Token', API_TOKEN)
         .expect(200);
 
       expect(response.body.success).toBe(true);
@@ -446,50 +446,50 @@ describe("Movies Integration Tests", () => {
       expect(deletedMovie).toBeNull();
     });
 
-    it("should return 404 when deleting non-existent movie", async () => {
+    it('should return 404 when deleting non-existent movie', async () => {
       const response = await request(app.getHttpServer())
-        .delete("/movies/999999")
-        .set("X-API-Token", API_TOKEN)
+        .delete('/movies/999999')
+        .set('X-API-Token', API_TOKEN)
         .expect(404);
 
       expect(response.body.success).toBe(false);
     });
   });
 
-  describe("Movie-Actor relationships", () => {
+  describe('Movie-Actor relationships', () => {
     let createdMovie: any;
     let createdActor: any;
 
     beforeEach(async () => {
       createdMovie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
 
       createdActor = await prismaService.actor.create({
         data: {
-          name: "Test Actor",
-          biography: "Test actor biography",
-          birthDate: new Date("1990-01-01"),
+          name: 'Test Actor',
+          biography: 'Test actor biography',
+          birthDate: new Date('1990-01-01'),
         },
       });
     });
 
-    describe("POST /movies/:id/actors", () => {
-      it("should add an actor to a movie", async () => {
+    describe('POST /movies/:id/actors', () => {
+      it('should add an actor to a movie', async () => {
         const addActorData = {
           actorId: createdActor.id,
-          role: "Lead Actor",
+          role: 'Lead Actor',
         };
 
         const response = await request(app.getHttpServer())
           .post(`/movies/${createdMovie.id}/actors`)
-          .set("X-API-Token", API_TOKEN)
+          .set('X-API-Token', API_TOKEN)
           .send(addActorData)
           .expect(201);
 
@@ -497,66 +497,66 @@ describe("Movies Integration Tests", () => {
         expect(response.body.data.actors).toHaveLength(1);
         expect(response.body.data.actors[0]).toMatchObject({
           actorId: createdActor.id,
-          role: "Lead Actor",
+          role: 'Lead Actor',
           actor: {
             id: createdActor.id,
-            name: "Test Actor",
+            name: 'Test Actor',
           },
         });
       });
 
-      it("should return 404 for non-existent movie", async () => {
+      it('should return 404 for non-existent movie', async () => {
         const response = await request(app.getHttpServer())
-          .post("/movies/999999/actors")
-          .set("X-API-Token", API_TOKEN)
-          .send({ actorId: createdActor.id, role: "Lead" })
+          .post('/movies/999999/actors')
+          .set('X-API-Token', API_TOKEN)
+          .send({ actorId: createdActor.id, role: 'Lead' })
           .expect(404);
 
         expect(response.body.success).toBe(false);
       });
 
-      it("should return 404 for non-existent actor", async () => {
+      it('should return 404 for non-existent actor', async () => {
         const response = await request(app.getHttpServer())
           .post(`/movies/${createdMovie.id}/actors`)
-          .set("X-API-Token", API_TOKEN)
-          .send({ actorId: 999999, role: "Lead" })
+          .set('X-API-Token', API_TOKEN)
+          .send({ actorId: 999999, role: 'Lead' })
           .expect(404);
 
         expect(response.body.success).toBe(false);
       });
 
-      it("should handle duplicate actor assignment", async () => {
+      it('should handle duplicate actor assignment', async () => {
         // First assignment
         await request(app.getHttpServer())
           .post(`/movies/${createdMovie.id}/actors`)
-          .set("X-API-Token", API_TOKEN)
-          .send({ actorId: createdActor.id, role: "Lead" })
+          .set('X-API-Token', API_TOKEN)
+          .send({ actorId: createdActor.id, role: 'Lead' })
           .expect(201);
 
         // Duplicate assignment
         const response = await request(app.getHttpServer())
           .post(`/movies/${createdMovie.id}/actors`)
-          .set("X-API-Token", API_TOKEN)
-          .send({ actorId: createdActor.id, role: "Supporting" })
+          .set('X-API-Token', API_TOKEN)
+          .send({ actorId: createdActor.id, role: 'Supporting' })
           .expect(409);
 
         expect(response.body.success).toBe(false);
       });
     });
 
-    describe("GET /movies/:id/actors", () => {
+    describe('GET /movies/:id/actors', () => {
       beforeEach(async () => {
         // Add actor to movie
         await prismaService.movieActor.create({
           data: {
             movieId: createdMovie.id,
             actorId: createdActor.id,
-            role: "Lead Actor",
+            role: 'Lead Actor',
           },
         });
       });
 
-      it("should return actors for a movie", async () => {
+      it('should return actors for a movie', async () => {
         const response = await request(app.getHttpServer())
           .get(`/movies/${createdMovie.id}/actors`)
           .expect(200);
@@ -565,21 +565,21 @@ describe("Movies Integration Tests", () => {
         expect(response.body.data).toHaveLength(1);
         expect(response.body.data[0]).toMatchObject({
           actorId: createdActor.id,
-          role: "Lead Actor",
+          role: 'Lead Actor',
           actor: {
             id: createdActor.id,
-            name: "Test Actor",
+            name: 'Test Actor',
           },
         });
       });
 
-      it("should return empty array for movie with no actors", async () => {
+      it('should return empty array for movie with no actors', async () => {
         const newMovie = await prismaService.movie.create({
           data: {
-            title: "Movie without actors",
-            description: "Test",
+            title: 'Movie without actors',
+            description: 'Test',
             releaseYear: 2023,
-            genre: "Drama",
+            genre: 'Drama',
             duration: 90,
           },
         });
@@ -593,22 +593,22 @@ describe("Movies Integration Tests", () => {
       });
     });
 
-    describe("DELETE /movies/:movieId/actors/:actorId", () => {
+    describe('DELETE /movies/:movieId/actors/:actorId', () => {
       beforeEach(async () => {
         // Add actor to movie
         await prismaService.movieActor.create({
           data: {
             movieId: createdMovie.id,
             actorId: createdActor.id,
-            role: "Lead Actor",
+            role: 'Lead Actor',
           },
         });
       });
 
-      it("should remove an actor from a movie", async () => {
+      it('should remove an actor from a movie', async () => {
         const response = await request(app.getHttpServer())
           .delete(`/movies/${createdMovie.id}/actors/${createdActor.id}`)
-          .set("X-API-Token", API_TOKEN)
+          .set('X-API-Token', API_TOKEN)
           .expect(200);
 
         expect(response.body.success).toBe(true);
@@ -623,10 +623,10 @@ describe("Movies Integration Tests", () => {
         expect(relationship).toBeNull();
       });
 
-      it("should return 404 for non-existent relationship", async () => {
+      it('should return 404 for non-existent relationship', async () => {
         const response = await request(app.getHttpServer())
           .delete(`/movies/${createdMovie.id}/actors/999999`)
-          .set("X-API-Token", API_TOKEN)
+          .set('X-API-Token', API_TOKEN)
           .expect(404);
 
         expect(response.body.success).toBe(false);
@@ -634,52 +634,52 @@ describe("Movies Integration Tests", () => {
     });
   });
 
-  describe("Response format and interceptors", () => {
+  describe('Response format and interceptors', () => {
     let createdMovie: any;
 
     beforeEach(async () => {
       createdMovie = await prismaService.movie.create({
         data: {
-          title: "Test Movie",
-          description: "Test description",
+          title: 'Test Movie',
+          description: 'Test description',
           releaseYear: 2023,
-          genre: "Action",
+          genre: 'Action',
           duration: 120,
         },
       });
     });
 
-    it("should apply ResponseInterceptor to all endpoints", async () => {
+    it('should apply ResponseInterceptor to all endpoints', async () => {
       const response = await request(app.getHttpServer())
         .get(`/movies/${createdMovie.id}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty("success", true);
-      expect(response.body).toHaveProperty("data");
-      expect(response.body).toHaveProperty("message", "Success");
-      expect(response.body).toHaveProperty("timestamp");
+      expect(response.body).toHaveProperty('success', true);
+      expect(response.body).toHaveProperty('data');
+      expect(response.body).toHaveProperty('message', 'Success');
+      expect(response.body).toHaveProperty('timestamp');
       expect(response.body.timestamp).toMatch(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
       );
     });
 
-    it("should apply pagination meta for list endpoints", async () => {
+    it('should apply pagination meta for list endpoints', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies")
+        .get('/movies')
         .expect(200);
 
-      expect(response.body).toHaveProperty("meta");
-      expect(response.body.meta).toHaveProperty("page");
-      expect(response.body.meta).toHaveProperty("limit");
-      expect(response.body.meta).toHaveProperty("total");
-      expect(response.body.meta).toHaveProperty("totalPages");
-      expect(response.body.meta).toHaveProperty("hasNext");
-      expect(response.body.meta).toHaveProperty("hasPrev");
+      expect(response.body).toHaveProperty('meta');
+      expect(response.body.meta).toHaveProperty('page');
+      expect(response.body.meta).toHaveProperty('limit');
+      expect(response.body.meta).toHaveProperty('total');
+      expect(response.body.meta).toHaveProperty('totalPages');
+      expect(response.body.meta).toHaveProperty('hasNext');
+      expect(response.body.meta).toHaveProperty('hasPrev');
     });
 
-    it("should apply HttpExceptionFilter for errors", async () => {
+    it('should apply HttpExceptionFilter for errors', async () => {
       const response = await request(app.getHttpServer())
-        .get("/movies/999999")
+        .get('/movies/999999')
         .expect(404);
 
       expect(response.body).toMatchObject({
@@ -689,25 +689,25 @@ describe("Movies Integration Tests", () => {
         timestamp: expect.stringMatching(
           /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
         ),
-        path: "/movies/999999",
+        path: '/movies/999999',
       });
     });
   });
 
-  describe("Performance and edge cases", () => {
-    it("should handle concurrent requests", async () => {
+  describe('Performance and edge cases', () => {
+    it('should handle concurrent requests', async () => {
       const movieData = {
-        title: "Concurrent Movie",
-        description: "Test concurrent creation",
+        title: 'Concurrent Movie',
+        description: 'Test concurrent creation',
         releaseYear: 2023,
-        genre: "Action",
+        genre: 'Action',
         duration: 120,
       };
 
       const promises = Array.from({ length: 5 }, (_, i) =>
         request(app.getHttpServer())
-          .post("/movies")
-          .set("X-API-Token", API_TOKEN)
+          .post('/movies')
+          .set('X-API-Token', API_TOKEN)
           .send({ ...movieData, title: `${movieData.title} ${i}` }),
       );
 
@@ -720,38 +720,38 @@ describe("Movies Integration Tests", () => {
       });
     });
 
-    it("should handle special characters in search", async () => {
+    it('should handle special characters in search', async () => {
       await prismaService.movie.create({
         data: {
           title: 'Movie with "Quotes" & Symbols!',
-          description: "Special characters: @#$%^&*()",
+          description: 'Special characters: @#$%^&*()',
           releaseYear: 2023,
-          genre: "Comedy",
+          genre: 'Comedy',
           duration: 100,
         },
       });
 
       const response = await request(app.getHttpServer())
-        .get("/movies?search=Quotes")
+        .get('/movies?search=Quotes')
         .expect(200);
 
       expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].title).toContain("Quotes");
+      expect(response.body.data[0].title).toContain('Quotes');
     });
 
-    it("should handle very long movie descriptions", async () => {
-      const longDescription = "A".repeat(5000);
+    it('should handle very long movie descriptions', async () => {
+      const longDescription = 'A'.repeat(5000);
       const movieData = {
-        title: "Movie with Long Description",
+        title: 'Movie with Long Description',
         description: longDescription,
         releaseYear: 2023,
-        genre: "Epic",
+        genre: 'Epic',
         duration: 180,
       };
 
       const response = await request(app.getHttpServer())
-        .post("/movies")
-        .set("X-API-Token", API_TOKEN)
+        .post('/movies')
+        .set('X-API-Token', API_TOKEN)
         .send(movieData)
         .expect(201);
 

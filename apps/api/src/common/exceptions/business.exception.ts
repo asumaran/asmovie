@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export interface BusinessExceptionDetails {
   [key: string]: unknown;
@@ -12,7 +12,7 @@ export class BusinessException extends HttpException {
   ) {
     super(
       {
-        error: "Business Rule Violation",
+        error: 'Business Rule Violation',
         message,
         details,
         timestamp: new Date().toISOString(),
@@ -27,7 +27,11 @@ export class DuplicateResourceException extends BusinessException {
     super(
       `${resource} with ${field} '${value}' already exists`,
       HttpStatus.CONFLICT,
-      { resource, field, value },
+      {
+        resource,
+        field,
+        value,
+      },
     );
   }
 }
@@ -37,7 +41,10 @@ export class ResourceNotFoundException extends BusinessException {
     super(
       `${resource} with identifier '${identifier}' not found`,
       HttpStatus.NOT_FOUND,
-      { resource, identifier },
+      {
+        resource,
+        identifier,
+      },
     );
   }
 }

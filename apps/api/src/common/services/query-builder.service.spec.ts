@@ -1,7 +1,7 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { QueryBuilderService } from "./query-builder.service";
+import { Test, TestingModule } from '@nestjs/testing';
+import { QueryBuilderService } from './query-builder.service';
 
-describe("QueryBuilderService", () => {
+describe('QueryBuilderService', () => {
   let service: QueryBuilderService;
 
   beforeEach(async () => {
@@ -12,12 +12,12 @@ describe("QueryBuilderService", () => {
     service = module.get<QueryBuilderService>(QueryBuilderService);
   });
 
-  it("should be defined", () => {
+  it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe("buildMovieInclude", () => {
-    it("should build include with all options enabled", () => {
+  describe('buildMovieInclude', () => {
+    it('should build include with all options enabled', () => {
       const result = service.buildMovieInclude({
         includeActors: true,
         includeRatings: true,
@@ -50,7 +50,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build include with actors only", () => {
+    it('should build include with actors only', () => {
       const result = service.buildMovieInclude({
         includeActors: true,
         includeRatings: false,
@@ -72,7 +72,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build include with ratings only", () => {
+    it('should build include with ratings only', () => {
       const result = service.buildMovieInclude({
         includeActors: false,
         includeRatings: true,
@@ -91,7 +91,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build include with no details", () => {
+    it('should build include with no details', () => {
       const result = service.buildMovieInclude({
         includeActors: true,
         includeRatings: true,
@@ -109,7 +109,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build empty include when nothing is included", () => {
+    it('should build empty include when nothing is included', () => {
       const result = service.buildMovieInclude({
         includeActors: false,
         includeRatings: false,
@@ -119,8 +119,8 @@ describe("QueryBuilderService", () => {
     });
   });
 
-  describe("buildActorInclude", () => {
-    it("should build include with movies and details", () => {
+  describe('buildActorInclude', () => {
+    it('should build include with movies and details', () => {
       const result = service.buildActorInclude({
         includeMovies: true,
         includeMovieDetails: true,
@@ -143,7 +143,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build include with movies without details", () => {
+    it('should build include with movies without details', () => {
       const result = service.buildActorInclude({
         includeMovies: true,
         includeMovieDetails: false,
@@ -158,7 +158,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build empty include when movies not included", () => {
+    it('should build empty include when movies not included', () => {
       const result = service.buildActorInclude({
         includeMovies: false,
       });
@@ -167,31 +167,31 @@ describe("QueryBuilderService", () => {
     });
   });
 
-  describe("buildMovieWhere", () => {
-    it("should build where clause with search term", () => {
+  describe('buildMovieWhere', () => {
+    it('should build where clause with search term', () => {
       const result = service.buildMovieWhere({
-        search: "inception",
+        search: 'inception',
       });
 
       expect(result).toEqual({
         OR: [
-          { title: { contains: "inception", mode: "insensitive" } },
-          { description: { contains: "inception", mode: "insensitive" } },
+          { title: { contains: 'inception', mode: 'insensitive' } },
+          { description: { contains: 'inception', mode: 'insensitive' } },
         ],
       });
     });
 
-    it("should build where clause with genre filter", () => {
+    it('should build where clause with genre filter', () => {
       const result = service.buildMovieWhere({
-        genre: "Action",
+        genre: 'Action',
       });
 
       expect(result).toEqual({
-        genre: { equals: "Action", mode: "insensitive" },
+        genre: { equals: 'Action', mode: 'insensitive' },
       });
     });
 
-    it("should build where clause with release year filter", () => {
+    it('should build where clause with release year filter', () => {
       const result = service.buildMovieWhere({
         releaseYear: 2023,
       });
@@ -201,7 +201,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build where clause with rating range", () => {
+    it('should build where clause with rating range', () => {
       const result = service.buildMovieWhere({
         minRating: 7.0,
         maxRating: 9.0,
@@ -219,7 +219,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build where clause with minRating only", () => {
+    it('should build where clause with minRating only', () => {
       const result = service.buildMovieWhere({
         minRating: 7.0,
       });
@@ -235,7 +235,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build where clause with maxRating only", () => {
+    it('should build where clause with maxRating only', () => {
       const result = service.buildMovieWhere({
         maxRating: 9.0,
       });
@@ -251,10 +251,10 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build where clause with multiple filters", () => {
+    it('should build where clause with multiple filters', () => {
       const result = service.buildMovieWhere({
-        search: "action",
-        genre: "Action",
+        search: 'action',
+        genre: 'Action',
         releaseYear: 2023,
         minRating: 8.0,
         maxRating: 10.0,
@@ -262,10 +262,10 @@ describe("QueryBuilderService", () => {
 
       expect(result).toEqual({
         OR: [
-          { title: { contains: "action", mode: "insensitive" } },
-          { description: { contains: "action", mode: "insensitive" } },
+          { title: { contains: 'action', mode: 'insensitive' } },
+          { description: { contains: 'action', mode: 'insensitive' } },
         ],
-        genre: { equals: "Action", mode: "insensitive" },
+        genre: { equals: 'Action', mode: 'insensitive' },
         releaseYear: 2023,
         ratings: {
           some: {
@@ -278,28 +278,28 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build empty where clause when no filters provided", () => {
+    it('should build empty where clause when no filters provided', () => {
       const result = service.buildMovieWhere({});
 
       expect(result).toEqual({});
     });
   });
 
-  describe("buildActorWhere", () => {
-    it("should build where clause with search term", () => {
+  describe('buildActorWhere', () => {
+    it('should build where clause with search term', () => {
       const result = service.buildActorWhere({
-        search: "leonardo",
+        search: 'leonardo',
       });
 
       expect(result).toEqual({
         OR: [
-          { name: { contains: "leonardo", mode: "insensitive" } },
-          { biography: { contains: "leonardo", mode: "insensitive" } },
+          { name: { contains: 'leonardo', mode: 'insensitive' } },
+          { biography: { contains: 'leonardo', mode: 'insensitive' } },
         ],
       });
     });
 
-    it("should build where clause with birth year range", () => {
+    it('should build where clause with birth year range', () => {
       const result = service.buildActorWhere({
         birthYearFrom: 1970,
         birthYearTo: 1980,
@@ -307,67 +307,67 @@ describe("QueryBuilderService", () => {
 
       expect(result).toEqual({
         birthDate: {
-          gte: new Date("1970-01-01"),
-          lte: new Date("1980-12-31"),
+          gte: new Date('1970-01-01'),
+          lte: new Date('1980-12-31'),
         },
       });
     });
 
-    it("should build where clause with multiple filters", () => {
+    it('should build where clause with multiple filters', () => {
       const result = service.buildActorWhere({
-        search: "tom",
+        search: 'tom',
         birthYearFrom: 1960,
         birthYearTo: 1970,
       });
 
       expect(result).toEqual({
         OR: [
-          { name: { contains: "tom", mode: "insensitive" } },
-          { biography: { contains: "tom", mode: "insensitive" } },
+          { name: { contains: 'tom', mode: 'insensitive' } },
+          { biography: { contains: 'tom', mode: 'insensitive' } },
         ],
         birthDate: {
-          gte: new Date("1960-01-01"),
-          lte: new Date("1970-12-31"),
+          gte: new Date('1960-01-01'),
+          lte: new Date('1970-12-31'),
         },
       });
     });
 
-    it("should build empty where clause when no filters provided", () => {
+    it('should build empty where clause when no filters provided', () => {
       const result = service.buildActorWhere({});
 
       expect(result).toEqual({});
     });
   });
 
-  describe("buildOrderBy", () => {
-    it("should build order by with provided field and order", () => {
-      const result = service.buildOrderBy("title", "asc", {
-        createdAt: "desc" as const,
+  describe('buildOrderBy', () => {
+    it('should build order by with provided field and order', () => {
+      const result = service.buildOrderBy('title', 'asc', {
+        createdAt: 'desc' as const,
       });
 
       expect(result).toEqual({
-        title: "asc",
+        title: 'asc',
       });
     });
 
-    it("should return default sort when no sortBy provided", () => {
-      const defaultSort = { createdAt: "desc" as const };
-      const result = service.buildOrderBy(undefined, "asc", defaultSort);
+    it('should return default sort when no sortBy provided', () => {
+      const defaultSort = { createdAt: 'desc' as const };
+      const result = service.buildOrderBy(undefined, 'asc', defaultSort);
 
       expect(result).toEqual(defaultSort);
     });
 
-    it("should handle desc order", () => {
-      const result = service.buildOrderBy("releaseYear", "desc", {});
+    it('should handle desc order', () => {
+      const result = service.buildOrderBy('releaseYear', 'desc', {});
 
       expect(result).toEqual({
-        releaseYear: "desc",
+        releaseYear: 'desc',
       });
     });
   });
 
-  describe("buildPagination", () => {
-    it("should build pagination with default values", () => {
+  describe('buildPagination', () => {
+    it('should build pagination with default values', () => {
       const result = service.buildPagination();
 
       expect(result).toEqual({
@@ -376,7 +376,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build pagination with custom page and limit", () => {
+    it('should build pagination with custom page and limit', () => {
       const result = service.buildPagination(3, 20);
 
       expect(result).toEqual({
@@ -385,7 +385,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should handle first page correctly", () => {
+    it('should handle first page correctly', () => {
       const result = service.buildPagination(1, 15);
 
       expect(result).toEqual({
@@ -395,11 +395,11 @@ describe("QueryBuilderService", () => {
     });
   });
 
-  describe("buildPaginatedQuery", () => {
-    it("should build complete paginated query with all options", () => {
+  describe('buildPaginatedQuery', () => {
+    it('should build complete paginated query with all options', () => {
       const include = { actors: true };
-      const where = { title: { contains: "test" } };
-      const orderBy = { createdAt: "desc" as const };
+      const where = { title: { contains: 'test' } };
+      const orderBy = { createdAt: 'desc' as const };
 
       const result = service.buildPaginatedQuery({
         page: 2,
@@ -418,7 +418,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build paginated query with defaults", () => {
+    it('should build paginated query with defaults', () => {
       const result = service.buildPaginatedQuery({});
 
       expect(result).toEqual({
@@ -427,7 +427,7 @@ describe("QueryBuilderService", () => {
       });
     });
 
-    it("should build paginated query with only pagination", () => {
+    it('should build paginated query with only pagination', () => {
       const result = service.buildPaginatedQuery({
         page: 3,
         limit: 5,

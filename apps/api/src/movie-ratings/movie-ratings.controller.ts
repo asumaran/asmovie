@@ -12,15 +12,15 @@ import {
   ValidationPipe,
   BadRequestException,
   UseGuards,
-} from "@nestjs/common";
-import { MovieRatingsService } from "./movie-ratings.service";
+} from '@nestjs/common';
+import { MovieRatingsService } from './movie-ratings.service';
 import {
   CreateMovieRatingDto,
   UpdateMovieRatingDto,
-} from "./dto/movie-rating.dto";
-import { ApiOrJwtSimpleGuard } from "../common/guards/api-or-jwt-simple.guard";
+} from './dto/movie-rating.dto';
+import { ApiOrJwtSimpleGuard } from '../common/guards/api-or-jwt-simple.guard';
 
-@Controller("movie-ratings")
+@Controller('movie-ratings')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class MovieRatingsController {
   constructor(private readonly movieRatingsService: MovieRatingsService) {}
@@ -32,46 +32,46 @@ export class MovieRatingsController {
   }
 
   @Get()
-  findAll(@Query("movieId") movieId?: string) {
+  findAll(@Query('movieId') movieId?: string) {
     let parsedMovieId: number | undefined;
 
     if (movieId !== undefined) {
       parsedMovieId = parseInt(movieId, 10);
       if (isNaN(parsedMovieId)) {
-        throw new BadRequestException("movieId must be a valid number");
+        throw new BadRequestException('movieId must be a valid number');
       }
     }
 
     return this.movieRatingsService.findAll(parsedMovieId);
   }
 
-  @Get("movie/:movieId/average")
-  getAverageRating(@Param("movieId", ParseIntPipe) movieId: number) {
+  @Get('movie/:movieId/average')
+  getAverageRating(@Param('movieId', ParseIntPipe) movieId: number) {
     return this.movieRatingsService.getAverageRating(movieId);
   }
 
-  @Get("movie/:movieId")
-  getMovieRatings(@Param("movieId", ParseIntPipe) movieId: number) {
+  @Get('movie/:movieId')
+  getMovieRatings(@Param('movieId', ParseIntPipe) movieId: number) {
     return this.movieRatingsService.getMovieRatings(movieId);
   }
 
-  @Get(":id")
-  findOne(@Param("id", ParseIntPipe) id: number) {
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.movieRatingsService.findOne(id);
   }
 
-  @Patch(":id")
+  @Patch(':id')
   @UseGuards(ApiOrJwtSimpleGuard)
   update(
-    @Param("id", ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateMovieRatingDto: UpdateMovieRatingDto,
   ) {
     return this.movieRatingsService.update(id, updateMovieRatingDto);
   }
 
-  @Delete(":id")
+  @Delete(':id')
   @UseGuards(ApiOrJwtSimpleGuard)
-  remove(@Param("id", ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.movieRatingsService.remove(id);
   }
 }

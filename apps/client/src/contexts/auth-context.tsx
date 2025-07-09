@@ -14,6 +14,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
+  signup: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -103,6 +104,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signup = async (firstName: string, lastName: string, email: string, password: string): Promise<void> => {
+    setIsLoading(true);
+    
+    try {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ firstName, lastName, email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      const data = await response.json();
+      
+      // Handle different response formats
+      let authToken, userData;
+      if (data.success) {
+        authToken = data.data?.accessToken || data.data?.token || data.token;
+        userData = data.data?.user || data.user;
+      } else {
+        authToken = data.accessToken || data.token;
+        userData = data.user;
+      }
+
+      if (!authToken) {
+        throw new Error('No token received from server');
+      }
+
+      // Store in localStorage
+      localStorage.setItem('auth_token', authToken);
+      if (userData) {
+        localStorage.setItem('auth_user', JSON.stringify(userData));
+      }
+
+      // Update state
+      setToken(authToken);
+      setUser(userData || { id: 0, email, firstName, lastName });
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = () => {
     // Clear localStorage
     localStorage.removeItem('auth_token');
@@ -118,6 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     token,
     login,
+    signup,
     logout,
     isLoading,
     isAuthenticated: !!token,

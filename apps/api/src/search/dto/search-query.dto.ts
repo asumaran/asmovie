@@ -6,8 +6,8 @@ import {
   Min,
   Max,
   IsNotEmpty,
-} from "class-validator";
-import { Type } from "class-transformer";
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class SearchQueryDto {
   @IsString()
@@ -17,22 +17,22 @@ export class SearchQueryDto {
   @IsOptional()
   @IsString()
   @IsIn([
-    "title",
-    "name",
-    "rating",
-    "releaseYear",
-    "createdAt",
-    "director",
-    "budget",
-    "boxOffice",
-    "nationality",
+    'title',
+    'name',
+    'rating',
+    'releaseYear',
+    'createdAt',
+    'director',
+    'budget',
+    'boxOffice',
+    'nationality',
   ])
   sortBy?: string;
 
   @IsOptional()
   @IsString()
-  @IsIn(["asc", "desc"])
-  sortOrder?: "asc" | "desc";
+  @IsIn(['asc', 'desc'])
+  sortOrder?: 'asc' | 'desc';
 
   @IsOptional()
   @IsInt()
