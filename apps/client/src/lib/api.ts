@@ -267,7 +267,7 @@ export async function getAllActors(): Promise<SearchItem[]> {
 
     while (hasMore) {
       const response = await fetch(
-        `${API_BASE_URL}/actors?limit=${limit}&sortBy=name&sortOrder=asc&page=${page}`
+        `${API_BASE_URL}/actors?limit=${limit}&sortBy=name&sortOrder=asc&page=${page}`,
       );
 
       if (!response.ok) {

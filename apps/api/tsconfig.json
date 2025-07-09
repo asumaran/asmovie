@@ -20,9 +20,5 @@
     // Prevent .d.ts files from being generated in the input folder
     "declarationDir": "./dist/types"
   },
-  "exclude": [
-    "infrastructure",
-    "dist",
-    "types"
-  ]
+  "exclude": ["infrastructure", "dist", "types"]
 }

@@ -157,27 +157,36 @@ describe('MoviesService', () => {
             movieId: 1,
             actorId: 1,
             role: 'Lead Actor',
-            actor: { id: 1, name: 'Actor 1', biography: 'Bio 1', birthDate: new Date() },
+            actor: {
+              id: 1,
+              name: 'Actor 1',
+              biography: 'Bio 1',
+              birthDate: new Date(),
+            },
           },
           {
             id: 2,
             movieId: 1,
             actorId: 2,
             role: 'Supporting Actor',
-            actor: { id: 2, name: 'Actor 2', biography: 'Bio 2', birthDate: new Date() },
+            actor: {
+              id: 2,
+              name: 'Actor 2',
+              biography: 'Bio 2',
+              birthDate: new Date(),
+            },
           },
         ],
       };
 
-      const existingActors = [
-        { id: 1 },
-        { id: 2 },
-      ];
+      const existingActors = [{ id: 1 }, { id: 2 }];
 
       mockPrismaService.movie.create.mockResolvedValue(createdMovie);
       mockPrismaService.actor.findMany.mockResolvedValue(existingActors);
       mockPrismaService.movieActor.createMany.mockResolvedValue({ count: 2 });
-      mockPrismaService.movie.findUnique.mockResolvedValue(expectedMovieWithActors);
+      mockPrismaService.movie.findUnique.mockResolvedValue(
+        expectedMovieWithActors,
+      );
 
       const result = await service.create(createMovieDto);
 
@@ -215,9 +224,7 @@ describe('MoviesService', () => {
         releaseYear: 2023,
         genre: 'Action',
         duration: 120,
-        actors: [
-          { actorId: 999, role: 'Lead Actor' },
-        ],
+        actors: [{ actorId: 999, role: 'Lead Actor' }],
       };
 
       const { actors, ...movieData } = createMovieDto;
@@ -235,7 +242,7 @@ describe('MoviesService', () => {
       mockPrismaService.actor.findMany.mockResolvedValue([]); // No actors found
 
       await expect(service.create(createMovieDto)).rejects.toThrow(
-        "Actor(s) with identifier '999' not found"
+        "Actor(s) with identifier '999' not found",
       );
     });
   });
@@ -536,22 +543,29 @@ describe('MoviesService', () => {
             movieId: 1,
             actorId: 1,
             role: 'New Lead Actor',
-            actor: { id: 1, name: 'Actor 1', biography: 'Bio 1', birthDate: new Date() },
+            actor: {
+              id: 1,
+              name: 'Actor 1',
+              biography: 'Bio 1',
+              birthDate: new Date(),
+            },
           },
           {
             id: 2,
             movieId: 1,
             actorId: 2,
             role: 'New Supporting Actor',
-            actor: { id: 2, name: 'Actor 2', biography: 'Bio 2', birthDate: new Date() },
+            actor: {
+              id: 2,
+              name: 'Actor 2',
+              biography: 'Bio 2',
+              birthDate: new Date(),
+            },
           },
         ],
       };
 
-      const existingActors = [
-        { id: 1 },
-        { id: 2 },
-      ];
+      const existingActors = [{ id: 1 }, { id: 2 }];
 
       mockPrismaService.movie.findUnique
         .mockResolvedValueOnce(existingMovie) // First call in update method
@@ -611,9 +625,7 @@ describe('MoviesService', () => {
         releaseYear: 2023,
         genre: 'Action',
         duration: 120,
-        actors: [
-          { id: 1, actorId: 1, role: 'Old Actor' },
-        ],
+        actors: [{ id: 1, actorId: 1, role: 'Old Actor' }],
         ratings: [],
       };
 
@@ -644,9 +656,7 @@ describe('MoviesService', () => {
       const movieId = 1;
       const updateMovieDto = {
         title: 'Updated Movie',
-        actors: [
-          { actorId: 999, role: 'Non-existent Actor' },
-        ],
+        actors: [{ actorId: 999, role: 'Non-existent Actor' }],
       };
 
       const existingMovie = {
@@ -667,7 +677,7 @@ describe('MoviesService', () => {
       mockPrismaService.actor.findMany.mockResolvedValue([]); // No actors found
 
       await expect(service.update(movieId, updateMovieDto)).rejects.toThrow(
-        "Actor(s) with identifier '999' not found"
+        "Actor(s) with identifier '999' not found",
       );
     });
 

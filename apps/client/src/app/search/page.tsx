@@ -199,7 +199,8 @@ function SearchResults() {
         <Search className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
         <h2 className="text-2xl font-semibold mb-2">No results found</h2>
         <p className="text-muted-foreground">
-          No movies or actors found for &ldquo;{query}&rdquo;. Try a different search term.
+          No movies or actors found for &ldquo;{query}&rdquo;. Try a different
+          search term.
         </p>
       </div>
     );

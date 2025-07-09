@@ -29,7 +29,7 @@ export class MoviesService {
 
   async create(createMovieDto: CreateMovieDto) {
     const { actors, ...movieData } = createMovieDto;
-    
+
     // First, create the movie
     const movie = await this.prisma.movie.create({
       data: movieData,
@@ -46,22 +46,27 @@ export class MoviesService {
     // If actors are provided, add them to the movie
     if (actors && actors.length > 0) {
       // Validate that all actors exist
-      const actorIds = actors.map(a => a.actorId);
+      const actorIds = actors.map((a) => a.actorId);
       const existingActors = await this.prisma.actor.findMany({
         where: { id: { in: actorIds } },
         select: { id: true },
       });
-      
-      const existingActorIds = existingActors.map(a => a.id);
-      const missingActorIds = actorIds.filter(id => !existingActorIds.includes(id));
-      
+
+      const existingActorIds = existingActors.map((a) => a.id);
+      const missingActorIds = actorIds.filter(
+        (id) => !existingActorIds.includes(id),
+      );
+
       if (missingActorIds.length > 0) {
-        throw new ResourceNotFoundException('Actor(s)', missingActorIds.join(', '));
+        throw new ResourceNotFoundException(
+          'Actor(s)',
+          missingActorIds.join(', '),
+        );
       }
 
       // Create movie-actor relationships
       await this.prisma.movieActor.createMany({
-        data: actors.map(actor => ({
+        data: actors.map((actor) => ({
           movieId: movie.id,
           actorId: actor.actorId,
           role: actor.role,
@@ -156,7 +161,7 @@ export class MoviesService {
     await this.findOne(id); // Check if exists
 
     const { actors, ...movieData } = updateMovieDto;
-    
+
     const include = this.queryBuilder.buildMovieInclude({
       includeActors: true,
       includeRatings: true,
@@ -179,22 +184,27 @@ export class MoviesService {
       // If actors array is not empty, add new relationships
       if (actors.length > 0) {
         // Validate that all actors exist
-        const actorIds = actors.map(a => a.actorId);
+        const actorIds = actors.map((a) => a.actorId);
         const existingActors = await this.prisma.actor.findMany({
           where: { id: { in: actorIds } },
           select: { id: true },
         });
-        
-        const existingActorIds = existingActors.map(a => a.id);
-        const missingActorIds = actorIds.filter(id => !existingActorIds.includes(id));
-        
+
+        const existingActorIds = existingActors.map((a) => a.id);
+        const missingActorIds = actorIds.filter(
+          (id) => !existingActorIds.includes(id),
+        );
+
         if (missingActorIds.length > 0) {
-          throw new ResourceNotFoundException('Actor(s)', missingActorIds.join(', '));
+          throw new ResourceNotFoundException(
+            'Actor(s)',
+            missingActorIds.join(', '),
+          );
         }
 
         // Create new movie-actor relationships
         await this.prisma.movieActor.createMany({
-          data: actors.map(actor => ({
+          data: actors.map((actor) => ({
             movieId: id,
             actorId: actor.actorId,
             role: actor.role,

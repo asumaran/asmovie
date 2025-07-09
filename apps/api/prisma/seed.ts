@@ -1096,7 +1096,8 @@ async function main() {
     prisma.movie.create({
       data: {
         title: 'Example Movie with Multiple Actors',
-        description: 'Demonstrates creating a movie with multiple actors at once',
+        description:
+          'Demonstrates creating a movie with multiple actors at once',
         plot: 'This movie shows how to create a movie with multiple actors assigned during creation',
         releaseYear: 2024,
         genre: 'Example',
@@ -1137,12 +1138,16 @@ async function main() {
 
   console.log('✅ Database seeded successfully!');
   console.log(`👥 Created ${users.length} users`);
-  console.log(`📽️  Created ${movies.length + 3} movies (including test movies)`);
+  console.log(
+    `📽️  Created ${movies.length + 3} movies (including test movies)`,
+  );
   console.log(
     `🎭 Created ${actors.length + 3} actors (20 main actors + 3 test actors)`,
   );
   console.log(`🎬 Created movie-actor relationships using new approach`);
-  console.log(`⭐ Created ratings for ${movies.length} out of ${movies.length + 3} movies (${Math.round((movies.length / (movies.length + 3)) * 100)}% coverage)`);
+  console.log(
+    `⭐ Created ratings for ${movies.length} out of ${movies.length + 3} movies (${Math.round((movies.length / (movies.length + 3)) * 100)}% coverage)`,
+  );
   console.log('');
   console.log('🎬 Movies demonstrating new create/update approach:');
   console.log('  ✅ Inception (5 actors) - created with actors');
@@ -1151,7 +1156,9 @@ async function main() {
   console.log('  ✅ Titanic (2 actors) - created with actors');
   console.log('  ✅ The Silence of the Lambs (2 actors) - created with actors');
   console.log('  ✅ Test Movie (1 actor) - created with actors');
-  console.log('  ✅ Example Movie with Multiple Actors (4 actors) - created with actors');
+  console.log(
+    '  ✅ Example Movie with Multiple Actors (4 actors) - created with actors',
+  );
   console.log('  ✅ Movie Without Actors (0 actors) - created without actors');
   console.log('');
   console.log('🔐 Test users created:');
