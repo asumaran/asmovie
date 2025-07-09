@@ -56,7 +56,7 @@ interface Actor {
 
 function ActorCard({ actor }: { actor: Actor }) {
   const age = calculateAge(actor.birthDate);
-  console.log('actor.movies', actor.movies);
+
   return (
     <Link key={actor.id} href={`/actors/${actor.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">

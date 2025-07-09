@@ -73,7 +73,6 @@ function mapSearchItemToMovie(item: SearchItem): Movie {
 }
 
 function MovieCard({ movie }: { movie: Movie }) {
-  console.log('movie', movie);
   return (
     <Link key={movie.id} href={`/movies/${movie.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">

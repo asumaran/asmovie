@@ -28,7 +28,7 @@ import {
   type CreateMovieData,
   type SearchItem,
 } from '@/lib/api';
-import { AlertCircle, CheckCircle, Loader2, Plus, Trash2 } from 'lucide-react';
+import { AlertCircle, Loader2, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -68,7 +68,6 @@ export default function AddMoviePage() {
   const [loadingActors, setLoadingActors] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   // Load actors on component mount
@@ -113,7 +112,6 @@ export default function AddMoviePage() {
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError('');
-    setSuccess(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -156,9 +154,6 @@ export default function AddMoviePage() {
       }
     }
 
-    // Note: Rating validation removed since averageRating is not sent to API
-    // The rating field can remain in the UI for future use or reference
-
     try {
       // Prepare data for API
       const movieData: CreateMovieData = {
@@ -190,29 +185,8 @@ export default function AddMoviePage() {
       // Call the API to create the movie
       const newMovie = await createMovie(movieData);
 
-      console.log('Movie created successfully:', newMovie);
-
-      setSuccess(true);
-
-      // Reset form after success
-      setTimeout(() => {
-        setFormData({
-          title: '',
-          year: '',
-          genre: '',
-          duration: '',
-          description: '',
-          plot: '',
-          director: '',
-          writers: '',
-          budget: '',
-          boxOffice: '',
-        });
-        setSelectedActors([]);
-        setSuccess(false);
-        // Optionally redirect to the movie detail page
-        // router.push(`/movies/${newMovie.id}`);
-      }, 3000);
+      // Redirect to movie detail page with success param
+      router.push(`/movies/${newMovie.id}?success=1`);
     } catch (err) {
       console.error('Error creating movie:', err);
       let errorMessage = 'Failed to add movie. Please try again.';
@@ -255,13 +229,6 @@ export default function AddMoviePage() {
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              {success && (
-                <Alert className="border-green-200 bg-green-50 text-green-800">
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>Movie added successfully!</AlertDescription>
                 </Alert>
               )}
 

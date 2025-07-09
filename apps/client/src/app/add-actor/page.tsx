@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { createActor, type CreateActorData } from '@/lib/api';
-import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -31,13 +31,11 @@ export default function AddActorPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError('');
-    setSuccess(false);
   };
 
   const calculateAge = (birthDate: string) => {
@@ -98,25 +96,8 @@ export default function AddActorPage() {
 
       // Call the API to create the actor
       const newActor = await createActor(actorData);
-
-      console.log('Actor created successfully:', newActor);
-
-      setSuccess(true);
-
-      // Reset form after success
-      setTimeout(() => {
-        setFormData({
-          name: '',
-          birthDate: '',
-          placeOfBirth: '',
-          nationality: '',
-          description: '',
-          biography: '',
-        });
-        setSuccess(false);
-        // Optionally redirect to the actor detail page
-        // router.push(`/actors/${newActor.id}`);
-      }, 3000);
+      // Redirect to actor detail page with success param
+      router.push(`/actors/${newActor.id}?success=1`);
     } catch (err) {
       console.error('Error creating actor:', err);
       let errorMessage = 'Failed to add actor. Please try again.';
@@ -162,12 +143,7 @@ export default function AddActorPage() {
                 </Alert>
               )}
 
-              {success && (
-                <Alert className="border-green-200 bg-green-50 text-green-800">
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>Actor added successfully!</AlertDescription>
-                </Alert>
-              )}
+              {/* Success message removed from here, now shown on detail page */}
 
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

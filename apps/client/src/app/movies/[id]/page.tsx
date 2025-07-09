@@ -27,8 +27,8 @@ import {
 } from '@/lib/ratings';
 import {
   AlertCircle,
-  ArrowLeft,
   Calendar,
+  CheckCircle,
   Clock,
   DollarSign,
   Loader2,
@@ -39,7 +39,7 @@ import {
   User,
 } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useRouter } from 'next/navigation';
+import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface Movie {
@@ -83,6 +83,8 @@ function MoviePageClient({ movieId }: { movieId: number }) {
   const [deleteError, setDeleteError] = useState('');
   const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const showSuccess = searchParams.get('success') === '1';
 
   useEffect(() => {
     async function fetchMovie() {
@@ -91,7 +93,6 @@ function MoviePageClient({ movieId }: { movieId: number }) {
         if (!movieData) {
           notFound();
         }
-        console.log('movieData', movieData);
         setMovie(movieData);
       } catch (error) {
         console.error('Error fetching movie:', error);
@@ -166,16 +167,18 @@ function MoviePageClient({ movieId }: { movieId: number }) {
   if (!movie) {
     notFound();
   }
-  console.log('move', movie);
+
   return (
     <div className="container mx-auto py-8">
-      {/* Back Button */}
-      <Button variant="ghost" asChild className="mb-6">
-        <Link href="/movies">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Movies
-        </Link>
-      </Button>
+      {/* Success message after creation */}
+      {showSuccess && (
+        <div className="mb-6">
+          <Alert className="border-green-200 bg-green-50 text-green-800">
+            <CheckCircle className="h-4 w-4" />
+            <AlertDescription>Movie added successfully!</AlertDescription>
+          </Alert>
+        </div>
+      )}
 
       {/* Movie Header */}
       <div className="mb-8">

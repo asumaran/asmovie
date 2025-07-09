@@ -21,13 +21,19 @@ import { deleteActor, getActorById } from '@/lib/api';
 import {
   AlertCircle,
   Calendar,
+  CheckCircle,
   Film,
   Loader2,
   MapPin,
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import {
+  notFound,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 function ActorLoadingSkeleton() {
@@ -114,6 +120,8 @@ export default function ActorPage() {
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const showSuccess = searchParams.get('success') === '1';
 
   const handleDelete = async () => {
     if (!actor) return;
@@ -215,6 +223,15 @@ export default function ActorPage() {
 
   return (
     <div className="container mx-auto py-8">
+      {/* Success message after creation */}
+      {showSuccess && (
+        <div className="mb-6">
+          <Alert className="border-green-200 bg-green-50 text-green-800">
+            <CheckCircle className="h-4 w-4" />
+            <AlertDescription>Actor added successfully!</AlertDescription>
+          </Alert>
+        </div>
+      )}
       {/* Actor Header */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
