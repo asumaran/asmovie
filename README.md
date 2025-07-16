@@ -29,7 +29,7 @@ npm install
 
 ```bash
 cd apps/api
-npm run dev
+npm run start:dev
 ```
 - The API will be available at [http://localhost:3001](http://localhost:3001)
 
