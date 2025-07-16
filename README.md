@@ -45,7 +45,7 @@ npm run docker:up
 >
 > ```bash
 > cd apps/api
-> npm run stop:docker
+> npm run docker:down
 > ```
 
 ---
